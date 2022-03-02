@@ -59,7 +59,9 @@ jobs:
         run: luarocks make --local
 
       - name: Run static code analysis
-        run: tools/runluacheck.sh
+        run: |
+          eval $(luarocks path)
+          tools/runluacheck.sh
 
       - name: Spawn Exasol environment
         run: |
