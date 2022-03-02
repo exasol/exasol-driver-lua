@@ -5,8 +5,8 @@ local bignum = require("openssl.bignum")
 local base64 = require("base64")
 
 local M = {}
-function M:new(object)
-    object = object or {}
+function M:new(log)
+    local object = {log = log}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -21,11 +21,13 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     return encrypted_password
 end
 
-local function login(socket, username, password)
+local function login(log, socket, username, password)
+    log.trace("Sending login command")
     local response = socket:sendJson({command = "login", protocolVersion = 3})
     local encrypted_password = encrypt_password(response.publicKeyModulus,
                                                 response.publicKeyExponent,
                                                 password)
+    log.trace("Login as user '%s'...", username)
     return socket:sendJson({
         username = username,
         password = encrypted_password,
@@ -34,20 +36,19 @@ local function login(socket, username, password)
 end
 
 function M:connect(sourcename, username, password)
-    print("Connecting to", sourcename, username, password)
     local websocketOptions = {receive_timeout = 3}
-    local socket = websocket.connect("wss://" .. sourcename, websocketOptions)
-    local loginResponse = login(socket, username, password)
+    local socket = websocket.connect(self.log, "wss://" .. sourcename, websocketOptions)
+    local loginResponse = login(self.log, socket, username, password)
     local details = {
         sessionId = loginResponse.sessionId,
         maxDataMessageSize = loginResponse.maxDataMessageSize,
         dbVersion = loginResponse.releaseVersion
     }
-    local conn = connection:new(socket, details)
-    print("Connection started with session id", details.sessionId)
+    local conn = connection:new(self.log, socket, details)
+    self.log.trace("Connected with session id %s", details.sessionId)
     return conn
 end
 
-function M:close() print("Closing environment") end
+function M:close() self.log.trace("Closing environment") end
 
 return M

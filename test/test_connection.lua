@@ -1,6 +1,8 @@
 local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 
+function test_version() luaunit.assertEquals(driver.VERSION, "0.1.0") end
+
 local function get_optional_system_env(varname, default)
     local value = os.getenv(varname)
     if value == nil then return default end
@@ -15,6 +17,10 @@ local function get_system_env(varname, default)
     return value
 end
 
+local function create_environment()
+    return driver.exasol({log_level = get_system_env("LOG_LEVEL", "INFO")})
+end
+
 local function get_connection_params(override)
     override = override or {}
     return {
@@ -24,7 +30,7 @@ local function get_connection_params(override)
         password = override.password or
             get_system_env("EXASOL_PASSWORD", "exasol"),
         fingerprint = override.fingerprint or
-            get_optional_system_env("EXASOL_PASSWORD")
+            get_system_env("EXASOL_CERT_FINGERPRINT")
     }
 end
 
@@ -48,7 +54,7 @@ function test_connection_fails()
         }
     }
     for _, test in ipairs(tests) do
-        local env = driver.exasol()
+        local env = create_environment()
         local sourcename = test.props.host .. ":" .. test.props.port
         luaunit.assertErrorMsgContentEquals(test.expected_error, function()
             env:connect(sourcename, test.props.user, test.props.password)
@@ -59,25 +65,12 @@ end
 
 function test_connection_succeeds()
     local params = get_connection_params()
-    local env = driver.exasol()
+    local env = create_environment()
     local sourcename = params.host .. ":" .. params.port
     local connection = env:connect(sourcename, params.user, params.password)
     luaunit.assertNotNil(connection)
     connection:close()
     env:close()
 end
-
-
--- local conn = env:connect("192.168.56.7:8563", "sys", "exasol")
-
--- local cursor = conn:execute("select 1")
-
--- cursor:close()
-
--- conn:commit()
--- conn:rollback()
--- conn.setautocommit(true)
--- conn:close()
--- env:close()
 
 os.exit(luaunit.LuaUnit.run())

@@ -19,6 +19,27 @@ luarocks install luaunit
 luarocks install luacheck
 ```
 
+## Running Tests
+
+You need an Exasol database for running the tests. Start the tests by executing:
+
+```sh
+EXASOL_HOST=<host> \
+  EXASOL_PORT=<port> \
+  EXASOL_USER=<user> \
+  EXASOL_PASSWORD=<password> \
+  EXASOL_CERT_FINGERPRINT=<fingerprint> \
+  ./tools/runtests.sh
+```
+
+The following environment have a default value and can be omitted:
+
+* `EXASOL_PORT` = `8563`
+* `EXASOL_USER` = `sys`
+* `EXASOL_PASSWORD` = `exasol`
+
+You can enable tracing by setting environment variable `LOG_LEVEL=TRACE`.
+
 ## Open Tasks
 
 * Basics

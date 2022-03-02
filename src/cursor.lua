@@ -1,7 +1,7 @@
 local M = {}
 
-function M:new(object)
-    object = object or {}
+function M:new(log)
+    local object = {log = log}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -14,15 +14,10 @@ function M:fetch(table, modestring)
     return table
 end
 
-function M:getcolnames()
-    return {}
-end
+function M:getcolnames() return {} end
 
-function M:getcoltypes()
-    return {}
-end
+function M:getcoltypes() return {} end
 
-function M:close()
-end
+function M:close() self.log.trace("Closing cursor") end
 
 return M
