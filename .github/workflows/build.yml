@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt install lua${{ matrix.lua_version }} liblua${{ matrix.lua_version }} lua-any shellcheck
+          sudo apt-get -y install lua${{ matrix.lua_version }} liblua${{ matrix.lua_version }} lua-any shellcheck
           wget http://http.us.debian.org/debian/pool/main/l/luarocks/luarocks_3.8.0+dfsg1-1_all.deb
           sudo dpkg -i luarocks_3.8.0+dfsg1-1_all.deb
 
