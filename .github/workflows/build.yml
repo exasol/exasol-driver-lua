@@ -66,6 +66,7 @@ jobs:
 
       - name: Run smoketests
         run: |
+          eval $(luarocks path)
           RUN_ONLY=smoketest.lua ./tools/runtests.sh
 
       - name: Spawn Exasol environment
@@ -79,6 +80,7 @@ jobs:
       - name: Run integration tests
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          eval $(luarocks path)
           EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
