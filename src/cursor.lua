@@ -1,7 +1,9 @@
+local log = require("remotelog")
+
 local M = {}
 
-function M:new(log)
-    local object = {log = log}
+function M:new()
+    local object = {}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -18,6 +20,6 @@ function M:getcolnames() return {} end
 
 function M:getcoltypes() return {} end
 
-function M:close() self.log.trace("Closing cursor") end
+function M:close() log.trace("Closing cursor") end
 
 return M

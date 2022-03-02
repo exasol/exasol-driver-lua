@@ -21,7 +21,7 @@ function M.exasol(options)
     log.init().set_level(log_level)
     log.set_client_name("Exasol driver for Lua")
     log.trace("Created new luasql.exasol environment, log level = %s", log_level)
-    return environment:new(log)
+    return environment:new()
 end
 
 return M

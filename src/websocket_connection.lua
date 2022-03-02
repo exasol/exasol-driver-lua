@@ -4,9 +4,10 @@ local luws = require("luws")
 local socket = require("socket")
 local lunajson = require("lunajson")
 local exaerror = require("exaerror")
+local log = require("remotelog")
 
-function M:new(log)
-    local object =  {log=log}
+function M:new()
+    local object = {}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -18,13 +19,13 @@ local function default_data_handler(socket, status, message)
                     {message = message}):add_ticket_mitigation():raise()
 end
 
-function M.connect(log, wsUrl, options)
+function M.connect(wsUrl, options)
     options = options or {}
-    local connection = M:new(log)
+    local connection = M:new()
     connection.data_handler = default_data_handler
     log.trace("Connecting to websocket url %s...", wsUrl)
-    local result, err = wsopen(wsUrl, function(socket, status, message)
-        connection.data_handler(socket, status, message)
+    local result, err = wsopen(wsUrl, function(web_socket, status, message)
+        connection.data_handler(web_socket, status, message)
     end, options)
     if err ~= nil then
         exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}",
@@ -49,7 +50,7 @@ end
 local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
 
 function M:waitForResponse()
-    self.log.trace("Waiting for response...")
+    log.trace("Waiting for response...")
     sleep(50)
     local result, err = wsreceive(self.websocket)
     if type(err) == "string" then
@@ -59,14 +60,14 @@ function M:waitForResponse()
     if result == false then
         return -- no more data
     end
-    self.log.trace("Response not received yet, result=%s, error=%s. Try again...", result, err)
+    log.trace("Response not received yet, result=%s, error=%s. Try again...", result, err)
     self:waitForResponse()
 end
 
 function M:sleepForResponse()
     sleep(100)
     local result, err = wsreceive(self.websocket)
-    self.log.trace("Websocket receive finished with result %s / error %s", result, err)
+    log.trace("Websocket receive finished with result %s / error %s", result, err)
 end
 
 function M:sendRaw(payload)
@@ -84,7 +85,7 @@ function M:sendRaw(payload)
 end
 
 function M:close() 
-    self.log.trace("Closing websocket")
+    log.trace("Closing websocket")
     wsclose(self.websocket)
 end
 

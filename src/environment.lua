@@ -3,10 +3,11 @@ local websocket = require("websocket_connection")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
+local log = require("remotelog")
 
 local M = {}
-function M:new(log)
-    local object = {log = log}
+function M:new()
+    local object = {}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -21,7 +22,7 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     return encrypted_password
 end
 
-local function login(log, socket, username, password)
+local function login(socket, username, password)
     log.trace("Sending login command")
     local response = socket:sendJson({command = "login", protocolVersion = 3})
     local encrypted_password = encrypt_password(response.publicKeyModulus,
@@ -37,18 +38,18 @@ end
 
 function M:connect(sourcename, username, password)
     local websocketOptions = {receive_timeout = 3}
-    local socket = websocket.connect(self.log, "wss://" .. sourcename, websocketOptions)
-    local loginResponse = login(self.log, socket, username, password)
+    local socket = websocket.connect("wss://" .. sourcename, websocketOptions)
+    local loginResponse = login(socket, username, password)
     local details = {
         sessionId = loginResponse.sessionId,
         maxDataMessageSize = loginResponse.maxDataMessageSize,
         dbVersion = loginResponse.releaseVersion
     }
-    local conn = connection:new(self.log, socket, details)
-    self.log.trace("Connected with session id %s", details.sessionId)
+    local conn = connection:new(socket, details)
+    log.trace("Connected with session id %s", details.sessionId)
     return conn
 end
 
-function M:close() self.log.trace("Closing environment") end
+function M:close() log.trace("Closing environment") end
 
 return M
