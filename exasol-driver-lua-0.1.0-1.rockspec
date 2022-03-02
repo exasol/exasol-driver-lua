@@ -1,3 +1,4 @@
+rockspec_format = "3.0"
 package = "exasol-driver-lua"
 version = "0.1.0-1"
 
@@ -8,9 +9,9 @@ source = {
 
 description = {
     summary = "",
-    detailed = [[...
+    detailed = [[Exasol SQL driver for Lua based on the LuaSQL API.
 
-    You can find the user guide in the projects GitHub repository.
+    You can find the user guide in the project's GitHub repository.
     
     Links:
     
@@ -20,13 +21,22 @@ description = {
     maintainer = 'Exasol <opensource@exasol.com>'
 }
 
-dependencies = {"lua >= 5.4, <= 5.4"}
+dependencies = {
+    "lua >= 5.3, <= 5.4",
+    "luasocket >= 3.0rc1-2",
+    "luasec >= 1.0.2-1",
+    "luaossl >= 20200709-0",
+    "lunajson >= 1.2.3-1",
+    "base64 >= 1.5-3",
+    "exaerror >= 1.2.1-1"
+}
 
--- With support for LuaRocks 3 we will enable the following configuration option. Right now LuaRocks 2 is still the
--- current version on Ubuntu, so it is too early for this.
---
--- rockspec_format = "3.0"
--- build_dependencies = {"luaunit >= 3.3-1"}
+build_dependencies = {
+    "luaunit >= 3.4-1",
+    "luacov >= 0.15.0-1",
+    "luacov-coveralls >= 0.2.3-1",
+    "luacheck >= 0.25.0-1"
+}
 
 build = {
     type = "builtin",

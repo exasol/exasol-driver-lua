@@ -1,14 +1,29 @@
 # exasol-driver-lua &mdash; Developers Guide
 
-## Install Compile Dependencies
+This document contains developer information on how to build, run, modify and publish this Lua project.
+
+## Prerequisites
+
+This project needs a Lua interpreter &ge; Lua 5.4 and Luarocks %ge; 3.8.
+
+* macOS:
+    ```sh
+    brew install lua luarocks
+    ```
+
+### Install Compile Dependencies
+
+Install dependencies of by executing
 
 ```sh
-luarocks install luasocket
-luarocks install luasec OPENSSL_DIR=/usr/local/Cellar/openssl@1.1/1.1.1m/
-luarocks install luaossl CRYPTO_DIR=/usr/local/Cellar/openssl@1.1/1.1.1m/ OPENSSL_DIR=/usr/local/Cellar/openssl@1.1/1.1.1m/
-luarocks install lunajson
-luarocks install base64
-luarocks install exaerror
+luarocks install --deps-only *.rockspec
+```
+
+On macOS you may need to specify the path to OpenSSL:
+
+```sh
+openssl=/usr/local/Cellar/openssl@1.1/1.1.1m/
+luarocks install --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
 ```
 
 ## Install Test Dependencies
