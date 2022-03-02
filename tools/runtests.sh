@@ -29,7 +29,11 @@ function create_target_directories {
 #
 function run_tests {
     cd "$test_module_path" || exit
-    tests="$(find . -name '*.lua')"
+    if [[ -z "${RUN_ONLY+x}" ]] ; then
+        tests="$(find . -name '*.lua')"
+    else
+        tests="$RUN_ONLY"
+    fi
     readonly tests
     test_suites=0
     failures=0

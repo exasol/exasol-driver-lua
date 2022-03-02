@@ -3,7 +3,7 @@ on: [push]
 jobs:
 
   build:
-    concurrency: 
+    concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     strategy:
@@ -64,6 +64,10 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
+      - name: Run smoketests
+        run: |
+          RUN_ONLY=smoketest.lua ./tools/runtests.sh
+
       - name: Spawn Exasol environment
         run: |
           ./start-test-env spawn-test-environment --environment-name test \
@@ -79,6 +83,7 @@ jobs:
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             tools/runtests.sh
+
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
