@@ -10,7 +10,8 @@ jobs:
        fail-fast: true
        matrix:
           lua_version: [5.3]
-    name: "Build with Lua ${{ matrix.lua_version }}"
+          exasol_version: [7.1.6]
+    name: "Build with Lua ${{ matrix.lua_version }} and Exasol ${{ matrix.exasol_version }}"
     runs-on: ubuntu-latest
     steps:
 
@@ -65,7 +66,10 @@ jobs:
 
       - name: Spawn Exasol environment
         run: |
-          ./start-test-env spawn-test-environment --environment-name test --database-port-forward 8563 --deactivate-database-setup
+          ./start-test-env spawn-test-environment --environment-name test \
+            --docker-db-image-version ${{ matrix.exasol_version }} \
+            --database-port-forward 8563 \
+            --deactivate-database-setup
         working-directory: integration-test-docker-environment
 
       - name: Run integration tests
