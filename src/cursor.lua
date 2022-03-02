@@ -1,5 +1,7 @@
 local log = require("remotelog")
 
+-- luacheck: no unused args
+
 local M = {}
 
 function M:new()
@@ -12,6 +14,7 @@ end
 function M:fetch(table, modestring)
     modestring = modestring or "n"
     table = table or {}
+    log.trace("Fetching row with mode $s", modestring)
 
     return table
 end

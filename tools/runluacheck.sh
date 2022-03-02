@@ -13,4 +13,4 @@ readonly test_module_path="$base_dir/test"
 echo
 echo "Running static code analysis"
 echo
-luacheck "$src_module_path" "$test_module_path" --codes --ignore 111 # --ignore 112
+luacheck "$src_module_path" "$test_module_path" --codes --exclude-files src/luws.lua --ignore 111 # --ignore 112

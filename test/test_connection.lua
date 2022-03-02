@@ -39,7 +39,8 @@ function test_connection_fails()
     local tests = {
         {
             props = get_connection_params({host = "wronghost"}),
-            expected_error = "E-EDL-1: Error connecting to 'wss://wronghost:8563': 'Connection to wronghost:8563 failed: host or service not provided, or not known'"
+            expected_error = "E-EDL-1: Error connecting to 'wss://wronghost:8563': " ..
+                "'Connection to wronghost:8563 failed: host or service not provided, or not known'"
         }, {
             props = get_connection_params({port = "1234"}),
             expected_error = string.format(
@@ -69,6 +70,11 @@ function test_connection_succeeds()
     local sourcename = params.host .. ":" .. params.port
     local connection = env:connect(sourcename, params.user, params.password)
     luaunit.assertNotNil(connection)
+    print("cursoer", connection, connection.cursors)
+    local cursor = connection:execute("select 1")
+    luaunit.assertNotNil(cursor)
+    luaunit.assertNotNil(cursor.fetch())
+    cursor:close()
     connection:close()
     env:close()
 end

@@ -7,7 +7,7 @@ local log = require("remotelog")
 
 local M = {}
 function M:new()
-    local object = {}
+    local object = {connections = {}}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -47,9 +47,15 @@ function M:connect(sourcename, username, password)
     }
     local conn = connection:new(socket, details)
     log.trace("Connected with session id %s", details.sessionId)
+    self.connections[details.sessionId] = conn
     return conn
 end
 
-function M:close() log.trace("Closing environment") end
+function M:close()
+    log.trace("Closing environment: close all connections")
+    for _, conn in pairs(self.connections) do
+        conn:close()
+    end
+end
 
 return M

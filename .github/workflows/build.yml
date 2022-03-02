@@ -38,6 +38,7 @@ jobs:
 
       - name: Install Lua dependencies
         run: |
+          sudo luarocks install luacheck
           sudo luarocks install --deps-only *.rockspec
 
       - name: Validate tools

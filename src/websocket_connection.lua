@@ -1,6 +1,7 @@
 local M = {}
 
-local luws = require("luws")
+-- luacheck: globals wsopen wssend wsreceive wsclose
+require("luws")
 local socket = require("socket")
 local lunajson = require("lunajson")
 local exaerror = require("exaerror")
@@ -13,7 +14,7 @@ function M:new()
     return object
 end
 
-local function default_data_handler(socket, status, message)
+local function default_data_handler(message)
     exaerror.create("E-EDL-5",
                     "No data handler registered for handling websocket data {{message}}",
                     {message = message}):add_ticket_mitigation():raise()
@@ -24,8 +25,8 @@ function M.connect(wsUrl, options)
     local connection = M:new()
     connection.data_handler = default_data_handler
     log.trace("Connecting to websocket url %s...", wsUrl)
-    local result, err = wsopen(wsUrl, function(web_socket, status, message)
-        connection.data_handler(web_socket, status, message)
+    local result, err = wsopen(wsUrl, function(_, _, message)
+        connection.data_handler(message)
     end, options)
     if err ~= nil then
         exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}",
@@ -72,8 +73,8 @@ end
 
 function M:sendRaw(payload)
     local data = nil
-    self.data_handler = function(socket, status, message) data = message end
-    local result, err = wssend(self.websocket, 1, payload)
+    self.data_handler = function(message) data = message end
+    local _, err = wssend(self.websocket, 1, payload)
     if err ~= nil then
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
                         {error = err}):raise()
@@ -84,7 +85,7 @@ function M:sendRaw(payload)
     return data
 end
 
-function M:close() 
+function M:close()
     log.trace("Closing websocket")
     wsclose(self.websocket)
 end
