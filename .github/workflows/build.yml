@@ -13,6 +13,17 @@ jobs:
     name: "Build with Lua ${{ matrix.lua_version }}"
     runs-on: ubuntu-latest
     steps:
+
+      - name: Cache Luarocks dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.luarocks
+          key: ${{ runner.os }}-lua-${{ matrix.lua_version }}-${{ hashFiles('*.rockspec') }}
+          restore-keys: |
+            ${{ runner.os }}-lua-
+            ${{ runner.os }}-lua-${{ matrix.lua_version }}-
+            ${{ runner.os }}-lua-${{ matrix.lua_version }}-${{ hashFiles('*.rockspec') }}
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -38,8 +49,8 @@ jobs:
 
       - name: Install Lua dependencies
         run: |
-          sudo luarocks install luacheck
-          sudo luarocks install --deps-only *.rockspec
+          luarocks install luacheck
+          luarocks install --deps-only *.rockspec
 
       - name: Validate tools
         run: shellcheck --check-sourced --severity=style tools/runtests.sh tools/trace-requirements.sh
