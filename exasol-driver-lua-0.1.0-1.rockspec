@@ -30,7 +30,7 @@ dependencies = {
     "luaossl >= 20200709-0",
     "lunajson >= 1.2.3-1",
     "base64 >= 1.5-3",
-    "exaerror >= 1.2.2-1",
+    "exaerror >= 1.2.1-1",
     "remotelog >= 1.1.1-1"
 }
 
