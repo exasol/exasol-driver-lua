@@ -37,7 +37,7 @@ function test_connection_fails()
     local real_connection = get_connection_params()
     local tests = {
         {
-            props = get_connection_params({host = "wronghost"}),
+            props = get_connection_params({host = "wronghost", port = "8563"}),
             expected_error_pattern = ".*E%-EDL%-1: Error connecting to 'wss://wronghost:8563': .*"
         }, {
             props = get_connection_params({port = "1234"}),
