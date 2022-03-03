@@ -76,6 +76,7 @@ jobs:
           EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            EXASOL_CERT_FINGERPRINT=todo \
             tools/runtests.sh
 
       - name: Archive code coverage results
