@@ -25,12 +25,15 @@ jobs:
             ${{ runner.os }}-lua-${{ matrix.lua_version }}-
             ${{ runner.os }}-lua-
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install lua${{ matrix.lua_version }} liblua${{ matrix.lua_version }} lua-any shellcheck
-          wget http://http.us.debian.org/debian/pool/main/l/luarocks/luarocks_3.8.0+dfsg1-1_all.deb
-          sudo dpkg -i luarocks_3.8.0+dfsg1-1_all.deb
+      - name: Install Lua ${{ matrix.lua_version }}
+        uses: leafo/gh-actions-lua@v8.0.0
+        with:
+          luaVersion: ${{ matrix.lua_version }}
+
+      - name: Install LuaRocks
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luarocksVersion: "3.8.0"
 
       - name: Print versions
         run: |
@@ -50,7 +53,6 @@ jobs:
 
       - name: Install Lua dependencies
         run: |
-          luarocks install --local luacheck
           luarocks install --local --deps-only *.rockspec
 
       - name: "Build"
