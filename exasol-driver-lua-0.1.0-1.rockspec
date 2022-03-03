@@ -8,7 +8,8 @@ source = {
 }
 
 description = {
-    summary = "",
+    summary = "Exasol SQL driver for Lua",
+    labels = {"luasql", "sql", "database", "exasol"},
     detailed = [[Exasol SQL driver for Lua based on the LuaSQL API.
 
     You can find the user guide in the project's GitHub repository.
@@ -17,6 +18,7 @@ description = {
     
     - User guide: https://github.com/exasol/exasol-driver-lua/blob/master/doc/user_guide/user_guide.md]],
     homepage = "https://github.com/exasol/exasol-driver-lua",
+    issues_url = "https://github.com/exasol/exasol-driver-lua/issues",
     license = "MIT",
     maintainer = 'Exasol <opensource@exasol.com>'
 }
@@ -28,8 +30,8 @@ dependencies = {
     "luaossl >= 20200709-0",
     "lunajson >= 1.2.3-1",
     "base64 >= 1.5-3",
-    "exaerror >= 1.2.1-1",
-    "remotelog >= 1.1.0-1"
+    "exaerror >= 1.2.2-1",
+    "remotelog >= 1.1.1-1"
 }
 
 build_dependencies = {
