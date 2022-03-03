@@ -21,9 +21,9 @@ jobs:
           path: ~/.luarocks
           key: ${{ runner.os }}-lua-${{ matrix.lua_version }}-${{ hashFiles('*.rockspec') }}
           restore-keys: |
-            ${{ runner.os }}-lua-
-            ${{ runner.os }}-lua-${{ matrix.lua_version }}-
             ${{ runner.os }}-lua-${{ matrix.lua_version }}-${{ hashFiles('*.rockspec') }}
+            ${{ runner.os }}-lua-${{ matrix.lua_version }}-
+            ${{ runner.os }}-lua-
 
       - name: Install dependencies
         run: |
