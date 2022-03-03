@@ -39,25 +39,24 @@ function test_connection_fails()
     local tests = {
         {
             props = get_connection_params({host = "wronghost"}),
-            expected_error = "E-EDL-1: Error connecting to 'wss://wronghost:8563': " ..
-                "'Connection to wronghost:8563 failed: host or service not provided, or not known'"
+            expected_error_pattern = ".*E-EDL-.1: Error connecting to 'wss://wronghost:8563': .*"
         }, {
             props = get_connection_params({port = "1234"}),
-            expected_error = string.format(
-                "E-EDL-1: Error connecting to 'wss://%s:1234': 'Connection to %s:1234 failed: connection refused'",
-                real_connection.host, real_connection.host)
+            expected_error_pattern = string.format(
+                ".*E-EDL-.1: Error connecting to 'wss://%s:1234': .*",
+                real_connection.host)
         }, {
             props = get_connection_params({user = "unknownUser"}),
-            expected_error = "E-EDL-2: Did not receive response for payload"
+            expected_error_pattern = ".*E-EDL-.2: Did not receive response for payload. Username or password may be wrong..*"
         }, {
             props = get_connection_params({password = "wrong password"}),
-            expected_error = "E-EDL-2: Did not receive response for payload"
+            expected_error_pattern = ".*E-EDL-.2: Did not receive response for payload. Username or password may be wrong..*"
         }
     }
     for _, test in ipairs(tests) do
         local env = create_environment()
         local sourcename = test.props.host .. ":" .. test.props.port
-        luaunit.assertErrorMsgContentEquals(test.expected_error, function()
+        luaunit.assertErrorMsgMatches(test.expected_error_pattern, function()
             env:connect(sourcename, test.props.user, test.props.password)
         end)
         env:close()

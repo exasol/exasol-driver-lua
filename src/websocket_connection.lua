@@ -41,7 +41,7 @@ function M:sendJson(payload)
     local raw_payload = lunajson.encode(payload)
     local raw_response = self:sendRaw(raw_payload)
     if raw_response == nil then
-        exaerror.create("E-EDL-2", "Did not receive response for payload"):raise()
+        exaerror.create("E-EDL-2", "Did not receive response for payload. Username or password may be wrong."):raise()
     end
     local response = lunajson.decode(raw_response)
     if response.status ~= "ok" then error("Request failed: " .. raw_response) end
