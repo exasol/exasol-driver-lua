@@ -40,22 +40,16 @@ function M:connect(sourcename, username, password)
     local websocketOptions = {receive_timeout = 3}
     local socket = websocket.connect("wss://" .. sourcename, websocketOptions)
     local loginResponse = login(socket, username, password)
-    local details = {
-        sessionId = loginResponse.sessionId,
-        maxDataMessageSize = loginResponse.maxDataMessageSize,
-        dbVersion = loginResponse.releaseVersion
-    }
-    local conn = connection:new(socket, details)
-    log.trace("Connected with session id %s", details.sessionId)
-    self.connections[details.sessionId] = conn
+    log.trace("Connected to exasol %s, max message size: %d",
+              loginResponse.releaseVersion, loginResponse.maxDataMessageSize)
+    local conn = connection:new(socket, loginResponse.sessionId)
+    self.connections[loginResponse.sessionId] = conn
     return conn
 end
 
 function M:close()
     log.trace("Closing environment: close all connections")
-    for _, conn in pairs(self.connections) do
-        conn:close()
-    end
+    for _, conn in pairs(self.connections) do conn:close() end
 end
 
 return M

@@ -6,7 +6,7 @@ jobs:
     strategy:
        fail-fast: true
        matrix:
-          lua_version: [5.3]
+          lua_version: [5.4]
           exasol_version: [7.1.6]
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}

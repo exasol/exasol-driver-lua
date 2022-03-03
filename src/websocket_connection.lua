@@ -8,7 +8,7 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 
 function M:new()
-    local object = {}
+    local object = {closed = false}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -37,15 +37,39 @@ function M.connect(wsUrl, options)
     return connection
 end
 
-function M:sendJson(payload)
-    local raw_payload = lunajson.encode(payload)
-    local raw_response = self:sendRaw(raw_payload)
-    if raw_response == nil then
-        exaerror.create("E-EDL-2", "Did not receive response for payload. Username or password may be wrong."):raise()
+local function getResponseError(response)
+    if response.status == "ok" then return nil end
+    local sqlCode = response.exception and response.exception.sqlCode
+    local text = response.text and response.exception.text
+    return exaerror.create("E-EDL-10",
+                           "Received status {{status}} with code {{sqlCode}}: {{text}}",
+                           {
+        status = response.status,
+        sqlCode = sqlCode,
+        text = text
+    })
+end
+
+function M:sendJson(payload, ignoreResponse)
+    local rawPayload = lunajson.encode(payload)
+    log.trace("Sending payload '%s'...", rawPayload)
+    local rawResponse = self:sendRaw(rawPayload, ignoreResponse)
+    if ignoreResponse then
+        log.trace("Ignore response, return nil")
+        return nil, nil
     end
-    local response = lunajson.decode(raw_response)
-    if response.status ~= "ok" then error("Request failed: " .. raw_response) end
-    return response.responseData
+    if rawResponse == nil then
+        exaerror.create("E-EDL-2",
+                        "Did not receive response for payload. Username or password may be wrong."):raise()
+    end
+    log.trace("Received response '%s'", rawResponse)
+    local response = lunajson.decode(rawResponse)
+    local err = getResponseError(response)
+    if err then
+        return nil, err
+    else
+        return response.responseData, nil
+    end
 end
 
 local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
@@ -56,22 +80,17 @@ function M:waitForResponse()
     local result, err = wsreceive(self.websocket)
     if type(err) == "string" then
         exaerror.create("E-EDL-4", "Error receiving data: {{error}}",
-        {error = err}):raise()
+                        {error = err}):raise()
     end
     if result == false then
         return -- no more data
     end
-    log.trace("Response not received yet, result=%s, error=%s. Try again...", result, err)
+    log.trace("Response not received yet, result=%s, error=%s. Try again...",
+              result, err)
     self:waitForResponse()
 end
 
-function M:sleepForResponse()
-    sleep(100)
-    local result, err = wsreceive(self.websocket)
-    log.trace("Websocket receive finished with result %s / error %s", result, err)
-end
-
-function M:sendRaw(payload)
+function M:sendRaw(payload, ignoreResponse)
     local data = nil
     self.data_handler = function(message) data = message end
     local _, err = wssend(self.websocket, 1, payload)
@@ -79,15 +98,21 @@ function M:sendRaw(payload)
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
                         {error = err}):raise()
     end
-    self:waitForResponse()
-    -- self:sleepForResponse()
-    self.data_handler = default_data_handler
-    return data
+    if ignoreResponse then
+        log.trace("Ignoring response, no need to wait")
+        return nil
+    else
+        self:waitForResponse()
+        self.data_handler = default_data_handler
+        return data
+    end
 end
 
 function M:close()
+    if self.closed then return end
     log.trace("Closing websocket")
     wsclose(self.websocket)
+    self.closed = true
 end
 
 return M
