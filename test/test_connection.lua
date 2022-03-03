@@ -29,8 +29,7 @@ local function get_connection_params(override)
         user = override.user or get_system_env("EXASOL_USER", "sys"),
         password = override.password or
             get_system_env("EXASOL_PASSWORD", "exasol"),
-        fingerprint = override.fingerprint or
-            get_system_env("EXASOL_CERT_FINGERPRINT")
+        fingerprint = override.fingerprint or nil
     }
 end
 

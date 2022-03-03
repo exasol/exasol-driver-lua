@@ -10,28 +10,32 @@ This project needs a Lua interpreter &ge; Lua 5.4 and Luarocks %ge; 3.8.
     ```sh
     brew install lua luarocks
     ```
+* Fedora:
+    ```sh
+    sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl
+    ```
 
 ### Install Compile Dependencies
 
 Install dependencies of by executing
 
 ```sh
-luarocks install --deps-only *.rockspec
+luarocks install --local --deps-only *.rockspec
 ```
 
 On macOS you may need to specify the path to OpenSSL:
 
 ```sh
 openssl=/usr/local/Cellar/openssl@1.1/1.1.1m/
-luarocks install --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
+luarocks install --local --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
 ```
 
 ## Install Test Dependencies
 
 ```sh
-luarocks install luacov
-luarocks install luaunit
-luarocks install luacheck
+luarocks install --local luacov
+luarocks install --local luaunit
+luarocks install --local luacheck
 ```
 
 ## Running Tests
@@ -43,7 +47,6 @@ EXASOL_HOST=<host> \
   EXASOL_PORT=<port> \
   EXASOL_USER=<user> \
   EXASOL_PASSWORD=<password> \
-  EXASOL_CERT_FINGERPRINT=<fingerprint> \
   ./tools/runtests.sh
 ```
 
