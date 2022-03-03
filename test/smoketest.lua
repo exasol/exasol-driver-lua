@@ -1,9 +1,11 @@
 local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 
-function test_version() luaunit.assertEquals(driver.VERSION, "0.1.0") end
+TEST_SMOKE = {}
 
-function test_connection_fails()
+function TEST_SMOKE.test_version() luaunit.assertEquals(driver.VERSION, "0.1.0") end
+
+function TEST_SMOKE.test_connection_fails()
     local env = driver.exasol({log_level = "TRACE"})
     luaunit.assertErrorMsgMatches(
         ".*E%-EDL%-1: Error connecting to 'wss://wronghost:1234':.*",
