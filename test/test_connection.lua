@@ -47,10 +47,12 @@ function test_connection_fails()
                 real_connection.host)
         }, {
             props = get_connection_params({user = "unknownUser"}),
-            expected_error_pattern = ".*E-EDL-.2: Did not receive response for payload. Username or password may be wrong..*"
+            expected_error_pattern = ".*E-EDL-.2: Did not receive response for payload. " ..
+                "Username or password may be wrong..*"
         }, {
             props = get_connection_params({password = "wrong password"}),
-            expected_error_pattern = ".*E-EDL-.2: Did not receive response for payload. Username or password may be wrong..*"
+            expected_error_pattern = ".*E-EDL-.2: Did not receive response for payload. " ..
+                "Username or password may be wrong..*"
         }
     }
     for _, test in ipairs(tests) do

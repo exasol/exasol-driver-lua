@@ -53,16 +53,8 @@ jobs:
           luarocks install --local luacheck
           luarocks install --local --deps-only *.rockspec
 
-      - name: Validate tools
-        run: shellcheck --check-sourced --severity=style tools/runtests.sh tools/trace-requirements.sh
-
       - name: "Build"
         run: luarocks make --local
-
-      - name: Run static code analysis
-        run: |
-          eval $(luarocks path)
-          tools/runluacheck.sh
 
       - name: Run smoketests
         run: |
@@ -91,6 +83,14 @@ jobs:
         with:
           name: luacov.report.out
           path: target/luacov-reports/luacov.report.out
+
+      - name: Validate tools
+        run: shellcheck --check-sourced --severity=style tools/runtests.sh tools/trace-requirements.sh
+
+      - name: Run static code analysis
+        run: |
+          eval $(luarocks path)
+          tools/runluacheck.sh
 
   trace-requirements:
     runs-on: ubuntu-latest
