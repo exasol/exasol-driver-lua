@@ -86,14 +86,15 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
-  trace-requirements:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: "Set up JDK"
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-      - name: Trace requirements
-        run: ./tools/trace-requirements.sh
+## Deactivated until requirements and coverage are added
+#  trace-requirements:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: "Set up JDK"
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#      - name: Trace requirements
+#        run: ./tools/trace-requirements.sh

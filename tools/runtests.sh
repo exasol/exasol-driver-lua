@@ -43,7 +43,7 @@ function run_tests {
         echo "Running test $testcase"
         ((test_suites++))
         testname=$(echo "$testcase" | sed -e s'/.\///' -e s'/\//./g' -e s'/.lua$//')
-        if LUA_PATH="$src_module_path/?.lua;$(luarocks path --lr-path)" \
+        if LUA_PATH="$src_module_path/?.lua;$test_module_path/?.lua;$(luarocks path --lr-path)" \
             lua -lluacov "$testcase" -v -o junit -n "$reports_dir/$testname"
         then
             ((successes++))

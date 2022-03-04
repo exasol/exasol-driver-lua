@@ -28,7 +28,7 @@ local function login(socket, username, password)
     local encrypted_password = encrypt_password(response.publicKeyModulus,
                                                 response.publicKeyExponent,
                                                 password)
-    log.trace("Login as user '%s'...", username)
+    log.trace("Login as user '%s'", username)
     return socket:sendJson({
         username = username,
         password = encrypted_password,

@@ -2,13 +2,13 @@ local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 local config = require("config")
 
-TEST_RESULTSET = {}
+TEST = {}
 
-function TEST_RESULTSET.test_version()
+function TEST:test_version()
     luaunit.assertEquals(driver.VERSION, "0.1.0")
 end
 
-function TEST_RESULTSET.test_connection_fails()
+function TEST:test_connection_fails()
     local real_connection = config.get_connection_params()
     local tests = {
         {
@@ -38,9 +38,9 @@ function TEST_RESULTSET.test_connection_fails()
     end
 end
 
-function TEST_RESULTSET.test_connection_succeeds()
+function TEST:test_connection_succeeds()
     local params = config.get_connection_params()
-    local env = create_environment()
+    local env = config.create_environment()
     local sourcename = params.host .. ":" .. params.port
     local connection = env:connect(sourcename, params.user, params.password)
     luaunit.assertNotNil(connection)

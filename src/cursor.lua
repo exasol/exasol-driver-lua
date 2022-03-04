@@ -20,8 +20,8 @@ function M:new(websocket, sessionId, resultSet)
     self.__index = self
     setmetatable(object, self)
     if object.resultSetHandle then
-        error(
-            "Result sets with 1000 or more rows are not yet supported, see https://github.com/exasol/exasol-driver-lua/issues/4")
+        error("Result sets with 1000 or more rows are not yet supported, " ..
+                  "see https://github.com/exasol/exasol-driver-lua/issues/4")
     end
     return object
 end
@@ -38,7 +38,8 @@ function M:fetch(table, modestring)
     end
 
     table = table or {}
-    log.trace("Fetching row %d of %d with mode %s", self.currentRow,self.numRows, modestring)
+    log.trace("Fetching row %d of %d with mode %s", self.currentRow,
+              self.numRows, modestring)
     for col = 1, self.numColumns do
         table[col] = self.data[self.currentRow][col]
     end
@@ -60,8 +61,8 @@ function M:close()
         self.closed = true
         return
     end
-    error(
-        "Closing cursor with result set handle not yet supported, see https://github.com/exasol/exasol-driver-lua/issues/4")
+    error("Closing cursor with result set handle not yet supported, " ..
+              "see https://github.com/exasol/exasol-driver-lua/issues/4")
     self.closed = true
 end
 

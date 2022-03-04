@@ -1,7 +1,8 @@
 local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 
-TEST_RESULTSET = {}
+
+TEST = {}
 
 local function get_optional_system_env(varname, default)
     local value = os.getenv(varname)
@@ -33,7 +34,7 @@ local function get_connection_params(override)
     }
 end
 
-function TEST_RESULTSET.test_connection_fails()
+function TEST.test_connection_fails()
     local real_connection = get_connection_params()
     local tests = {
         {
@@ -63,7 +64,7 @@ function TEST_RESULTSET.test_connection_fails()
     end
 end
 
-function TEST_RESULTSET.test_connection_succeeds()
+function TEST.test_connection_succeeds()
     local params = get_connection_params()
     local env = create_environment()
     local sourcename = params.host .. ":" .. params.port

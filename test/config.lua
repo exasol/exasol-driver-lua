@@ -11,7 +11,7 @@ end
 local function get_system_env(varname, default)
     local value = get_optional_system_env(varname, default)
     if value == nil and default == nil then
-        error("Environment variable '" .. varname .. "' is not defined")
+        error("Environment variable '" .. varname .. "' required for test is not defined")
     end
     return value
 end
@@ -29,7 +29,7 @@ function M.get_connection_params(override)
 end
 
 function M.create_environment()
-    return driver.exasol({log_level = M.get_system_env("LOG_LEVEL", "INFO")})
+    return driver.exasol({log_level = get_system_env("LOG_LEVEL", "INFO")})
 end
 
 return M

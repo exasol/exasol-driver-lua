@@ -24,7 +24,7 @@ function M.connect(wsUrl, options)
     options = options or {}
     local connection = M:new()
     connection.data_handler = default_data_handler
-    log.trace("Connecting to websocket url %s...", wsUrl)
+    log.trace("Connecting to websocket url %s", wsUrl)
     local result, err = wsopen(wsUrl, function(_, _, message)
         connection.data_handler(message)
     end, options)
@@ -52,7 +52,7 @@ end
 
 function M:sendJson(payload, ignoreResponse)
     local rawPayload = lunajson.encode(payload)
-    log.trace("Sending payload '%s'...", rawPayload)
+    log.trace("Sending payload '%s'", rawPayload)
     local rawResponse = self:sendRaw(rawPayload, ignoreResponse)
     if ignoreResponse then
         log.trace("Ignore response, return nil")
@@ -75,7 +75,7 @@ end
 local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
 
 function M:waitForResponse()
-    log.trace("Waiting for response...")
+    log.trace("Waiting for response")
     sleep(50)
     local result, err = wsreceive(self.websocket)
     if type(err) == "string" then
@@ -85,7 +85,7 @@ function M:waitForResponse()
     if result == false then
         return -- no more data
     end
-    log.trace("Response not received yet, result=%s, error=%s. Try again...",
+    log.trace("Response not received yet, result=%s, error=%s. Try again",
               result, err)
     self:waitForResponse()
 end
