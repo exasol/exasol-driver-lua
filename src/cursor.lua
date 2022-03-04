@@ -1,4 +1,5 @@
 local log = require("remotelog")
+local exaerror = require("exaerror")
 
 -- luacheck: no unused args
 
@@ -27,6 +28,9 @@ function M:new(websocket, sessionId, resultSet)
 end
 
 function M:fetch(table, modestring)
+    if self.closed then
+        exaerror.create("E-EDL-13", "Cursor already closed"):raise()
+    end
     modestring = modestring or "n"
     if modestring ~= "n" then
         error("Fetch with modestring '" + modestring +
@@ -41,7 +45,7 @@ function M:fetch(table, modestring)
     log.trace("Fetching row %d of %d with mode %s", self.currentRow,
               self.numRows, modestring)
     for col = 1, self.numColumns do
-        table[col] = self.data[self.currentRow][col]
+        table[col] = self.data[col][self.currentRow]
     end
     self.currentRow = self.currentRow + 1
     return table

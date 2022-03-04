@@ -42,7 +42,7 @@ local function getResponseError(response)
     local sqlCode = response.exception and response.exception.sqlCode
     local text = response.text and response.exception.text
     return exaerror.create("E-EDL-10",
-                           "Received status {{status}} with code {{sqlCode}}: {{text}}",
+                           "Received status {{status}} with code {{sqlCode|uq}}: {{text|uq}}",
                            {
         status = response.status,
         sqlCode = sqlCode,

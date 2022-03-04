@@ -39,15 +39,25 @@ function TestConnection:test_connection_fails()
 end
 
 function TestConnection:test_connection_succeeds()
-    local params = config.get_connection_params()
-    local env = config.create_environment()
-    local sourcename = params.host .. ":" .. params.port
-    local connection = env:connect(sourcename, params.user, params.password)
-    luaunit.assertNotNil(connection)
+    local connection = config.create_connection()
     local cursor = connection:execute("select 1")
     luaunit.assertEquals(cursor:fetch(), {1})
     luaunit.assertNil(cursor:fetch())
-    env:close()
+    connection:close()
+end
+
+function TestConnection:test_using_closed_connection_fails()
+    local connection = config.create_connection()
+    connection:close()
+    luaunit.assertErrorMsgMatches(".*E%-EDL%-12: Connection already closed", function ()
+        connection:execute("select 1")
+    end)
+end
+
+function TestConnection:test_closing_closed_connection_succeeds()
+    local connection = config.create_connection()
+    connection:close()
+    connection:close()
 end
 
 os.exit(luaunit.LuaUnit.run())

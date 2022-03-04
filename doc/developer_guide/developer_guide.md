@@ -19,9 +19,7 @@ This project needs a Lua interpreter &ge; Lua 5.4 and Luarocks %ge; 3.8.
 
 Install dependencies of by executing
 
-```sh
-luarocks install --local --deps-only *.rockspec
-```
+
 
 On macOS you may need to specify the path to OpenSSL:
 

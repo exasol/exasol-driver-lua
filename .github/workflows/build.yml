@@ -72,6 +72,12 @@ jobs:
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             tools/runtests.sh
 
+      - name: Publish test teports
+        uses: scacap/action-surefire-report@v1
+        with:
+          report_paths: 'target/luaunit-reports/*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
