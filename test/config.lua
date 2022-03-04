@@ -1,3 +1,4 @@
+local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 
 local M = {}
@@ -11,7 +12,8 @@ end
 local function get_system_env(varname, default)
     local value = get_optional_system_env(varname, default)
     if value == nil and default == nil then
-        error("Environment variable '" .. varname .. "' required for test is not defined")
+        error("Environment variable '" .. varname ..
+                  "' required for test is not defined")
     end
     return value
 end
@@ -29,7 +31,17 @@ function M.get_connection_params(override)
 end
 
 function M.create_environment()
-    return driver.exasol({log_level = get_system_env("LOG_LEVEL", "INFO")})
+    local options = {log_level = get_system_env("LOG_LEVEL", "INFO")}
+    return driver.exasol(options)
+end
+
+function M.create_connection()
+    local params = M.get_connection_params()
+    local env = M.create_environment()
+    local sourcename = params.host .. ":" .. params.port
+    local conn = env:connect(sourcename, params.user, params.password)
+    luaunit.assertNotNil(conn)
+    return conn
 end
 
 return M

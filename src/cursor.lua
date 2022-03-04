@@ -33,7 +33,7 @@ function M:fetch(table, modestring)
                   "' is not yet supported, see https://github.com/exasol/exasol-driver-lua/issues/5")
     end
     if self.currentRow > self.numRows then
-        log.trace("End of result set reached, no more rows")
+        log.trace("End of result set reached, no more rows after %d", self.numRows)
         return nil
     end
 
