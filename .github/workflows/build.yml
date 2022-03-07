@@ -91,13 +91,10 @@ jobs:
       - name: Run static code analysis
         run: |
           eval $(luarocks path)
-          tools/runluacheck.sh
+          LOG_LEVEL=TRACE tools/runluacheck.sh
 
 ## Deactivated until requirements and coverage are added
-#  trace-requirements:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
+
 #      - name: "Set up JDK"
 #        uses: actions/setup-java@v2
 #        with:
