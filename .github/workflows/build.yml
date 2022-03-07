@@ -74,6 +74,7 @@ jobs:
 
       - name: Publish test teports
         uses: scacap/action-surefire-report@v1
+        if: ${{ always() && secrets.GITHUB_TOKEN != null }}
         with:
           report_paths: 'target/luaunit-reports/*.xml'
           github_token: ${{ secrets.GITHUB_TOKEN }}
