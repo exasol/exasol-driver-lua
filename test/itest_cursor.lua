@@ -28,8 +28,8 @@ end
 
 function TestCursor:test_select_multiple_columns_multiple_rows()
     self.assertions:assert_rows(
-                          "select * from sys.exa_sql_keywords where keyword like 'AB%' order by keyword",
-                          {{"ABS", false}, {"ABSOLUTE", true}})
+                          "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)",
+                          {{1, "a"}, {2, "b"}, {3, "c"}})
 end
 
 function TestCursor:test_using_closed_cursor_fails()
