@@ -53,7 +53,7 @@ jobs:
       - name: Run smoketests
         run: |
           eval $(luarocks path)
-          RUN_ONLY=smoketest.lua ./tools/runtests.sh
+          LOG_LEVEL=TRACE RUN_ONLY=smoketest.lua ./tools/runtests.sh
 
       - name: Spawn Exasol environment
         run: |
@@ -67,7 +67,8 @@ jobs:
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
           eval $(luarocks path)
-          EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
+          LOG_LEVEL=TRACE \
+            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             tools/runtests.sh
@@ -91,7 +92,7 @@ jobs:
       - name: Run static code analysis
         run: |
           eval $(luarocks path)
-          LOG_LEVEL=TRACE tools/runluacheck.sh
+          tools/runluacheck.sh
 
 ## Deactivated until requirements and coverage are added
 
