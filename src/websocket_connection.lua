@@ -72,7 +72,11 @@ function M:sendJson(payload, ignoreResponse)
     end
 end
 
-local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
+local function sleep(milliseconds)
+    local seconds = milliseconds / 1000
+    log.trace("Sleeping %fs", seconds)
+    socket.sleep(milliseconds / 1000)
+end
 
 function M:waitForResponse()
     log.trace("Waiting for response")
@@ -92,7 +96,10 @@ end
 
 function M:sendRaw(payload, ignoreResponse)
     local data = nil
-    self.data_handler = function(message) data = message end
+    self.data_handler = function(message)
+        log.trace("Received data: '%s'", message)
+        data = message
+    end
     local _, err = wssend(self.websocket, 1, payload)
     if err ~= nil then
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
