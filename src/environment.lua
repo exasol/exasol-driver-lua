@@ -4,6 +4,7 @@ local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
 local log = require("remotelog")
+local exaerror = require("exaerror")
 
 local M = {}
 function M:new()
@@ -39,12 +40,16 @@ end
 function M:connect(sourcename, username, password)
     local websocketOptions = {receive_timeout = 3}
     local socket = websocket.connect("wss://" .. sourcename, websocketOptions)
-    local loginResponse = login(socket, username, password)
+    local response, err = login(socket, username, password)
+    if err then
+        return nil, err
+    end
+
     log.trace("Connected to exasol %s, max message size: %d",
-              loginResponse.releaseVersion, loginResponse.maxDataMessageSize)
-    local conn = connection:new(socket, loginResponse.sessionId)
-    self.connections[loginResponse.sessionId] = conn
-    return conn
+              response.releaseVersion, response.maxDataMessageSize)
+    local conn = connection:new(socket, response.sessionId)
+    self.connections[response.sessionId] = conn
+    return conn, nil
 end
 
 function M:close()

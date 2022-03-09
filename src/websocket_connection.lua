@@ -59,8 +59,7 @@ function M:sendJson(payload, ignoreResponse)
         return nil, nil
     end
     if rawResponse == nil then
-        exaerror.create("E-EDL-2",
-                        "Did not receive response for payload. Username or password may be wrong."):raise()
+        exaerror.create("E-EDL-2", "Did not receive response for payload."):raise()
     end
     log.trace("Received response '%s'", rawResponse)
     local response = lunajson.decode(rawResponse)

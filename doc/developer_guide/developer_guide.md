@@ -15,25 +15,19 @@ This project needs a Lua interpreter &ge; Lua 5.4 and Luarocks %ge; 3.8.
     sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl
     ```
 
-### Install Compile Dependencies
+### Install Dependencies
 
-Install dependencies of by executing
+Install dependencies by running
 
-
+```sh
+luarocks install --local --deps-only *.rockspec 
+```
 
 On macOS you may need to specify the path to OpenSSL:
 
 ```sh
 openssl=/usr/local/Cellar/openssl@1.1/1.1.1m/
 luarocks install --local --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
-```
-
-## Install Test Dependencies
-
-```sh
-luarocks install --local luacov
-luarocks install --local luaunit
-luarocks install --local luacheck
 ```
 
 ## Running Tests
@@ -55,3 +49,11 @@ The following environment have a default value and can be omitted:
 * `EXASOL_PASSWORD` = `exasol`
 
 You can enable tracing by setting environment variable `LOG_LEVEL=TRACE`.
+
+To run a single test:
+
+```sh
+export LUA_PATH="./src/?.lua;./test/?.lua;$(luarocks path --lr-path)"
+export EXASOL_HOST=<host>
+lua test/itest_connection.lua
+```
