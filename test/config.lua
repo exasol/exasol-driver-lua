@@ -1,5 +1,6 @@
 local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
+local log = require("remotelog")
 
 local M = {}
 
@@ -30,9 +31,18 @@ function M.get_connection_params(override)
     }
 end
 
+local function enable_luws_trace_log()
+    -- luacheck: globals debug_mode
+    debug_mode = 1
+end
+
 function M.create_environment()
-    local options = {log_level = get_system_env("LOG_LEVEL", "INFO")}
-    return driver.exasol(options)
+    local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
+    if log_level == "TRACE" then
+        enable_luws_trace_log()
+    end
+    log.set_level(log_level)
+    return driver.exasol()
 end
 
 function M.create_connection()
