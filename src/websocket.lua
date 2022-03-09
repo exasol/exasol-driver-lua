@@ -20,21 +20,38 @@ local function default_data_handler(message)
                     {message = message}):add_ticket_mitigation():raise()
 end
 
-function M.connect(url, options)
-    options = options or {}
+local function connect_with_retry(url, data_handler, options, remaining_retries)
     local connection = M:new()
-    connection.data_handler = default_data_handler
-    log.trace("Connecting to websocket url %s", url)
-    local result, err = wsopen(url, function(_, _, message)
+    log.trace("Connecting to websocket url %s with %d remaining retries", url,
+              remaining_retries)
+    local socket, err = wsopen(url, function(_, _, message)
         connection.data_handler(message)
     end, options)
     if err ~= nil then
-        exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}",
-                        {url = url, error = err}):raise()
+        if remaining_retries <= 0 or tostring(err) ~= "connection refused" then
+            exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}",
+                            {url = url, error = err}):raise()
+        else
+            remaining_retries = remaining_retries - 1
+            log.warn(exaerror.create("W-EDL-15",
+                                     "Websocket connection to {{ur}} failed with error {{error}}, remaining retries: {{remaining_retries}}",
+                                     {
+                url = url,
+                error = err,
+                remaining_retries = remaining_retries
+            }):__tostring())
+            return connect_with_retry(url, data_handler, options,
+                                      remaining_retries)
+        end
     end
-    log.trace("Connected to websocket with result %s", result)
-    connection.websocket = result
+    log.trace("Connected to websocket with result %s", socket)
+    connection.websocket = socket
     return connection
+end
+
+function M.connect(url, options)
+    options = options or {}
+    return connect_with_retry(url, default_data_handler, options, 3)
 end
 
 local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
