@@ -29,7 +29,7 @@ end
 
 function M:fetch(table, modestring)
     if self.closed then
-        exaerror.create("E-EDL-13", "Cursor already closed"):raise()
+        exaerror.create("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
     end
     modestring = modestring or "n"
     if modestring ~= "n" then
@@ -57,7 +57,7 @@ function M:getcoltypes() return {} end
 
 function M:close()
     if self.closed then
-        log.trace("Cursor already closed")
+        log.warn("Attempted to close an already closed cursor")
         return
     end
     if self.resultSetHandle == nil then
