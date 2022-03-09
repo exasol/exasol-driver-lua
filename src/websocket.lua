@@ -14,21 +14,27 @@ function M:new(object)
     return object
 end
 
-local function default_data_handler(message)
-    exaerror.create("E-EDL-5",
-                    "No data handler registered for handling websocket data {{message}}",
-                    {message = message}):add_ticket_mitigation():raise()
-end
-
 local function not_recoverable_connection_error(err)
     return not string.match(err, ".*failed: connection refused$")
 end
 
-local function connect_with_retry(url, data_handler, options, remaining_retries)
-    local connection = M:new()
+local function connect_with_retry(url, options, remaining_retries)
     log.trace("Connecting to websocket url %s with %d remaining retries", url,
               remaining_retries)
-    local websocket, err = wsopen(url, function(_, _, message)
+    local connection = M:new()
+    local websocket, err = wsopen(url, function(conn, opcode, message)
+        if opcode == false then
+            log.warn("Received error from websocket connection: '%s'", message)
+            return
+        end
+        if type(connection.data_handler) ~= "function" then
+            exaerror.create("E-EDL-5",
+                            "No handler registered for handling websocket message with opcode {{opcode}} and data {{message}}",
+                            {opcode = opcode, message = message}):add_ticket_mitigation()
+                :raise()
+        end
+        log.trace("Received websocket message with opcode %s and data '%s'",
+                  opcode, message)
         connection.data_handler(message)
     end, options)
     if err ~= nil then
@@ -45,8 +51,7 @@ local function connect_with_retry(url, data_handler, options, remaining_retries)
                 error = err,
                 remaining_retries = remaining_retries
             }):__tostring())
-            return connect_with_retry(url, data_handler, options,
-                                      remaining_retries)
+            return connect_with_retry(url, options, remaining_retries)
         end
     end
     log.trace("Connected to websocket with result %s", websocket)
@@ -56,24 +61,38 @@ end
 
 function M.connect(url, options)
     options = options or {}
-    return connect_with_retry(url, default_data_handler, options, 3)
+    return connect_with_retry(url, options, 3)
 end
 
 local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
 
 function M:wait_for_response()
     log.trace("Waiting for response")
-    sleep(50)
+    local start = os.clock()
+    sleep(100)
     local result, err = wsreceive(self.websocket)
-    if type(err) == "string" then
+    while result == false and err == 0 do
+        sleep(10)
+        log.trace("Continue waiting for data, result = %s, err = %s", result,
+                  err)
+        result, err = wsreceive(self.websocket)
+    end
+    if err and type(err) == "string" then
         exaerror.create("E-EDL-4", "Error receiving data: {{error}}",
                         {error = err}):raise()
     end
-    if result == false then
+    if result == true then
+        log.trace("Waiting finished after %fs with result = true, received %d bytes",
+                  os.clock() - start, err)
+        return
+    end
+    if result == false and type(err) == "number" then
+        log.trace("Waiting finished after %fs, received %d bytes",
+                  os.clock() - start, err)
         return -- no more data
     end
-    log.trace("Response not received yet, result=%s, error=%s. Try again",
-              result, err)
+    log.warn("Unexpected result of wsreceive: result=%s, error=%s. Try again",
+             result, err)
     self:wait_for_response()
 end
 
@@ -90,7 +109,7 @@ function M:send_raw(payload, ignore_response)
         return nil
     else
         self:wait_for_response()
-        self.data_handler = default_data_handler
+        self.data_handler = nil
         return data
     end
 end
