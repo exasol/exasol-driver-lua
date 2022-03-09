@@ -5,7 +5,10 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 
 ## Features
 
-1. 
+1. Connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements
+1. Encrypted communication via TLS
+1. Compatible to the [LuaSQL](https://keplerproject.github.io/luasql/) API
+
 
 ## Information for Users
 
@@ -14,8 +17,6 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 * [MIT License](LICENSE)
 
 ### Dependencies
-
-The only runtime-dependency of this module is Lua 5.1 or later.
 
 See the [dependencies list](dependencies.md) for build and test dependencies and license information.
 

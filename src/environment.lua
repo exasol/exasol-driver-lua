@@ -1,5 +1,5 @@
 local connection = require("connection")
-local websocket = require("websocket_connection")
+local websocket = require("exasol_websocket")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
@@ -25,35 +25,28 @@ end
 
 local function login(socket, username, password)
     log.trace("Sending login command")
-    local response = socket:sendJson({command = "login", protocolVersion = 3})
+    local response = socket:send_login_command()
     local encrypted_password = encrypt_password(response.publicKeyModulus,
                                                 response.publicKeyExponent,
                                                 password)
     log.trace("Login as user '%s'", username)
-    return socket:sendJson({
-        username = username,
-        password = encrypted_password,
-        useCompression = false
-    })
+    return socket:send_login_credentials(username, encrypted_password)
 end
 
 function M:connect(sourcename, username, password)
-    local websocketOptions = {receive_timeout = 3}
-    local socket = websocket.connect("wss://" .. sourcename, websocketOptions)
-    local response, err = login(socket, username, password)
-    if err then
-        return nil, err
-    end
-
-    log.trace("Connected to exasol %s, max message size: %d",
+    local websocket_options = {receive_timeout = 3}
+    local socket = websocket.connect("wss://" .. sourcename, websocket_options)
+    local response = login(socket, username, password)
+    log.trace("Connected to Exasol %s, maximum message size: %d bytes",
               response.releaseVersion, response.maxDataMessageSize)
-    local conn = connection:new(socket, response.sessionId)
-    self.connections[response.sessionId] = conn
-    return conn, nil
+    local session_id = response.sessionId
+    local conn = connection:create(socket, session_id)
+    self.connections[session_id] = conn
+    return conn
 end
 
 function M:close()
-    log.trace("Closing environment: close all connections")
+    log.trace("Closing environment: close all %d connections", #self.connections)
     for _, conn in pairs(self.connections) do conn:close() end
 end
 

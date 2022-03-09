@@ -4,23 +4,29 @@ This document contains developer information on how to build, run, modify and pu
 
 ## Prerequisites
 
-This project needs a Lua interpreter &ge; Lua 5.4 and Luarocks %ge; 3.8.
+This project has the following prerequisites:
+
+* [Lua](https://www.lua.org/) &ge; 5.4
+* [Luarocks](https://luarocks.org/) &ge; 3.8: Package manager for Lua
+* [OpenSSL](https://www.openssl.org/) &ge; 1.1: Library used for TLS connections and RSA encryption
+
+Install the prerequisites like this:
 
 * macOS:
     ```sh
-    brew install lua luarocks
+    brew install lua luarocks openssl@1.1
     ```
-* Fedora:
+* Fedora: Installing `luaossl` via luarocks fails on Fedora 35 with a compile error. That's why we install `lua-luaossl` via `yum`:
     ```sh
     sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl
     ```
 
-### Install Dependencies
+### Install Runtime and Test Dependencies
 
-Install dependencies by running
+See the [list of dependencies](../../dependencies.md) for details. Install dependencies by executing:
 
 ```sh
-luarocks install --local --deps-only *.rockspec 
+luarocks install --local --deps-only *.rockspec
 ```
 
 On macOS you may need to specify the path to OpenSSL:
@@ -32,7 +38,9 @@ luarocks install --local --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=
 
 ## Running Tests
 
-You need an Exasol database for running the tests. Start the tests by executing:
+You need an Exasol database for running the tests. You can start a Docker instance either manually as described in [docker-db](https://github.com/EXASOL/docker-db) or using the [integration-test-docker-environment](https://github.com/exasol/integration-test-docker-environment).
+
+Once Exasol is running, start the tests by executing:
 
 ```sh
 EXASOL_HOST=<host> \
@@ -42,7 +50,7 @@ EXASOL_HOST=<host> \
   ./tools/runtests.sh
 ```
 
-The following environment have a default value and can be omitted:
+The following environment variables have a default value and can be omitted:
 
 * `EXASOL_PORT` = `8563`
 * `EXASOL_USER` = `sys`
