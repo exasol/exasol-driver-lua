@@ -20,6 +20,10 @@ local function default_data_handler(message)
                     {message = message}):add_ticket_mitigation():raise()
 end
 
+local function not_recoverable_connection_error(err)
+    return not string.match(err, ".*failed: connection refused$")
+end
+
 local function connect_with_retry(url, data_handler, options, remaining_retries)
     local connection = M:new()
     log.trace("Connecting to websocket url %s with %d remaining retries", url,
@@ -28,7 +32,7 @@ local function connect_with_retry(url, data_handler, options, remaining_retries)
         connection.data_handler(message)
     end, options)
     if err ~= nil then
-        if remaining_retries <= 0 or tostring(err) ~= "connection refused" then
+        if remaining_retries <= 0 or not_recoverable_connection_error(err) then
             exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}",
                             {url = url, error = err}):raise()
         else
