@@ -53,7 +53,7 @@ function dump(t, seen)
 		elseif type(v) == "string" then
 			if #v > 255 then val = string.format("%q", v:sub(1,252).."...")
 			else val = string.format("%q", v) end
-		elseif type(v) == "number" and (math.abs(v-os.time()) <= 86400) then
+		elseif type(v) == "number" and math.type(v) == "integer" and (math.abs(v-os.time()) <= 86400) then
 			val = tostring(v) .. "(" .. os.date("%x.%X", v) .. ")"
 		else
 			val = tostring(v)
@@ -74,10 +74,11 @@ local function L(msg, ...) -- luacheck: ignore 212
 	else
 		str = "luws: " .. tostring(msg)
 	end
+	local msgArgs = table.pack(...)
 	str = string.gsub(str, "%%(%d+)", function( n )
 			n = tonumber(n, 10)
-			if n < 1 or n > #arg then return "nil" end
-			local val = arg[n]
+			if n < 1 or n > #msgArgs then return "nil" end
+			local val = msgArgs[n]
 			if type(val) == "table" then
 				return dump(val)
 			elseif type(val) == "string" then
