@@ -384,6 +384,7 @@ local function handle_control_frame( wsconn, opcode, data )
 		return
 	end
 	if opcode == 0x08 then -- close
+		D("handle_control_frame() Received opcode closing: close socket", data)
 		if not wsconn.closing then
 			wsconn.closing = true
 			wssend( wsconn, 0x08, "" )
@@ -393,8 +394,10 @@ local function handle_control_frame( wsconn, opcode, data )
 			unpack(wsconn.options.handler_args or {}) )
 	elseif opcode == 0x09 then
 		-- Ping. Reply with pong.
+		D("handle_control_frame() Received ping with data %1, send pong", data)
 		wssend( wsconn, 0x0a, "" )
 	elseif opcode == 0x0a then
+		D("handle_control_frame() Received pong frame with data %1: ignore", data)
 		-- Pong; no action
 	else
 		-- Other unsupported control frame
@@ -476,7 +479,7 @@ end
 -- Handle a block of data. The block does not need to contain an entire message
 -- (or fragment). A series of blocks as small as one byte can be passed and the
 -- message accumulated properly within the protocol.
-function wshandleincoming( data, wsconn )
+local function wshandleincoming( data, wsconn )
 	D("wshandleincoming(<%1 bytes>,%2) in state %3", #data, wsconn, wsconn.readstate)
 	local state = wsconn
 	local ix = 1
@@ -582,18 +585,21 @@ function wsreceive( wsconn )
 	if nb == nil then
 		if err == "timeout" or err == "wantread" then
 			if bb and #bb > 0 then
-				D("wsreceive() %1; handling partial result %2 bytes", err, #bb)
+				D("wsreceive() %1; handling partial result %2 bytes: %3", err, #bb, bb)
 				wshandleincoming( bb, wsconn )
 				return false, #bb -- timeout, say no more data
 			elseif wsconn.options.receive_timeout > 0 and
 				( timenow() - wsconn.lastMessage ) > wsconn.options.receive_timeout then
+				D("wsreceive() message timeout after %1s", wsconn.options.receive_timeout)
 				pcall( wsconn.msghandler, wsconn, false, "message timeout",
 					unpack(wsconn.options.handler_args or {}) )
 				return nil, "message timeout"
 			end
+			D("wsreceive() no data received, err=%1, byte count=%2", err, #bb)
 			return false, 0 -- not error, no data was handled
 		end
 		-- ??? error
+		D("wsreceive() Unexpected error %1 when calling socket:receive()", err)
 		pcall( wsconn.msghandler, wsconn, false, "receiver error: "..err,
 			unpack(wsconn.options.handler_args or {}) )
 		return nil, err
