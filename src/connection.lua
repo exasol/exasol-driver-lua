@@ -1,17 +1,15 @@
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
--- luacheck: no unused args
-
 local M = {}
 
 local cursor = require("cursor")
 
-function M:new(websocket, sessionId)
-    log.trace("Created new connection with session ID %d", sessionId)
+function M:create(websocket, session_id)
+    log.trace("Created new connection with session ID %d", session_id)
     local object = {
         websocket = websocket,
-        sessionId = sessionId,
+        session_id = session_id,
         closed = false,
         cursors = {}
     }
@@ -25,7 +23,7 @@ function M:execute(statement)
         exaerror.create("E-EDL-12", "Connection already closed"):raise()
     end
     log.trace("Executing statement '%s'", statement)
-    local result, err = self.websocket:sendJson({
+    local result, err = self.websocket:send_json({
         command = "execute",
         sqlText = statement,
         attributes = {}
@@ -39,51 +37,57 @@ function M:execute(statement)
             error = tostring(err)
         });
     end
-    local numResults = result.numResults
-    if numResults == 0 then
+    local num_results = result.numResults
+    if num_results == 0 then
         exaerror.create("E-EDL-7",
                         "Got no results for statement '{{statement}}'",
                         {statement = statement}):add_ticket_mitigation():raise()
     end
-    if numResults > 1 then
+    if num_results > 1 then
         exaerror.create("E-EDL-8",
                         "Got {{numResults}} results for statement '{{statement}}' but at most one is supported",
-                        {numResults = numResults, statement = statement}):add_ticket_mitigation()
+                        {numResults = num_results, statement = statement}):add_ticket_mitigation()
             :raise()
     end
-    local firstResult = result.results[1]
-    local resultType = firstResult.resultType
-    if resultType == "rowCount" then return firstResult.rowCount, nil end
-    if resultType ~= "resultSet" then
+    local first_result = result.results[1]
+    local result_type = first_result.resultType
+    if result_type == "rowCount" then return first_result.rowCount, nil end
+    if result_type ~= "resultSet" then
         exaerror.create("E-EDL-9", "Got unexpected result type {{resultType}}",
-                        {resultType = resultType}):add_ticket_mitigation()
+                        {resultType = result_type}):add_ticket_mitigation()
             :raise()
     end
     local cur =
-        cursor:new(self.websocket, self.sessionId, firstResult.resultSet)
+        cursor:create(self.websocket, self.session_id, first_result.resultSet)
     table.insert(self.cursors, cur)
     return cur
 end
 
-function M:commit() end
+function M:commit()
+    error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+end
 
-function M:rollback() end
+function M:rollback()
+    error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+end
 
-function M:setautocommit(autocommit) end
+function M:setautocommit(autocommit)
+    error("Setautocommit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+end
 
 function M:close()
     if self.closed then
-        log.warn("Connection with session ID %d already closed", self.sessionId)
+        log.warn("Connection with session ID %d already closed", self.session_id)
         return
     end
     local cursors = self.cursors
-    log.trace("Closing Session session ID %d: and its %d cursors", #cursors, self.sessionId)
+    log.trace("Closing Session session ID %d: and its %d cursors", #cursors, self.session_id)
     for _, cur in ipairs(cursors) do cur:close() end
-    local _, err = self.websocket:sendJson({command = "disconnect"}, true)
+    local _, err = self.websocket:send_json({command = "disconnect"}, true)
     if err then
         exaerror.create("E-EDL-11",
                         "Error closing session {{sessionId}}: {{error}}",
-                        {sessionId = self.sessionId, error = err})
+                        {session_id = self.session_id, error = err})
     end
     self.websocket:close()
     self.closed = true

@@ -50,7 +50,7 @@ local function getResponseError(response)
     })
 end
 
-function M:sendJson(payload, ignoreResponse)
+function M:send_json(payload, ignoreResponse)
     local rawPayload = lunajson.encode(payload)
     log.trace("Sending payload '%s'", rawPayload)
     local rawResponse = self:sendRaw(rawPayload, ignoreResponse)

@@ -35,7 +35,7 @@ end
 function TestCursor:test_using_closed_cursor_fails()
     local cursor = self.assertions:execute("select 1")
     cursor:close()
-    luaunit.assertErrorMsgMatches(".*E%-EDL%-13: Cursor already closed",
+    luaunit.assertErrorMsgMatches(".*E%-EDL%-13: Cursor closed while trying to fetch datasets from cursor",
                                   function() cursor:fetch() end)
 end
 
