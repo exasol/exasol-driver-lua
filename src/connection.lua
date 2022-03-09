@@ -23,12 +23,7 @@ function M:execute(statement)
         exaerror.create("E-EDL-12", "Connection already closed"):raise()
     end
     log.trace("Executing statement '%s'", statement)
-    local result, err = self.websocket:send_json({
-        command = "execute",
-        sqlText = statement,
-        attributes = {}
-    })
-
+    local result, err = self.websocket:send_execute(statement)
     if err then
         return nil, exaerror.create("E-EDL-6",
                                     "Error executing statement {{statement}}: {{error|uq}}",
@@ -83,7 +78,7 @@ function M:close()
     local cursors = self.cursors
     log.trace("Closing Session session ID %d: and its %d cursors", #cursors, self.session_id)
     for _, cur in ipairs(cursors) do cur:close() end
-    local _, err = self.websocket:send_json({command = "disconnect"}, true)
+    local _, err = self.websocket:send_disconnect()
     if err then
         exaerror.create("E-EDL-11",
                         "Error closing session {{sessionId}}: {{error}}",

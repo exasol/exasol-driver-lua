@@ -24,16 +24,12 @@ end
 
 local function login(socket, username, password)
     log.trace("Sending login command")
-    local response = socket:send_json({command = "login", protocolVersion = 3})
+    local response = socket:send_login_command()
     local encrypted_password = encrypt_password(response.publicKeyModulus,
                                                 response.publicKeyExponent,
                                                 password)
     log.trace("Login as user '%s'", username)
-    return socket:send_json({
-        username = username,
-        password = encrypted_password,
-        useCompression = false
-    })
+    return socket:send_login_credentials(username, encrypted_password)
 end
 
 function M:connect(sourcename, username, password)
