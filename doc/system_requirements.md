@@ -4,7 +4,7 @@
 
 ## Introduction
 
-The Exasol eriver for Lua (EDL) is a library for Lua that allows accessing an Exasol database to insert, update, delete and query data. EDL provides an API interface that closely resembles the API of [LuaSQL](https://keplerproject.github.io/luasql/) in order to be a drop-in replacement.
+The Exasol driver for Lua (EDL) is a library for Lua that allows accessing an Exasol database to insert, update, delete and query data. EDL provides an API interface that closely resembles the API of [LuaSQL](https://keplerproject.github.io/luasql/) in order to act as a drop-in replacement.
 
 ## About This Document
 

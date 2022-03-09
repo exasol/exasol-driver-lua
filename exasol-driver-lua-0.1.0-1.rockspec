@@ -9,7 +9,7 @@ source = {
 
 description = {
     summary = "Exasol SQL driver for Lua",
-    labels = {"luasql", "sql", "database", "exasol"},
+    labels = {"luasql", "sql", "database", "driver", "exasol"},
     detailed = [[Exasol SQL driver for Lua based on the LuaSQL API.
 
     You can find the user guide in the project's GitHub repository.

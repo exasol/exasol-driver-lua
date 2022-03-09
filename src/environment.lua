@@ -40,7 +40,7 @@ function M:connect(sourcename, username, password)
     local websocketOptions = {receive_timeout = 3}
     local socket = websocket.connect("wss://" .. sourcename, websocketOptions)
     local loginResponse = login(socket, username, password)
-    log.trace("Connected to exasol %s, max message size: %d",
+    log.trace("Connected to Exasol %s, maximum message size: %d bytes",
               loginResponse.releaseVersion, loginResponse.maxDataMessageSize)
     local conn = connection:new(socket, loginResponse.sessionId)
     self.connections[loginResponse.sessionId] = conn

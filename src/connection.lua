@@ -8,7 +8,7 @@ local M = {}
 local cursor = require("cursor")
 
 function M:new(websocket, sessionId)
-    log.trace("Created new connection with session id %d", sessionId)
+    log.trace("Created new connection with session ID %d", sessionId)
     local object = {
         websocket = websocket,
         sessionId = sessionId,
@@ -73,12 +73,12 @@ function M:setautocommit(autocommit) end
 
 function M:close()
     if self.closed then
-        log.trace("Connection with session id %d already closed", self.sessionId)
+        log.warn("Connection with session ID %d already closed", self.sessionId)
         return
     end
-    log.trace("Closing connection with session id %d: close cursors",
-              self.sessionId)
-    for _, cur in ipairs(self.cursors) do cur:close() end
+    local cursors = self.cursors
+    log.trace("Closing Session session ID %d: and its %d cursors", #cursors, self.sessionId)
+    for _, cur in ipairs(cursors) do cur:close() end
     local _, err = self.websocket:sendJson({command = "disconnect"}, true)
     if err then
         exaerror.create("E-EDL-11",
