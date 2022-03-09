@@ -4,7 +4,7 @@ local exaerror = require("exaerror")
 -- luacheck: no unused args
 
 local FETCH_MODE_NUMERIC_INDICES = "n"
-local FETCH_MODE_ALPHANUMERIC_INDICES = "a"
+local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused variable
 
 local M = {}
 

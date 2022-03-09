@@ -28,7 +28,7 @@ local function connect_with_retry(url, data_handler, options, remaining_retries)
     local connection = M:new()
     log.trace("Connecting to websocket url %s with %d remaining retries", url,
               remaining_retries)
-    local socket, err = wsopen(url, function(_, _, message)
+    local websocket, err = wsopen(url, function(_, _, message)
         connection.data_handler(message)
     end, options)
     if err ~= nil then
@@ -38,7 +38,8 @@ local function connect_with_retry(url, data_handler, options, remaining_retries)
         else
             remaining_retries = remaining_retries - 1
             log.warn(exaerror.create("W-EDL-15",
-                                     "Websocket connection to {{ur}} failed with error {{error}}, remaining retries: {{remaining_retries}}",
+                                     "Websocket connection to {{ur}} failed with error {{error}}, " ..
+                                         "remaining retries: {{remaining_retries}}",
                                      {
                 url = url,
                 error = err,
@@ -48,8 +49,8 @@ local function connect_with_retry(url, data_handler, options, remaining_retries)
                                       remaining_retries)
         end
     end
-    log.trace("Connected to websocket with result %s", socket)
-    connection.websocket = socket
+    log.trace("Connected to websocket with result %s", websocket)
+    connection.websocket = websocket
     return connection
 end
 

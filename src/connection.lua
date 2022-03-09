@@ -1,9 +1,10 @@
 local log = require("remotelog")
 local exaerror = require("exaerror")
+local cursor = require("cursor")
+
+-- luacheck: ignore 212 # unused argument self
 
 local M = {}
-
-local cursor = require("cursor")
 
 function M:create(websocket, session_id)
     log.trace("Created new connection with session ID %d", session_id)
