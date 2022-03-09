@@ -95,6 +95,8 @@ function M:send_raw(payload, ignore_response)
     end
 end
 
+function M:is_connected() return self.websocket and self.websocket.connected end
+
 function M:close()
     if self.closed then return end
     log.trace("Closing websocket")

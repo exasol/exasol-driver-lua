@@ -79,7 +79,7 @@ function M:close()
     local cursors = self.cursors
     log.trace("Closing Session session ID %d: and its %d cursors", #cursors, self.session_id)
     for _, cur in ipairs(cursors) do cur:close() end
-    local _, err = self.websocket:send_disconnect()
+    local err = self.websocket:send_disconnect()
     if err then
         exaerror.create("E-EDL-11",
                         "Error closing session {{sessionId}}: {{error}}",
