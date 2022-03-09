@@ -1,5 +1,5 @@
 local connection = require("connection")
-local websocket = require("websocket_connection")
+local websocket = require("exasol_websocket")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
