@@ -63,7 +63,8 @@ function M:wait_for_response(timeout_seconds)
         local result, err = wsreceive(self.websocket)
         if type(err) == "string" then
             local wrapped_error = exaerror.create("E-EDL-4",
-                                                  "Error receiving data when waiting for response for {{waiting_time}}s: {{error}}",
+                                                  "Error receiving data while waiting for response " ..
+                                                      "for {{waiting_time}}s: {{error}}",
                                                   {
                 error = err,
                 waiting_time = os.clock() - start
@@ -88,7 +89,6 @@ function M:wait_for_response(timeout_seconds)
         end
         try_count = try_count + 1
         log.trace("Wsreceive: result=%s, error=%s. Try again.", result, err)
-        return nil
     end
 end
 
@@ -105,9 +105,7 @@ function M:send_raw(payload, ignore_response)
     end
     err = self:wait_for_response(3)
     self.data_handler:expected_data_received()
-    if err then
-        return nil, err
-    end
+    if err then return nil, err end
     return self.data_handler:get_data(), nil
 end
 
