@@ -23,13 +23,8 @@ function M:send_login_command()
 end
 
 function M:send_disconnect()
-    local _, err = self:_send_json({command = "disconnect"}, true)
-    if err then return err end
-    if self.websocket:is_connected() then
-        return exaerror.create("E-EDL-14",
-                               "Websocket still connected after disconnect")
-    end
-    return nil
+    local _, err = self:_send_json({command = "disconnect"})
+    return err
 end
 
 function M:send_login_credentials(username, encrypted_password)
@@ -61,20 +56,16 @@ local function get_response_error(response)
             text = text
         })
     else
-        return exaerror.create("E-EDL-17",
+        return exaerror.create("E-EDL-15",
                                "Received DB status {{status}} without exception details",
                                {status = response.status})
     end
 end
 
-function M:_send_json(payload, ignore_response)
+function M:_send_json(payload)
     local raw_payload = lunajson.encode(payload)
     log.trace("Sending payload '%s'", raw_payload)
-    local raw_response = self.websocket:send_raw(raw_payload, ignore_response)
-    if ignore_response then
-        log.trace("Ignore response, return nil")
-        return nil, nil
-    end
+    local raw_response = self.websocket:send_raw(raw_payload)
     if raw_response == nil then
         exaerror.create("E-EDL-2",
                         "Did not receive response for request payload {{payload}}.",

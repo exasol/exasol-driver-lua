@@ -82,8 +82,8 @@ function M:close()
     local err = self.websocket:send_disconnect()
     if err then
         exaerror.create("E-EDL-11",
-                        "Error closing session {{sessionId}}: {{error}}",
-                        {session_id = self.session_id, error = err})
+                        "Error closing session {{session_id}}: {{error}}",
+                        {session_id = self.session_id, error = err}):raise()
     end
     self.websocket:close()
     self.closed = true

@@ -55,11 +55,8 @@ end
 function M:wait_for_response()
     log.trace("Waiting for response")
     local start = os.clock()
-    -- sleep(100)
     local result, err = wsreceive(self.websocket)
     while result == false and err == 0 do
-        -- sleep(100)
-        -- log.trace("Continue waiting for data, result = %s, err = %s", result, err)
         result, err = wsreceive(self.websocket)
     end
     if err and type(err) == "string" then
@@ -72,27 +69,21 @@ function M:wait_for_response()
             os.clock() - start, err)
         return
     end
-    log.trace("Wsreceive: result=%s, error=%s. Try again.",
-             result, err)
+    log.trace("Wsreceive: result=%s, error=%s. Try again.", result, err)
     self:wait_for_response()
 end
 
-function M:send_raw(payload, ignore_response)
-    if not ignore_response then self.data_handler:expect_data() end
+function M:send_raw(payload)
+    self.data_handler:expect_data()
     local _, err = wssend(self.websocket, 1, payload)
     if err ~= nil then
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
                         {error = err}):raise()
     end
-    if ignore_response then
-        log.trace("Ignoring response, no need to wait")
-        return nil
-    end
 
     self:wait_for_response()
     self.data_handler:expected_data_received()
     return self.data_handler:get_data()
-
 end
 
 function M:is_connected() return self.websocket and self.websocket.connected end
