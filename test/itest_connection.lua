@@ -2,6 +2,7 @@ local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 local config = require("config")
 local log = require("remotelog")
+local assertions = require("assertions")
 
 TestConnection = {}
 
@@ -46,9 +47,13 @@ function TestConnection:test_login_fails()
         local sourcename = test.props.host .. ":" .. test.props.port
         local _, err = env:connect(sourcename, test.props.user,
                                    test.props.password)
-        luaunit.assertEquals(tostring(err),
-                             "E-EDL-16: Login failed: 'E-EDL-10: Received DB status 'error' " ..
-                                 "with code 08004: 'Connection exception - authentication failed.''")
+        local error_pattern = "E%-EDL%-16: Login failed: '(E%-%EDL%-%d+:.*)'"
+        luaunit.assertStrMatches(tostring(err), error_pattern)
+        local cause = string.match(tostring(err), error_pattern)
+        assertions.assert_matches_one_of(cause, {
+            "E%-EDL%-10: Received DB status 'error' with code 08004: 'Connection exception %- authentication failed%.'",
+            "E%-EDL%-4: Error receiving data while waiting for response for [%d%.]+s: 'closed')'"
+        })
         env:close()
     end
 end

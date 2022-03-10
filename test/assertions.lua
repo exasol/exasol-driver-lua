@@ -33,4 +33,16 @@ function M:assert_execute_fails(statement, expected_error_pattern)
     luaunit.assertNil(cursor)
 end
 
+function M.assert_matches_one_of(value, patterns)
+    for _, pattern in ipairs(patterns) do
+        if string.match(value, pattern) then
+            return
+        else
+            print("Pattern '" .. pattern .. "' does not match '" .. value .. "'")
+        end
+    end
+    luaunit.fail("Value '" .. value .. "' matched none of the " .. #patterns ..
+                     " patterns: "..table.concat(patterns, ", "))
+end
+
 return M
