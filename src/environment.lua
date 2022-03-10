@@ -36,9 +36,7 @@ local function login(socket, username, password)
 end
 
 function M:connect(sourcename, username, password)
-    local websocket_options = {receive_timeout = 4}
-    local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename,
-                                     websocket_options)
+    local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
     if err then
         err = exaerror.create("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})

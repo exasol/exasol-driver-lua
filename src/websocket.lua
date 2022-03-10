@@ -6,6 +6,8 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
 
+local CONNECT_RETRY_COUNT = 1
+
 function M:new(object)
     object = object or {data_handler = websocket_datahandler:create()}
     object.closed = false
@@ -18,28 +20,28 @@ local function not_recoverable_connection_error(err)
     return not string.match(err, ".*failed: connection refused$")
 end
 
-local function connect_with_retry(url, options, remaining_retries)
+local function connect_with_retry(url, websocket_options, remaining_retries)
     log.trace("Connecting to websocket url %s with %d remaining retries", url,
               remaining_retries)
     local connection = M:new()
     local websocket, err = wsopen(url, function(conn, opcode, message)
         connection.data_handler:handle_data(conn, opcode, message)
-    end, options)
+    end, websocket_options)
     if err ~= nil then
         if remaining_retries <= 0 or not_recoverable_connection_error(err) then
             exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}",
                             {url = url, error = err}):raise()
         else
             remaining_retries = remaining_retries - 1
-            log.warn(exaerror.create("W-EDL-15",
-                                     "Websocket connection to {{ur}} failed with error {{error}}, " ..
-                                         "remaining retries: {{remaining_retries}}",
-                                     {
+            log.warn(tostring(exaerror.create("W-EDL-15",
+                                              "Websocket connection to {{ur}} failed with error {{error}}, " ..
+                                                  "remaining retries: {{remaining_retries}}",
+                                              {
                 url = url,
                 error = err,
                 remaining_retries = remaining_retries
-            }):__tostring())
-            return connect_with_retry(url, options, remaining_retries)
+            })))
+            return connect_with_retry(url, websocket_options, remaining_retries)
         end
     end
     log.trace("Connected to websocket with result %s", websocket)
@@ -47,30 +49,38 @@ local function connect_with_retry(url, options, remaining_retries)
     return connection
 end
 
-function M.connect(url, options)
-    options = options or {}
-    return connect_with_retry(url, options, 3)
+function M.connect(url)
+    local websocket_options = {receive_timeout = 3}
+    log.debug("Connecting to '%s' with %d retries", url, CONNECT_RETRY_COUNT)
+    return connect_with_retry(url, websocket_options, CONNECT_RETRY_COUNT)
 end
 
-function M:wait_for_response()
-    log.trace("Waiting for response")
+function M:wait_for_response(timeout_seconds)
+    log.trace("Waiting %ds for response", timeout_seconds)
     local start = os.clock()
-    local result, err = wsreceive(self.websocket)
-    while result == false and err == 0 do
-        result, err = wsreceive(self.websocket)
+    local try_count = 0
+    while true do
+        local result, err = wsreceive(self.websocket)
+        if type(err) == "string" then
+            exaerror.create("E-EDL-4", "Error receiving data: {{error}}",
+                            {error = err}):raise()
+        end
+        local total_wait_time_seconds = os.clock() - start
+        if self.data_handler:has_received_data() then
+            log.debug("Received result after %fs and %d tries", total_wait_time_seconds,try_count)
+            return
+        end
+        if total_wait_time_seconds >= timeout_seconds then
+            exaerror.create("E-EDL-18",
+                            "Timeout after {{waiting_time}}s and {{try_count}} waiting for data",
+                            {
+                errowaiting_timer = total_wait_time_seconds,
+                try_count = try_count
+            }):raise()
+        end
+        try_count = try_count + 1
+        log.trace("Wsreceive: result=%s, error=%s. Try again.", result, err)
     end
-    if err and type(err) == "string" then
-        exaerror.create("E-EDL-4", "Error receiving data: {{error}}",
-                        {error = err}):raise()
-    end
-    if self.data_handler:has_received_data() then
-        log.trace(
-            "Waiting finished with result false after %fs, received %d bytes",
-            os.clock() - start, err)
-        return
-    end
-    log.trace("Wsreceive: result=%s, error=%s. Try again.", result, err)
-    self:wait_for_response()
 end
 
 function M:send_raw(payload)
@@ -81,7 +91,7 @@ function M:send_raw(payload)
                         {error = err}):raise()
     end
 
-    self:wait_for_response()
+    self:wait_for_response(3)
     self.data_handler:expected_data_received()
     return self.data_handler:get_data()
 end

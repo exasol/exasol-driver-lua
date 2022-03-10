@@ -13,8 +13,8 @@ function M:create(websocket)
     return object
 end
 
-function M.connect(url, options)
-    local websocket = raw_websocket.connect(url, options)
+function M.connect(url)
+    local websocket = raw_websocket.connect(url)
     return M:create(websocket)
 end
 
@@ -56,7 +56,7 @@ local function get_response_error(response)
             text = text
         })
     else
-        return exaerror.create("E-EDL-15",
+        return exaerror.create("E-EDL-17",
                                "Received DB status {{status}} without exception details",
                                {status = response.status})
     end
