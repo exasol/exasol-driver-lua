@@ -6,7 +6,7 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
 
-local CONNECT_RETRY_COUNT = 1
+local CONNECT_RETRY_COUNT = 3
 
 function M:new(object)
     object = object or {data_handler = websocket_datahandler:create()}
@@ -34,7 +34,7 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
         else
             remaining_retries = remaining_retries - 1
             log.warn(tostring(exaerror.create("W-EDL-15",
-                                              "Websocket connection to {{ur}} failed with error {{error}}, " ..
+                                              "Websocket connection to {{url}} failed with error {{error}}, " ..
                                                   "remaining retries: {{remaining_retries}}",
                                               {
                 url = url,
@@ -67,7 +67,8 @@ function M:wait_for_response(timeout_seconds)
         end
         local total_wait_time_seconds = os.clock() - start
         if self.data_handler:has_received_data() then
-            log.debug("Received result after %fs and %d tries", total_wait_time_seconds,try_count)
+            log.debug("Received result after %fs and %d tries",
+                      total_wait_time_seconds, try_count)
             return
         end
         if total_wait_time_seconds >= timeout_seconds then
@@ -83,14 +84,17 @@ function M:wait_for_response(timeout_seconds)
     end
 end
 
-function M:send_raw(payload)
-    self.data_handler:expect_data()
+function M:send_raw(payload, ignore_response)
+    if not ignore_response then self.data_handler:expect_data() end
     local _, err = wssend(self.websocket, 1, payload)
     if err ~= nil then
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
                         {error = err}):raise()
     end
-
+    if ignore_response then
+        log.trace("Ignore response after sending payload '%s'", payload)
+        return
+    end
     self:wait_for_response(3)
     self.data_handler:expected_data_received()
     return self.data_handler:get_data()

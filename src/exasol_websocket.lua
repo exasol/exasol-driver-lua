@@ -23,7 +23,7 @@ function M:send_login_command()
 end
 
 function M:send_disconnect()
-    local _, err = self:_send_json({command = "disconnect"})
+    local _, err = self:_send_json({command = "disconnect"}, true)
     return err
 end
 
@@ -62,10 +62,11 @@ local function get_response_error(response)
     end
 end
 
-function M:_send_json(payload)
+function M:_send_json(payload, ignore_response)
     local raw_payload = lunajson.encode(payload)
     log.trace("Sending payload '%s'", raw_payload)
-    local raw_response = self.websocket:send_raw(raw_payload)
+    local raw_response = self.websocket:send_raw(raw_payload, ignore_response)
+    if ignore_response then return nil, nil end
     if raw_response == nil then
         exaerror.create("E-EDL-2",
                         "Did not receive response for request payload {{payload}}.",
