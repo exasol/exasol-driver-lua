@@ -65,10 +65,12 @@ end
 function M:_send_json(payload, ignore_response)
     local raw_payload = lunajson.encode(payload)
     log.trace("Sending payload '%s'", raw_payload)
-    local raw_response = self.websocket:send_raw(raw_payload, ignore_response)
+    local raw_response, err = self.websocket:send_raw(raw_payload,
+                                                      ignore_response)
     if ignore_response then return nil, nil end
+    if err then return nil, err end
     if raw_response == nil then
-        local err = exaerror.create("E-EDL-2",
+        err = exaerror.create("E-EDL-2",
                                     "Did not receive response for request payload {{payload}}.",
                                     {payload = raw_payload})
         log.error(tostring(err))
@@ -77,7 +79,7 @@ function M:_send_json(payload, ignore_response)
 
     log.trace("Received response '%s'", raw_response)
     local response = lunajson.decode(raw_response)
-    local err = get_response_error(response)
+    err = get_response_error(response)
     if err then
         return nil, err
     else

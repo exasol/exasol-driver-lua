@@ -62,25 +62,33 @@ function M:wait_for_response(timeout_seconds)
     while true do
         local result, err = wsreceive(self.websocket)
         if type(err) == "string" then
-            exaerror.create("E-EDL-4", "Error receiving data: {{error}}",
-                            {error = err}):raise()
+            local wrapped_error = exaerror.create("E-EDL-4",
+                                                  "Error receiving data when waiting for response for {{waiting_time}}s: {{error}}",
+                                                  {
+                error = err,
+                waiting_time = os.clock() - start
+            })
+            wrapped_error.cause = err
+            log.error(tostring(wrapped_error))
+            return wrapped_error
         end
         local total_wait_time_seconds = os.clock() - start
         if self.data_handler:has_received_data() then
             log.debug("Received result after %fs and %d tries",
                       total_wait_time_seconds, try_count)
-            return
+            return nil
         end
         if total_wait_time_seconds >= timeout_seconds then
-            exaerror.create("E-EDL-18",
-                            "Timeout after {{waiting_time}}s and {{try_count}} waiting for data",
-                            {
-                errowaiting_timer = total_wait_time_seconds,
+            return exaerror.create("E-EDL-18",
+                                   "Timeout after {{waiting_time}}s and {{try_count}} waiting for data",
+                                   {
+                waiting_time = total_wait_time_seconds,
                 try_count = try_count
-            }):raise()
+            })
         end
         try_count = try_count + 1
         log.trace("Wsreceive: result=%s, error=%s. Try again.", result, err)
+        return nil
     end
 end
 
@@ -93,11 +101,14 @@ function M:send_raw(payload, ignore_response)
     end
     if ignore_response then
         log.trace("Ignore response after sending payload '%s'", payload)
-        return
+        return nil, nil
     end
-    self:wait_for_response(3)
+    err = self:wait_for_response(3)
     self.data_handler:expected_data_received()
-    return self.data_handler:get_data()
+    if err then
+        return nil, err
+    end
+    return self.data_handler:get_data(), nil
 end
 
 function M:is_connected() return self.websocket and self.websocket.connected end
