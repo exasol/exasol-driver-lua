@@ -12,18 +12,20 @@ end
 
 function M:handle_data(conn, opcode, message)
     if opcode == false then
-        log.warn("Received error from websocket connection: '%s'", message)
+        log.warn("Received error from websocket connection %s: '%s'", conn,
+                 message)
         return
     end
     if not self.expecting_data then
         log.warn(exaerror.create("E-EDL-5",
-                                 "Not expecting data from websocket but received message with opcode {{opcode}} and data {{message}}",
+                                 "Not expecting data from websocket but received message " ..
+                                     "with opcode {{opcode}} and data {{message}}",
                                  {opcode = opcode, message = message}):add_ticket_mitigation())
         return
     end
     table.insert(self.data, message)
-    log.trace("Received message #%d with opcode %s and %d bytes of data: '%s'.", #self.data,
-              opcode,#message, message)
+    log.trace("Received message #%d with opcode %s and %d bytes of data: '%s'.",
+              #self.data, opcode, #message, message)
 end
 
 function M:expect_data()
@@ -33,7 +35,7 @@ function M:expect_data()
 end
 
 function M:expected_data_received()
-    log.trace("Stop expecting data, received %d messages",#self.data)
+    log.trace("Stop expecting data, received %d messages", #self.data)
     self.expecting_data = false
 end
 
@@ -46,8 +48,6 @@ function M:get_data()
     return table.concat(self.data)
 end
 
-function M:has_received_data()
-    return #self.data > 0
-end
+function M:has_received_data() return #self.data > 0 end
 
 return M

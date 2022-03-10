@@ -2,7 +2,6 @@ local M = {}
 
 -- luacheck: globals wsopen wssend wsreceive wsclose
 require("luws")
-local socket = require("socket")
 local exaerror = require("exaerror")
 local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
@@ -52,8 +51,6 @@ function M.connect(url, options)
     options = options or {}
     return connect_with_retry(url, options, 3)
 end
-
-local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
 
 function M:wait_for_response()
     log.trace("Waiting for response")
