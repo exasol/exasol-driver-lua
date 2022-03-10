@@ -5,9 +5,10 @@ require("luws")
 local socket = require("socket")
 local exaerror = require("exaerror")
 local log = require("remotelog")
+local websocket_datahandler = require("websocket_datahandler")
 
 function M:new(object)
-    object = object or {}
+    object = object or {data_handler = websocket_datahandler:create()}
     object.closed = false
     self.__index = self
     setmetatable(object, self)
@@ -23,19 +24,7 @@ local function connect_with_retry(url, options, remaining_retries)
               remaining_retries)
     local connection = M:new()
     local websocket, err = wsopen(url, function(conn, opcode, message)
-        if opcode == false then
-            log.warn("Received error from websocket connection: '%s'", message)
-            return
-        end
-        if type(connection.data_handler) ~= "function" then
-            exaerror.create("E-EDL-5",
-                            "No handler registered for handling websocket message with opcode {{opcode}} and data {{message}}",
-                            {opcode = opcode, message = message}):add_ticket_mitigation()
-                :raise()
-        end
-        log.trace("Received websocket message with opcode %s and data '%s'",
-                  opcode, message)
-        connection.data_handler(message)
+        connection.data_handler:handle_data(conn, opcode, message)
     end, options)
     if err ~= nil then
         if remaining_retries <= 0 or not_recoverable_connection_error(err) then
@@ -69,36 +58,30 @@ local function sleep(milliseconds) socket.sleep(milliseconds / 1000) end
 function M:wait_for_response()
     log.trace("Waiting for response")
     local start = os.clock()
-    sleep(100)
+    -- sleep(100)
     local result, err = wsreceive(self.websocket)
     while result == false and err == 0 do
-        sleep(10)
-        log.trace("Continue waiting for data, result = %s, err = %s", result,
-                  err)
+        -- sleep(100)
+        -- log.trace("Continue waiting for data, result = %s, err = %s", result, err)
         result, err = wsreceive(self.websocket)
     end
     if err and type(err) == "string" then
         exaerror.create("E-EDL-4", "Error receiving data: {{error}}",
                         {error = err}):raise()
     end
-    if result == true then
-        log.trace("Waiting finished after %fs with result = true, received %d bytes",
-                  os.clock() - start, err)
+    if self.data_handler:has_received_data() then
+        log.trace(
+            "Waiting finished with result false after %fs, received %d bytes",
+            os.clock() - start, err)
         return
     end
-    if result == false and type(err) == "number" then
-        log.trace("Waiting finished after %fs, received %d bytes",
-                  os.clock() - start, err)
-        return -- no more data
-    end
-    log.warn("Unexpected result of wsreceive: result=%s, error=%s. Try again",
+    log.trace("Wsreceive: result=%s, error=%s. Try again.",
              result, err)
     self:wait_for_response()
 end
 
 function M:send_raw(payload, ignore_response)
-    local data = nil
-    self.data_handler = function(message) data = message end
+    if not ignore_response then self.data_handler:expect_data() end
     local _, err = wssend(self.websocket, 1, payload)
     if err ~= nil then
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
@@ -107,11 +90,12 @@ function M:send_raw(payload, ignore_response)
     if ignore_response then
         log.trace("Ignoring response, no need to wait")
         return nil
-    else
-        self:wait_for_response()
-        self.data_handler = nil
-        return data
     end
+
+    self:wait_for_response()
+    self.data_handler:expected_data_received()
+    return self.data_handler:get_data()
+
 end
 
 function M:is_connected() return self.websocket and self.websocket.connected end

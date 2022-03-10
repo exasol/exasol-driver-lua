@@ -1,6 +1,7 @@
 local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 local config = require("config")
+local log = require("remotelog")
 
 TestConnection = {}
 
@@ -12,26 +13,42 @@ function TestConnection:test_connection_fails()
     local real_connection = config.get_connection_params()
     local tests = {
         {
-            props = config.get_connection_params({host = "wronghost", port = "1234"}),
+            props = config.get_connection_params({
+                host = "wronghost",
+                port = "1234"
+            }),
             expected_error_pattern = ".*E%-EDL%-1: Error connecting to 'wss://wronghost:1234': .*"
         }, {
             props = config.get_connection_params({port = "1234"}),
             expected_error_pattern = ".*E%-EDL%-1: Error connecting to 'wss://" ..
                 real_connection.host .. ":1234': .*"
-        }, {
-            props = config.get_connection_params({user = "unknownUser"}),
-            expected_error_pattern = ".*E%-EDL%-2: Did not receive response for payload.*"
-        }, {
-            props = config.get_connection_params({password = "wrong password"}),
-            expected_error_pattern = ".*E%-EDL%-2: Did not receive response for payload.*"
         }
     }
     for _, test in ipairs(tests) do
         local env = config.create_environment()
         local sourcename = test.props.host .. ":" .. test.props.port
         luaunit.assertErrorMsgMatches(test.expected_error_pattern, function()
+            log.debug("Test: Login to '%s' with user '%s' and password '%s'",
+                      sourcename, test.props.user, test.props.password)
             env:connect(sourcename, test.props.user, test.props.password)
         end)
+        env:close()
+    end
+end
+
+function TestConnection:test_login_fails()
+    local real_connection = config.get_connection_params()
+    local tests = {
+        {props = config.get_connection_params({user = "unknownUser"})},
+        {props = config.get_connection_params({password = "wrong password"})}
+    }
+    for _, test in ipairs(tests) do
+        local env = config.create_environment()
+        local sourcename = test.props.host .. ":" .. test.props.port
+        local _, err = env:connect(sourcename, test.props.user,
+                                   test.props.password)
+        luaunit.assertEquals(tostring(err),
+                             "E-EDL-16: Login failed: 'E-EDL-10: Received DB status 'error' with code 08004: 'Connection exception - authentication failed.''")
         env:close()
     end
 end
@@ -47,9 +64,8 @@ end
 function TestConnection:test_using_closed_connection_fails()
     local connection = config.create_connection()
     connection:close()
-    luaunit.assertErrorMsgMatches(".*E%-EDL%-12: Connection already closed", function ()
-        connection:execute("select 1")
-    end)
+    luaunit.assertErrorMsgMatches(".*E%-EDL%-12: Connection already closed",
+                                  function() connection:execute("select 1") end)
 end
 
 function TestConnection:test_closing_closed_connection_succeeds()

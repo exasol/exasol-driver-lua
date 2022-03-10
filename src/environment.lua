@@ -4,6 +4,7 @@ local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
 local log = require("remotelog")
+local exaerror = require("exaerror")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -40,7 +41,8 @@ function M:connect(sourcename, username, password)
                                      websocket_options)
     local response, err = login(socket, username, password)
     if err then
-        log.warn("Login failed: %s", err)
+        err = exaerror.create("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
+        log.warn("%s", err)
         return nil, err
     end
     log.trace("Connected to Exasol %s, maximum message size: %d bytes",

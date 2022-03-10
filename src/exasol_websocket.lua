@@ -26,7 +26,8 @@ function M:send_disconnect()
     local _, err = self:_send_json({command = "disconnect"}, true)
     if err then return err end
     if self.websocket:is_connected() then
-        return exaerror.create("E-EDL-14", "Websocket still connected after disconnect")
+        return exaerror.create("E-EDL-14",
+                               "Websocket still connected after disconnect")
     end
     return nil
 end
@@ -49,15 +50,21 @@ end
 
 local function get_response_error(response)
     if response.status == "ok" then return nil end
-    local sqlCode = response.exception and response.exception.sqlCode
-    local text = response.text and response.exception.text
-    return exaerror.create("E-EDL-10",
-                           "Received status {{status}} with code {{sqlCode|uq}}: {{text|uq}}",
-                           {
-        status = response.status,
-        sqlCode = sqlCode,
-        text = text
-    })
+    if response.exception then
+        local sqlCode = response.exception.sqlCode
+        local text = response.exception.text
+        return exaerror.create("E-EDL-10",
+                               "Received DB status {{status}} with code {{sqlCode|uq}}: {{text}}",
+                               {
+            status = response.status,
+            sqlCode = sqlCode,
+            text = text
+        })
+    else
+        return exaerror.create("E-EDL-17",
+                               "Received DB status {{status}} without exception details",
+                               {status = response.status})
+    end
 end
 
 function M:_send_json(payload, ignore_response)
@@ -69,8 +76,11 @@ function M:_send_json(payload, ignore_response)
         return nil, nil
     end
     if raw_response == nil then
-        exaerror.create("E-EDL-2", "Did not receive response for payload."):raise()
+        exaerror.create("E-EDL-2",
+                        "Did not receive response for request payload {{payload}}.",
+                        {payload = raw_payload}):raise()
     end
+
     log.trace("Received response '%s'", raw_response)
     local response = lunajson.decode(raw_response)
     local err = get_response_error(response)

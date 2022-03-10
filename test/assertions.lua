@@ -27,9 +27,9 @@ function M:assert_rows(statement, rows)
     cursor:close()
 end
 
-function M:assert_execute_fails(statement, expected_error)
+function M:assert_execute_fails(statement, expected_error_pattern)
     local cursor, err = self.connection:execute(statement)
-    luaunit.assertEquals(tostring(err), expected_error)
+    luaunit.assertStrMatches(tostring(err), expected_error_pattern)
     luaunit.assertNil(cursor)
 end
 
