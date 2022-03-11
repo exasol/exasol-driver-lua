@@ -1,0 +1,50 @@
+@startuml
+!include ../clean.skin
+
+title: Executing Statements
+
+participant "Client Code" as client <<external>>
+participant Connection as conn
+participant Cursor as cur
+participant Websocket as ws
+participant "Exasol Database" as db
+
+activate client
+activate db
+activate conn
+activate ws
+client -> conn: execute(statement)
+conn -> ws: execute
+ws -> db: execute
+db -> db: Execute query
+db --> ws
+note left: Data or resultset handle
+ws --> conn
+conn -> cur: create
+activate cur
+conn --> client
+group Fetch result
+    client -> cur: fetch()
+    alt No resultset handle, less than 1000 rows
+        cur --> client: Row data
+    else Resultset handle, more than 1000 rows
+        cur -> ws : fetch(resultset_handle)
+        ws -> db : fetch(resultset_handle)
+        db --> ws
+        ws --> cur
+        cur --> client : Row data
+    end
+end
+group Close cursor
+    client -> cur : close()
+    alt No result set handle, less than 1000 rows
+        note right of cur: Nothing to do when no resultset is used
+    else Result set handle, more than 1000 rows
+        cur -> ws : close resultset
+        ws -> db : close resultset
+        db --> ws
+        ws --> cur
+    end
+    cur --> client
+    deactivate cur
+end

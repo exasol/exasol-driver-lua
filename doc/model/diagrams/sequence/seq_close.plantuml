@@ -1,0 +1,42 @@
+@startuml
+!include ../clean.skin
+
+title: Closing Connection
+
+participant "Client Code" as client <<external>>
+participant Environment as env
+participant Connection as conn
+participant Cursor as cur
+participant Websocket as ws
+participant "Exasol Database" as db
+
+activate client
+activate env
+activate conn
+activate cur
+activate ws
+activate db
+
+client -> env : close()
+env -> conn : close()
+note left: Close all connections
+conn -> cur : close()
+note left: Close all cursors
+alt Cursor with resultset
+    cur -> ws : closeResultSet
+    ws -> db : closeResultSet
+    db --> ws
+    ws --> cur
+end
+cur --> conn
+deactivate cur
+conn -> ws : disconnect
+ws -> db : disconnect
+db --> ws
+ws --> conn
+conn -> ws : close socket
+deactivate ws
+conn --> env
+deactivate conn
+env --> client
+deactivate env
