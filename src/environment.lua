@@ -39,7 +39,14 @@ function M:connect(sourcename, username, password)
     local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
     if err then
-        err = exaerror.create("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
+        if err.cause == "closed" then
+            err = exaerror.create("E-EDL-19",
+                                  "Login failed because socket is closed. Probably credentials where wrong: {{error}}",
+                                  {error = tostring(err)})
+        else
+            err = exaerror.create("E-EDL-16", "Login failed: {{error}}",
+                                  {error = tostring(err)})
+        end
         log.warn("%s", err)
         return nil, err
     end

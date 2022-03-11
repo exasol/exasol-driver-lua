@@ -71,8 +71,8 @@ function M:_send_json(payload, ignore_response)
     if err then return nil, err end
     if raw_response == nil then
         err = exaerror.create("E-EDL-2",
-                                    "Did not receive response for request payload {{payload}}.",
-                                    {payload = raw_payload})
+                              "Did not receive response for request payload {{payload}}.",
+                              {payload = raw_payload})
         log.error(tostring(err))
         err:raise()
     end
