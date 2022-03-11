@@ -7,6 +7,7 @@ local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
 
 local CONNECT_RETRY_COUNT = 3
+local RECEIVE_TIMEOUT_SECONDS = 5
 
 function M:new(object)
     object = object or {data_handler = websocket_datahandler:create()}
@@ -50,7 +51,7 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
 end
 
 function M.connect(url)
-    local websocket_options = {receive_timeout = 3}
+    local websocket_options = {receive_timeout = RECEIVE_TIMEOUT_SECONDS}
     log.debug("Connecting to '%s' with %d retries", url, CONNECT_RETRY_COUNT)
     return connect_with_retry(url, websocket_options, CONNECT_RETRY_COUNT)
 end
@@ -103,7 +104,7 @@ function M:send_raw(payload, ignore_response)
         log.trace("Ignore response after sending payload '%s'", payload)
         return nil, nil
     end
-    err = self:wait_for_response(3)
+    err = self:wait_for_response(RECEIVE_TIMEOUT_SECONDS)
     self.data_handler:expected_data_received()
     if err then return nil, err end
     return self.data_handler:get_data(), nil
