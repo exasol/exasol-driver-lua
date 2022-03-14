@@ -14,7 +14,7 @@ local function get_system_env(varname, default)
     local value = get_optional_system_env(varname, default)
     if value == nil and default == nil then
         error("Environment variable '" .. varname ..
-        "' required for test is not defined")
+                  "' required for test is not defined")
     end
     return value
 end

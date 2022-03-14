@@ -1,7 +1,6 @@
 local luaunit = require("luaunit")
 local driver = require("luasqlexasol")
 local config = require("config")
-local log = require("remotelog")
 local assertions = require("assertions")
 
 TestConnection = {}
@@ -46,8 +45,6 @@ function TestConnection:test_connection_fails()
         table.insert(self.environments, env)
         local sourcename = test.props.host .. ":" .. test.props.port
         luaunit.assertErrorMsgMatches(test.expected_error_pattern, function()
-            log.debug("Test: Login to '%s' with user '%s' and password '%s'",
-                      sourcename, test.props.user, test.props.password)
             env:connect(sourcename, test.props.user, test.props.password)
         end)
     end
@@ -84,8 +81,9 @@ function TestConnection:test_using_closed_connection_fails()
     local connection = config.create_connection()
     table.insert(self.connections, connection)
     connection:close()
-    luaunit.assertErrorMsgMatches(".*E%-EDL%-12: Connection already closed",
-                                  function() connection:execute("select 1") end)
+    luaunit.assertErrorMsgMatches(".*E%-EDL%-12: Connection already closed", function ()
+        connection:execute("select 1")
+    end)
 end
 
 function TestConnection:test_closing_closed_connection_succeeds()

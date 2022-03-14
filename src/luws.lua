@@ -384,7 +384,7 @@ local function handle_control_frame( wsconn, opcode, data )
 		return
 	end
 	if opcode == 0x08 then -- close
-		D("handle_control_frame() Received opcode closing: close socket", data)
+		D("handle_control_frame() Received opcode closing: close socket")
 		if not wsconn.closing then
 			wsconn.closing = true
 			wssend( wsconn, 0x08, "" )
@@ -585,7 +585,7 @@ function wsreceive( wsconn )
 	if nb == nil then
 		if err == "timeout" or err == "wantread" then
 			if bb and #bb > 0 then
-				D("wsreceive() %1; handling partial result %2 bytes: %3", err, #bb, bb)
+				D("wsreceive() %1; handling partial result %2 bytes", err, #bb)
 				wshandleincoming( bb, wsconn )
 				return false, #bb -- timeout, say no more data
 			elseif wsconn.options.receive_timeout > 0 and
