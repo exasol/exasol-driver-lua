@@ -38,8 +38,8 @@ end
 function M.create_connection()
     local params = M.get_connection_params()
     local env = M.create_environment()
-    local sourcename = params.host .. ":" .. params.port
-    local conn = env:connect(sourcename, params.user, params.password)
+    local source_name = params.host .. ":" .. params.port
+    local conn = env:connect(source_name, params.user, params.password)
     luaunit.assertNotNil(conn)
     return conn
 end

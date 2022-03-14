@@ -65,7 +65,7 @@ function M:_send_json(payload, ignore_response)
     end
     if raw_response == nil then
         exaerror.create("E-EDL-2",
-                        "Did not receive response for payload. Username or password may be wrong."):raise()
+                        "Did not receive response for Exasol WebSocket request. Username or password may be wrong."):raise()
     end
     log.trace("Received response '%s'", raw_response)
     local response = lunajson.decode(raw_response)
