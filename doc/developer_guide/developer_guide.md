@@ -65,3 +65,26 @@ export LUA_PATH="./src/?.lua;./test/?.lua;$(luarocks path --lr-path)"
 export EXASOL_HOST=<host>
 lua test/itest_connection.lua
 ```
+
+## Source Formatter
+
+First install prerequisites:
+
+* macOS:
+    ```sh
+    brew install cmake
+    ```
+
+Then install [LuaFormatter](https://github.com/Koihik/LuaFormatter):
+
+```sh
+luarocks install --local --server=https://luarocks.org/dev luaformatter
+```
+
+Run the formatter like this:
+
+```sh
+./tools/format-lua.sh
+```
+
+**This will overwrite sources directly**
