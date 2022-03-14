@@ -1,4 +1,4 @@
-@xxxstartuml seq_execute
+@startuml seq_execute
 !include ../clean.skin
 
 title: Executing Statements
