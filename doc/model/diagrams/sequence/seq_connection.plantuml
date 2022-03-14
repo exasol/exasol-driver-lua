@@ -1,4 +1,4 @@
-@startuml
+@startuml seq_connection
 !include ../clean.skin
 
 title: Create Connection
@@ -46,3 +46,5 @@ group Close
     deactivate conn
     deactivate env
 end
+
+@enduml

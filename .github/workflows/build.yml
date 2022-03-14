@@ -132,3 +132,26 @@ jobs:
 #          distribution: 'temurin'
 #      - name: Trace requirements
 #        run: ./tools/trace-requirements.sh
+
+  plantuml:
+    strategy:
+       fail-fast: true
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
+      cancel-in-progress: true
+    name: "Build Plantuml diagrams"
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install Plantuml
+        run: sudo apt-get install -y plantuml
+
+      - name: Run Plantuml
+        run: |
+          plantuml -testdot
+          plantuml -failfast2 -verbose -stdrpt:1 "doc/model/diagrams/**/*.plantuml"

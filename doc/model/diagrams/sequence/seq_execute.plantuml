@@ -1,4 +1,4 @@
-@startuml
+@xxxstartuml seq_execute
 !include ../clean.skin
 
 title: Executing Statements
@@ -48,3 +48,5 @@ group Close cursor
     cur --> client
     deactivate cur
 end
+
+@enduml

@@ -1,4 +1,4 @@
-@startuml
+@startuml seq_close
 !include ../clean.skin
 
 title: Closing Connection
@@ -40,3 +40,5 @@ conn --> env
 deactivate conn
 env --> client
 deactivate env
+
+@enduml

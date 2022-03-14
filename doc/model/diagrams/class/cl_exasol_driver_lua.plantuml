@@ -1,10 +1,7 @@
-@startuml
+@startuml cl_exasol_driver_lua
 !include ../clean.skin
 
 title: Exasol Driver for Lua
-
-
-
 
 package luasql.exasol {
     '[dsn -> req~luasql-entry-point~1 >> impl,utest]
@@ -75,3 +72,5 @@ Cursor .l.> ExasolWebsocket : use
 
 url of togglebits is [[https://github.com/toggledbits/LuWS]]
 url of togglebits.luws is [[https://github.com/toggledbits/LuWS]]
+
+@enduml

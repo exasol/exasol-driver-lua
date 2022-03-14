@@ -26,3 +26,7 @@
 *.orig
 *.old
 *.md.html
+
+# PlantUML diagrams
+/doc/model/diagrams/**/*.png
+/doc/model/diagrams/**/*.cmapx
