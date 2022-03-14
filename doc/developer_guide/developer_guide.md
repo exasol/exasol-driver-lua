@@ -68,6 +68,12 @@ lua test/itest_connection.lua
 
 ## Source Formatter
 
+Use the following plugins in your IDE:
+
+* Visual Studio Code: [vscode-lua-format](https://marketplace.visualstudio.com/items?itemName=Koihik.vscode-lua-format)
+
+### Command Line Usage
+
 First install prerequisites:
 
 * macOS:
