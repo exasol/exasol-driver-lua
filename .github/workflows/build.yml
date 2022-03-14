@@ -1,0 +1,105 @@
+name: "Build and test Lua project"
+on: [push]
+jobs:
+
+  build:
+    strategy:
+       fail-fast: true
+       matrix:
+          lua_version: [5.4]
+          exasol_version: [7.1.6]
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
+      cancel-in-progress: true
+    name: "Build with Lua ${{ matrix.lua_version }} and Exasol ${{ matrix.exasol_version }}"
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Checkout integration test docker environment
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          repository: 'exasol/integration-test-docker-environment'
+          path: 'integration-test-docker-environment'
+
+      - name: Install Lua ${{ matrix.lua_version }}
+        uses: leafo/gh-actions-lua@v8.0.0
+        with:
+          luaVersion: ${{ matrix.lua_version }}
+
+      - name: Install LuaRocks
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luarocksVersion: "3.8.0"
+
+      - name: Print versions
+        run: |
+          lua -v
+          luarocks --version
+          luarocks path
+
+      - name: Install Lua dependencies
+        run: |
+          luarocks install --local --deps-only *.rockspec
+
+      - name: "Build"
+        run: luarocks make --local
+
+      - name: Run smoketests
+        run: |
+          eval $(luarocks path)
+          LOG_LEVEL=TRACE RUN_ONLY=smoketest.lua ./tools/runtests.sh
+
+      - name: Spawn Exasol environment
+        run: |
+          ./start-test-env spawn-test-environment --environment-name test \
+            --docker-db-image-version ${{ matrix.exasol_version }} \
+            --database-port-forward 8563 \
+            --deactivate-database-setup
+        working-directory: integration-test-docker-environment
+
+      - name: Run integration tests
+        run: |
+          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          eval $(luarocks path)
+          LOG_LEVEL=TRACE \
+            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
+            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            tools/runtests.sh
+
+      - name: Publish test teports
+        uses: scacap/action-surefire-report@v1
+        if: ${{ always() }}
+        with:
+          report_paths: 'target/luaunit-reports/*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: luacov.report.out
+          path: target/luacov-reports/luacov.report.out
+
+      - name: Validate tools
+        run: shellcheck --check-sourced --severity=style tools/runtests.sh tools/trace-requirements.sh
+
+      - name: Run static code analysis
+        run: |
+          eval $(luarocks path)
+          tools/runluacheck.sh
+
+## Deactivated until requirements and coverage are added
+
+#      - name: "Set up JDK"
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#      - name: Trace requirements
+#        run: ./tools/trace-requirements.sh
