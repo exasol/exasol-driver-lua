@@ -6,11 +6,11 @@ local socket = require("socket")
 local exaerror = require("exaerror")
 local log = require("remotelog")
 
-function M:new(object)
-    object = object or {}
+local function create()
+    local object = {}
     object.closed = false
-    self.__index = self
-    setmetatable(object, self)
+    M.__index = M
+    setmetatable(object, M)
     return object
 end
 
@@ -25,7 +25,7 @@ local function not_recoverable_connection_error(err)
 end
 
 local function connect_with_retry(url, data_handler, options, remaining_retries)
-    local connection = M:new()
+    local connection = create()
     log.trace("Connecting to WebSocket URL %s with %d remaining retries", url,
               remaining_retries)
     local websocket, err = wsopen(url, function(_, _, message)
@@ -38,7 +38,7 @@ local function connect_with_retry(url, data_handler, options, remaining_retries)
         else
             remaining_retries = remaining_retries - 1
             log.warn(tostring(exaerror.create("W-EDL-15",
-                                     "Websocket connection to {{ur}} failed with error {{error}}, " ..
+                                     "Websocket connection to {{url}} failed with error {{error}}, " ..
                                          "remaining retries: {{remaining_retries}}",
                                      {
                 url = url,
@@ -81,17 +81,18 @@ function M:send_raw(payload, ignore_response)
     local data = nil
     self.data_handler = function(message) data = message end
     local _, err = wssend(self.websocket, 1, payload)
-    if err ~= nil then
+    if err == nil then
+        if ignore_response then
+            log.trace("Ignoring response to payload '%s', no need to wait", payload)
+            return nil
+        else
+            self:wait_for_response()
+            self.data_handler = default_data_handler
+            return data
+        end
+    else
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
                         {error = err}):raise()
-    end
-    if ignore_response then
-        log.trace("Ignoring response, no need to wait")
-        return nil
-    else
-        self:wait_for_response()
-        self.data_handler = default_data_handler
-        return data
     end
 end
 
