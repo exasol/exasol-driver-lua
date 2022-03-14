@@ -5,9 +5,14 @@ local assertions = require("assertions")
 TestCursor = {}
 
 function TestCursor:setUp()
-    self.conn = config.create_connection()
-    luaunit.assertNotNil(self.conn)
-    self.assertions = assertions:new(self.conn)
+    self.connection = config.create_connection()
+    luaunit.assertNotNil(self.connection)
+    self.assertions = assertions:new(self.connection)
+end
+
+function TestCursor:tearDown()
+    self.connection:close()
+    self.connection = nil
 end
 
 function TestCursor:test_query_fails()
@@ -32,7 +37,7 @@ function TestCursor:test_select_multiple_columns_multiple_rows()
 end
 
 function TestCursor:test_using_closed_cursor_fails()
-    local cursor = self.assertions:execute("select 1")
+    local cursor = assert(self.connection:execute("select 1"))
     cursor:close()
     luaunit.assertErrorMsgMatches(
         ".*E%-EDL%-13: Cursor closed while trying to fetch datasets from cursor",
@@ -40,11 +45,9 @@ function TestCursor:test_using_closed_cursor_fails()
 end
 
 function TestCursor:test_closing_closed_cursor_succeeds()
-    local cursor = self.assertions:execute("select 1")
+    local cursor = assert(self.connection:execute("select 1"))
     cursor:close()
     cursor:close()
 end
-
-function TestCursor:tearDown() self.conn:close() end
 
 os.exit(luaunit.LuaUnit.run())

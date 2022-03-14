@@ -5,17 +5,17 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 local raw_websocket = require("websocket")
 
-function M:create(websocket)
+local function create(websocket)
     local object = {websocket = websocket}
     object.closed = false
-    self.__index = self
-    setmetatable(object, self)
+    M.__index = M
+    setmetatable(object, M)
     return object
 end
 
 function M.connect(url)
     local websocket = raw_websocket.connect(url)
-    return M:create(websocket)
+    return create(websocket)
 end
 
 function M:send_login_command()
@@ -77,7 +77,7 @@ function M:_send_json(payload, ignore_response)
         err:raise()
     end
 
-    log.trace("Received response '%s'", raw_response)
+    log.trace("Received response of %d bytes", #raw_response)
     local response = lunajson.decode(raw_response)
     err = get_response_error(response)
     if err then

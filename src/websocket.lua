@@ -9,11 +9,11 @@ local websocket_datahandler = require("websocket_datahandler")
 local CONNECT_RETRY_COUNT = 3
 local RECEIVE_TIMEOUT_SECONDS = 5
 
-function M:new(object)
-    object = object or {data_handler = websocket_datahandler:create()}
+local function create()
+    local object = {data_handler = websocket_datahandler:create()}
     object.closed = false
-    self.__index = self
-    setmetatable(object, self)
+    M.__index = M
+    setmetatable(object, M)
     return object
 end
 
@@ -24,7 +24,7 @@ end
 local function connect_with_retry(url, websocket_options, remaining_retries)
     log.trace("Connecting to websocket url %s with %d remaining retries", url,
               remaining_retries)
-    local connection = M:new()
+    local connection = create()
     local websocket, err = wsopen(url, function(conn, opcode, message)
         connection.data_handler:handle_data(conn, opcode, message)
     end, websocket_options)
@@ -96,7 +96,16 @@ end
 function M:send_raw(payload, ignore_response)
     if not ignore_response then self.data_handler:expect_data() end
     local _, err = wssend(self.websocket, 1, payload)
-    if err ~= nil then
+    if err == nil then
+        if ignore_response then
+            log.trace("Ignoring response to payload '%s', no need to wait", payload)
+            return nil
+        else
+            self:wait_for_response()
+            self.data_handler = default_data_handler
+            return data
+        end
+    else
         exaerror.create("E-EDL-3", "Error sending payload: {{error}}",
                         {error = err}):raise()
     end

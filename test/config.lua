@@ -14,7 +14,7 @@ local function get_system_env(varname, default)
     local value = get_optional_system_env(varname, default)
     if value == nil and default == nil then
         error("Environment variable '" .. varname ..
-                  "' required for test is not defined")
+        "' required for test is not defined")
     end
     return value
 end
@@ -48,10 +48,10 @@ end
 function M.create_connection()
     local params = M.get_connection_params()
     local env = M.create_environment()
-    local sourcename = params.host .. ":" .. params.port
-    local conn, err = env:connect(sourcename, params.user, params.password)
-    luaunit.assertNil(err)
-    luaunit.assertNotNil(conn)
+    local source_name = params.host .. ":" .. params.port
+    local conn, err = env:connect(source_name, params.user, params.password)
+    luaunit.assertNil(err, "no error when connecting to " .. source_name)
+    luaunit.assertNotNil(conn, "connection available")
     return conn
 end
 
