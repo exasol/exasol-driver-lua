@@ -36,58 +36,61 @@ local unpack = unpack or table.unpack -- luacheck: ignore 143
 local LOG = (luup and luup.log) or (function(msg, level) print(level or 50, msg) end)
 
 function dump(t, seen)
-	if t == nil then return "nil" end
-	if seen == nil then seen = {} end
-	local sep = ""
-	local str = "{ "
-	for k,v in pairs(t) do
-		local val
-		if type(v) == "table" then
-			if seen[v] then val = "(recursion)"
-			else
-				seen[v] = true
-				val = dump(v, seen)
-			end
-		elseif type(v) == "string" then
-			if #v > 255 then val = string.format("%q", v:sub(1,252).."...")
-			else val = string.format("%q", v) end
-		elseif type(v) == "number" and math.type(v) == "integer" and (math.abs(v-os.time()) <= 86400) then
-			val = tostring(v) .. "(" .. os.date("%x.%X", v) .. ")"
-		else
-			val = tostring(v)
-		end
-		str = str .. sep .. k .. "=" .. val
-		sep = ", "
-	end
-	str = str .. " }"
-	return str
+    if t == nil then return "nil" end
+    if seen == nil then seen = {} end
+    local sep = ""
+    local str = "{ "
+    for k, v in pairs(t) do
+        local val
+        if type(v) == "table" then
+            if seen[v] then
+                val = "(recursion)"
+            else
+                seen[v] = true
+                val = dump(v, seen)
+            end
+        elseif type(v) == "string" then
+            if #v > 255 then
+                val = string.format("%q", v:sub(1, 252) .. "...")
+            else
+                val = string.format("%q", v)
+            end
+        elseif type(v) == "number" and math.type(v) == "integer" and (math.abs(v - os.time()) <= 86400) then
+            val = tostring(v) .. "(" .. os.date("%x.%X", v) .. ")"
+        else
+            val = tostring(v)
+        end
+        str = str .. sep .. k .. "=" .. val
+        sep = ", "
+    end
+    str = str .. " }"
+    return str
 end
 
 local function L(msg, ...) -- luacheck: ignore 212
-	local str
-	local level = 50
-	if type(msg) == "table" then
-		str = "luws: " .. tostring(msg.msg or msg[1])
-		level = msg.level or level
-	else
-		str = "luws: " .. tostring(msg)
-	end
-	local msgArgs = table.pack(...)
-	str = string.gsub(str, "%%(%d+)", function( n )
-			n = tonumber(n, 10)
-			if n < 1 or n > #msgArgs then return "nil" end
-			local val = msgArgs[n]
-			if type(val) == "table" then
-				return dump(val)
-			elseif type(val) == "string" then
-				return string.format("%q", val)
-			elseif type(val) == "number" and math.abs(val-os.time()) <= 86400 then
-				return tostring(val) .. "(" .. os.date("%x.%X", val) .. ")"
-			end
-			return tostring(val)
-		end
-	)
-	LOG(str, level)
+    local str
+    local level = 50
+    if type(msg) == "table" then
+        str = "luws: " .. tostring(msg.msg or msg[1])
+        level = msg.level or level
+    else
+        str = "luws: " .. tostring(msg)
+    end
+    local msgArgs = table.pack(...)
+    str = string.gsub(str, "%%(%d+)", function(n)
+        n = tonumber(n, 10)
+        if n < 1 or n > #msgArgs then return "nil" end
+        local val = msgArgs[n]
+        if type(val) == "table" then
+            return dump(val)
+        elseif type(val) == "string" then
+            return string.format("%q", val)
+        elseif type(val) == "number" and math.abs(val - os.time()) <= 86400 then
+            return tostring(val) .. "(" .. os.date("%x.%X", val) .. ")"
+        end
+        return tostring(val)
+    end)
+    LOG(str, level)
 end
 
 local function D(msg, ...) if debug_mode then L({msg = msg, prefix = "luws[debug]: "}, ...) end end
@@ -362,32 +365,31 @@ function wsclose(wsconn)
 end
 
 -- Handle a control frame. Caller is given option first.
-local function handle_control_frame( wsconn, opcode, data )
-	D("handle_control_frame(%1,%2,%3)", wsconn, opcode, data )
-	if wsconn.options.control_handler and
-		false == wsconn.options.control_handler( wsconn, opcode, data, unpack(wsconn.options.handler_args or {}) ) then
-		-- If custom handler returns exactly boolean false, don't do default actions
-		return
-	end
-	if opcode == 0x08 then -- close
-		D("handle_control_frame() Received opcode closing: close socket")
-		if not wsconn.closing then
-			wsconn.closing = true
-			wssend( wsconn, 0x08, "" )
-		end
-		-- Notify
-		pcall( wsconn.msghandler, wsconn, false, "receiver error: closed",
-			unpack(wsconn.options.handler_args or {}) )
-	elseif opcode == 0x09 then
-		-- Ping. Reply with pong.
-		D("handle_control_frame() Received ping with data %1, send pong", data)
-		wssend( wsconn, 0x0a, "" )
-	elseif opcode == 0x0a then
-		D("handle_control_frame() Received pong frame with data %1: ignore", data)
-		-- Pong; no action
-	else
-		-- Other unsupported control frame
-	end
+local function handle_control_frame(wsconn, opcode, data)
+    D("handle_control_frame(%1,%2,%3)", wsconn, opcode, data)
+    if wsconn.options.control_handler and false ==
+        wsconn.options.control_handler(wsconn, opcode, data, unpack(wsconn.options.handler_args or {})) then
+        -- If custom handler returns exactly boolean false, don't do default actions
+        return
+    end
+    if opcode == 0x08 then -- close
+        D("handle_control_frame() Received opcode closing: close socket")
+        if not wsconn.closing then
+            wsconn.closing = true
+            wssend(wsconn, 0x08, "")
+        end
+        -- Notify
+        pcall(wsconn.msghandler, wsconn, false, "receiver error: closed", unpack(wsconn.options.handler_args or {}))
+    elseif opcode == 0x09 then
+        -- Ping. Reply with pong.
+        D("handle_control_frame() Received ping with data %1, send pong", data)
+        wssend(wsconn, 0x0a, "")
+    elseif opcode == 0x0a then
+        D("handle_control_frame() Received pong frame with data %1: ignore", data)
+        -- Pong; no action
+    else
+        -- Other unsupported control frame
+    end
 end
 
 -- Take incoming fragment and accumulate into message (or, maybe it's the whole
@@ -464,95 +466,96 @@ end
 -- Handle a block of data. The block does not need to contain an entire message
 -- (or fragment). A series of blocks as small as one byte can be passed and the
 -- message accumulated properly within the protocol.
-local function wshandleincoming( data, wsconn )
-	D("wshandleincoming(<%1 bytes>,%2) in state %3", #data, wsconn, wsconn.readstate)
-	local state = wsconn
-	local ix = 1
-	while ix <= #data do
-		local b = data:byte( ix )
-		-- D("wshandleincoming() at %1/%2 byte %3 (%4) state %5", ix, #data, b, string.format("%02X", b), state.readstate)
-		if state.readstate == STATE_READDATA then
-			-- ??? WHAT ABOUT UNMASKING???
-			-- Performance: this at top; table > string concatenation; handle more than one byte, too.
-			-- D("wshandleincoming() read state, %1 bytes pending, %2 to go in message", #data, state.flen)
-			local nlast = math.min( ix + state.flen - 1, #data )
-			-- D("wshandleincoming() nlast is %1, length accepting %2", nlast, nlast-ix+1)
-			table.insert( state.frag, data:sub( ix, nlast ) )
-			state.flen = state.flen - ( nlast - ix + 1 )
-			if debug_mode and state.flen % 500 == 0 then D("wshandleincoming() accepted, now %1 bytes to go", state.flen) end
-			if state.flen <= 0 then
-				local delta = math.max( timenow() - state.start, 0.001 )
-				D("wshandleincoming() message received, %1 bytes in %2 secs, %3 bytes/sec, %4 chunks", state.size, delta, state.size / delta, #state.frag)
-				local f = state.masked and unmask( state.frag, state.mask ) or table.concat( state.frag, "" )
-				state.frag = nil -- gc eligible
-				state.readstate = STATE_START -- ready for next frame
-				wshandlefragment( state.fin, state.opcode, f, wsconn )
-			end
-			ix = nlast
-		elseif state.readstate == STATE_START then
-			-- D("wshandleincoming() start at %1 byte %2", ix, string.format("%02X", b))
-			state.fin = (b & 128) > 0
-			state.opcode = b & 15
-			state.flen = 0 -- remaining data bytes to receive
-			state.size = 0 -- keep track of original size
-			state.masked = nil
-			state.mask = nil
-			state.masklen = nil
-			state.frag = {}
-			state.readstate = STATE_READLEN1
-			state.start = timenow()
-			-- D("wshandleincoming() start of frame, opcode %1 fin %2", state.opcode, state.fin)
-		elseif state.readstate == STATE_READLEN1 then
-			state.masked = (b & 128) > 0
-			state.flen = b & 127
-			if state.flen == 126 then
-				-- Payload length in 16 bit integer that follows, read 2 bytes (big endian)
-				state.readstate = STATE_READLEN161
-			elseif state.flen == 127 then
-				-- 64-bit length (unsupported, ignore message)
-				L{level=2,msg="Ignoring 64-bit length frame, not supported"}
-				state.readstate = STATE_SYNC
-			else
-				-- 7-bit payload length
-				-- D("wshandleincoming() short length, expecting %1 byte payload", state.flen)
-				state.size = state.flen
-				if state.flen > 0 then
-					-- Transition to reading data.
-					state.readstate = state.masked and STATE_READMASK or STATE_READDATA
-				else
-					-- No data with this opcode, process and return to start state.
-					wshandlefragment( state.fin, state.opcode, "", wsconn )
-					state.readstate = STATE_START
-				end
-			end
-			-- D("wshandleincoming() opcode %1 len %2 next state %3", state.opcode, state.flen, state.readstate)
-		elseif state.readstate == STATE_READLEN161 then
-			state.flen = b * 256
-			state.readstate = STATE_READLEN162
-		elseif state.readstate == STATE_READLEN162 then
-			state.flen = state.flen + b
-			state.size = state.flen
-			state.readstate = state.masked and STATE_READMASK or STATE_READDATA
-			-- D("wshandleincoming() finished 16-bit length read, expecting %1 byte payload", state.size)
-		elseif state.readstate == STATE_READMASK then
-			-- ??? According to RFC6455, we MUST error and close for masked data from server [5.1]
-			if not state.mask then
-				state.mask = { b }
-			else
-				table.insert( state.mask, b )
-				if #state.mask >= 4 then
-					state.readstate = STATE_READDATA
-				end
-			end
-			-- D("wshandleincoming() received %1 mask bytes, now %2", state.masklen, state.mask)
-		elseif state.readstate == STATE_SYNC then
-			return pcall( state.msghandler, wsconn, false, "lost sync", unpack(wsconn.options.handler_args or {}) )
-		else
-			assert(false, "Invalid state in wshandleincoming: "..tostring(state.readstate))
-		end
-		ix = ix + 1
-	end
-	D("wshandleincoming() ending state is %1", state.readstate)
+local function wshandleincoming(data, wsconn)
+    D("wshandleincoming(<%1 bytes>,%2) in state %3", #data, wsconn, wsconn.readstate)
+    local state = wsconn
+    local ix = 1
+    while ix <= #data do
+        local b = data:byte(ix)
+        -- D("wshandleincoming() at %1/%2 byte %3 (%4) state %5", ix, #data, b, string.format("%02X", b), state.readstate)
+        if state.readstate == STATE_READDATA then
+            -- ??? WHAT ABOUT UNMASKING???
+            -- Performance: this at top; table > string concatenation; handle more than one byte, too.
+            -- D("wshandleincoming() read state, %1 bytes pending, %2 to go in message", #data, state.flen)
+            local nlast = math.min(ix + state.flen - 1, #data)
+            -- D("wshandleincoming() nlast is %1, length accepting %2", nlast, nlast-ix+1)
+            table.insert(state.frag, data:sub(ix, nlast))
+            state.flen = state.flen - (nlast - ix + 1)
+            if debug_mode and state.flen % 500 == 0 then
+                D("wshandleincoming() accepted, now %1 bytes to go", state.flen)
+            end
+            if state.flen <= 0 then
+                local delta = math.max(timenow() - state.start, 0.001)
+                D("wshandleincoming() message received, %1 bytes in %2 secs, %3 bytes/sec, %4 chunks", state.size,
+                  delta, state.size / delta, #state.frag)
+                local f = state.masked and unmask(state.frag, state.mask) or table.concat(state.frag, "")
+                state.frag = nil -- gc eligible
+                state.readstate = STATE_START -- ready for next frame
+                wshandlefragment(state.fin, state.opcode, f, wsconn)
+            end
+            ix = nlast
+        elseif state.readstate == STATE_START then
+            -- D("wshandleincoming() start at %1 byte %2", ix, string.format("%02X", b))
+            state.fin = (b & 128) > 0
+            state.opcode = b & 15
+            state.flen = 0 -- remaining data bytes to receive
+            state.size = 0 -- keep track of original size
+            state.masked = nil
+            state.mask = nil
+            state.masklen = nil
+            state.frag = {}
+            state.readstate = STATE_READLEN1
+            state.start = timenow()
+            -- D("wshandleincoming() start of frame, opcode %1 fin %2", state.opcode, state.fin)
+        elseif state.readstate == STATE_READLEN1 then
+            state.masked = (b & 128) > 0
+            state.flen = b & 127
+            if state.flen == 126 then
+                -- Payload length in 16 bit integer that follows, read 2 bytes (big endian)
+                state.readstate = STATE_READLEN161
+            elseif state.flen == 127 then
+                -- 64-bit length (unsupported, ignore message)
+                L {level = 2, msg = "Ignoring 64-bit length frame, not supported"}
+                state.readstate = STATE_SYNC
+            else
+                -- 7-bit payload length
+                -- D("wshandleincoming() short length, expecting %1 byte payload", state.flen)
+                state.size = state.flen
+                if state.flen > 0 then
+                    -- Transition to reading data.
+                    state.readstate = state.masked and STATE_READMASK or STATE_READDATA
+                else
+                    -- No data with this opcode, process and return to start state.
+                    wshandlefragment(state.fin, state.opcode, "", wsconn)
+                    state.readstate = STATE_START
+                end
+            end
+            -- D("wshandleincoming() opcode %1 len %2 next state %3", state.opcode, state.flen, state.readstate)
+        elseif state.readstate == STATE_READLEN161 then
+            state.flen = b * 256
+            state.readstate = STATE_READLEN162
+        elseif state.readstate == STATE_READLEN162 then
+            state.flen = state.flen + b
+            state.size = state.flen
+            state.readstate = state.masked and STATE_READMASK or STATE_READDATA
+            -- D("wshandleincoming() finished 16-bit length read, expecting %1 byte payload", state.size)
+        elseif state.readstate == STATE_READMASK then
+            -- ??? According to RFC6455, we MUST error and close for masked data from server [5.1]
+            if not state.mask then
+                state.mask = {b}
+            else
+                table.insert(state.mask, b)
+                if #state.mask >= 4 then state.readstate = STATE_READDATA end
+            end
+            -- D("wshandleincoming() received %1 mask bytes, now %2", state.masklen, state.mask)
+        elseif state.readstate == STATE_SYNC then
+            return pcall(state.msghandler, wsconn, false, "lost sync", unpack(wsconn.options.handler_args or {}))
+        else
+            assert(false, "Invalid state in wshandleincoming: " .. tostring(state.readstate))
+        end
+        ix = ix + 1
+    end
+    D("wshandleincoming() ending state is %1", state.readstate)
 end
 
 -- Receiver task. Use non-blocking read. Returns nil,err on error, otherwise true/false is the
@@ -566,34 +569,30 @@ function wsreceive(wsconn)
 	                special handling of special characters, including 0 bytes, CR, LF, etc. We want
 	                the available data completely unmolested.
 	--]]
-	local nb,err,bb = wsconn.socket:receive( wsconn.options.receive_chunk_size or CHUNKSIZE )
-	if nb == nil then
-		if err == "timeout" or err == "wantread" then
-			if bb and #bb > 0 then
-				D("wsreceive() %1; handling partial result %2 bytes", err, #bb)
-				wshandleincoming( bb, wsconn )
-				return false, #bb -- timeout, say no more data
-			elseif wsconn.options.receive_timeout > 0 and
-				( timenow() - wsconn.lastMessage ) > wsconn.options.receive_timeout then
-				D("wsreceive() message timeout after %1s", wsconn.options.receive_timeout)
-				pcall( wsconn.msghandler, wsconn, false, "message timeout",
-					unpack(wsconn.options.handler_args or {}) )
-				return nil, "message timeout"
-			end
-			D("wsreceive() no data received, err=%1, byte count=%2", err, #bb)
-			return false, 0 -- not error, no data was handled
-		end
-		-- ??? error
-		D("wsreceive() Unexpected error %1 when calling socket:receive()", err)
-		pcall( wsconn.msghandler, wsconn, false, "receiver error: "..err,
-			unpack(wsconn.options.handler_args or {}) )
-		return nil, err
-	end
-	D("wsreceive() handling %1 bytes", #nb)
-	if #nb > 0 then
-		wshandleincoming( nb, wsconn )
-	end
-	return #nb > 0, #nb -- data handled, maybe more?
+    local nb, err, bb = wsconn.socket:receive(wsconn.options.receive_chunk_size or CHUNKSIZE)
+    if nb == nil then
+        if err == "timeout" or err == "wantread" then
+            if bb and #bb > 0 then
+                D("wsreceive() %1; handling partial result %2 bytes", err, #bb)
+                wshandleincoming(bb, wsconn)
+                return false, #bb -- timeout, say no more data
+            elseif wsconn.options.receive_timeout > 0 and (timenow() - wsconn.lastMessage) >
+                wsconn.options.receive_timeout then
+                D("wsreceive() message timeout after %1s", wsconn.options.receive_timeout)
+                pcall(wsconn.msghandler, wsconn, false, "message timeout", unpack(wsconn.options.handler_args or {}))
+                return nil, "message timeout"
+            end
+            D("wsreceive() no data received, err=%1, byte count=%2", err, #bb)
+            return false, 0 -- not error, no data was handled
+        end
+        -- ??? error
+        D("wsreceive() Unexpected error %1 when calling socket:receive()", err)
+        pcall(wsconn.msghandler, wsconn, false, "receiver error: " .. err, unpack(wsconn.options.handler_args or {}))
+        return nil, err
+    end
+    D("wsreceive() handling %1 bytes", #nb)
+    if #nb > 0 then wshandleincoming(nb, wsconn) end
+    return #nb > 0, #nb -- data handled, maybe more?
 end
 
 -- Reset receiver state. Brutal resync; may or may not be usable, but worth having the option.

@@ -42,15 +42,14 @@ function M:connect(sourcename, username, password)
                                   "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
                                   {error = tostring(err)})
         else
-            err = exaerror.create("E-EDL-16", "Login failed: {{error}}",
-                                  {error = tostring(err)})
+            err = exaerror.create("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
         end
         err:add_mitigations("Check the credentials you provided.")
         log.warn("%s", err)
         return nil, err
     end
-    log.trace("Connected to Exasol %s, maximum message size: %d bytes",
-              response.releaseVersion, response.maxDataMessageSize)
+    log.trace("Connected to Exasol %s, maximum message size: %d bytes", response.releaseVersion,
+              response.maxDataMessageSize)
     local session_id = response.sessionId
     local conn = connection:create(socket, session_id)
     self.connections[session_id] = conn
