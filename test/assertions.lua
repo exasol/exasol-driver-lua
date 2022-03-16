@@ -41,7 +41,7 @@ function M.assert_matches_one_of(value, patterns)
         end
     end
     luaunit.fail("Value '" .. value .. "' matched none of the " .. #patterns .. " patterns: " ..
-                     table.concat(patterns, ", "))
+                         table.concat(patterns, ", "))
 end
 
 return M

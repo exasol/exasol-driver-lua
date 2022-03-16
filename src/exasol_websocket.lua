@@ -14,7 +14,7 @@ local function create(websocket)
 end
 
 function M.connect(url)
-    local websocket = raw_websocket.connect(url)
+    local websocket<const> = raw_websocket.connect(url)
     return create(websocket)
 end
 
@@ -29,7 +29,10 @@ function M:send_login_credentials(username, encrypted_password)
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
 end
 
-function M:send_execute(statement) return self:_send_json({command = "execute", sqlText = statement, attributes = {}}) end
+function M:send_execute(statement)
+    local payload = {command = "execute", sqlText = statement, attributes = {}}
+    return self:_send_json(payload)
+end
 
 local function get_response_error(response)
     if response.status == "ok" then return nil end

@@ -18,8 +18,8 @@ function M:handle_data(conn, opcode, message)
         return
     end
     if not self.expecting_data then
-        log.warn(exaerror.create("E-EDL-5",
-                                 "Not expecting data from websocket but received message with opcode {{opcode}} and data {{message}}",
+        log.warn(exaerror.create("E-EDL-5", "Not expecting data from websocket but received message " ..
+                                         "with opcode {{opcode}} and data {{message}}",
                                  {opcode = opcode, message = message}):add_ticket_mitigation())
         return
     end

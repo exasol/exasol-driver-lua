@@ -17,7 +17,7 @@ function M:new()
 end
 
 local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
-    local rsa = pkey.new {type = "RSA", bits = 1024}
+    local rsa = pkey.new({type = "RSA", bits = 1024})
     local modulus = bignum.new("0x" .. publicKeyModulus)
     local exponent = bignum.new("0x" .. publicKeyExponent)
     rsa:setParameters({n = modulus, e = exponent})

@@ -20,12 +20,12 @@ function M:execute(statement)
     local result, err = self.websocket:send_execute(statement)
     if err then
         return nil, exaerror.create("E-EDL-6", "Error executing statement {{statement}}: {{error|uq}}",
-                                    {statement = statement, error = tostring(err)});
+                                    {statement = statement, error = tostring(err)})
     end
     local num_results = result.numResults
     if num_results == 0 then
-        exaerror.create("E-EDL-7", "Got no results for statement '{{statement}}'", {statement = statement}):add_ticket_mitigation()
-            :raise()
+        local args = {statement = statement}
+        exaerror.create("E-EDL-7", "Got no results for statement '{{statement}}'", args):add_ticket_mitigation():raise()
     end
     if num_results > 1 then
         exaerror.create("E-EDL-8",
@@ -36,8 +36,8 @@ function M:execute(statement)
     local result_type = first_result.resultType
     if result_type == "rowCount" then return first_result.rowCount, nil end
     if result_type ~= "resultSet" then
-        exaerror.create("E-EDL-9", "Got unexpected result type {{resultType}}", {resultType = result_type}):add_ticket_mitigation()
-            :raise()
+        local args = {resultType = result_type}
+        exaerror.create("E-EDL-9", "Got unexpected result type {{resultType}}", args):add_ticket_mitigation():raise()
     end
     local cur = cursor:create(self.websocket, self.session_id, first_result.resultSet)
     table.insert(self.cursors, cur)

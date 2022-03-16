@@ -32,7 +32,7 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
             remaining_retries = remaining_retries - 1
             log.warn(tostring(exaerror.create("W-EDL-15",
                                               "Websocket connection to {{url}} failed with error {{error}}, " ..
-                                                  "remaining retries: {{remaining_retries}}",
+                                                      "remaining retries: {{remaining_retries}}",
                                               {url = url, error = err, remaining_retries = remaining_retries})))
             return connect_with_retry(url, websocket_options, remaining_retries)
         end
@@ -56,7 +56,7 @@ function M:wait_for_response(timeout_seconds)
         local result, err = wsreceive(self.websocket)
         if type(err) == "string" then
             local wrapped_error = exaerror.create("E-EDL-4", "Error receiving data while waiting for response " ..
-                                                      "for {{waiting_time}}s: {{error}}",
+                                                          "for {{waiting_time}}s: {{error}}",
                                                   {error = err, waiting_time = os.clock() - start})
             wrapped_error.cause = err
             log.error(tostring(wrapped_error))
@@ -92,7 +92,8 @@ function M:send_raw(payload, ignore_response)
             return self.data_handler:get_data(), nil
         end
     else
-        exaerror.create("E-EDL-3", "Error sending payload {{payload}}: {{error}}", {payload = payload, error = err}):raise()
+        local args = {payload = payload, error = err}
+        exaerror.create("E-EDL-3", "Error sending payload {{payload}}: {{error}}", args):raise()
     end
 end
 

@@ -17,8 +17,8 @@ end
 
 function TestCursor:test_query_fails()
     self.assertions:assert_execute_fails("select", "E%-EDL%-6: Error executing statement 'select': E%-EDL%-10: " ..
-                                             "Received DB status 'error' with code 42000: 'syntax error, " ..
-                                             "unexpected ';' %[line 1, column 7%] %(Session: %d+%)'")
+                                                 "Received DB status 'error' with code 42000: 'syntax error, " ..
+                                                 "unexpected ';' %[line 1, column 7%] %(Session: %d+%)'")
 end
 
 function TestCursor:test_select_single_column_single_row() self.assertions:assert_rows("select 1", {{1}}) end
