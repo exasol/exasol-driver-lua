@@ -41,7 +41,7 @@ function M:connect(sourcename, username, password)
     if err then
         if err.cause == "closed" then
             err = exaerror.create("E-EDL-19",
-                                  "Login failed because socket is closed. Probably credentials where wrong: {{error}}",
+                                  "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
                                   {error = tostring(err)})
         else
             err = exaerror.create("E-EDL-16", "Login failed: {{error}}",
