@@ -63,7 +63,7 @@ function TestConnection:test_login_fails()
                                    test.props.password)
         assertions.assert_matches_one_of(tostring(err), {
             "^E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: " ..
-                "'Connection exception %- authentication failed%.''$",
+                "'Connection exception %- authentication failed%.''.*",
             "^E%-EDL%-19: Login failed because socket is closed.*"
         })
     end

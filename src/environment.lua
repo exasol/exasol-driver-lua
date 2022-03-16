@@ -47,6 +47,7 @@ function M:connect(sourcename, username, password)
             err = exaerror.create("E-EDL-16", "Login failed: {{error}}",
                                   {error = tostring(err)})
         end
+        err:add_mitigations("Check the credentials you provided.")
         log.warn("%s", err)
         return nil, err
     end

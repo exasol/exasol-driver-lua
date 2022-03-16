@@ -10,8 +10,12 @@ function M:create()
     return object
 end
 
+local function is_websocket_error(opcode)
+    return type(opcode) == "boolean" and opcode == false
+end
+
 function M:handle_data(conn, opcode, message)
-    if opcode == false then
+    if is_websocket_error(opcode) then
         log.warn("Received error from websocket connection %s: '%s'", conn,
                  message)
         return
