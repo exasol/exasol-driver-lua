@@ -57,3 +57,11 @@ The following environment variables have a default value and can be omitted:
 * `EXASOL_PASSWORD` = `exasol`
 
 You can enable tracing by setting environment variable `LOG_LEVEL=TRACE`.
+
+To run a single test:
+
+```sh
+export LUA_PATH="./src/?.lua;./test/?.lua;$(luarocks path --lr-path)"
+export EXASOL_HOST=<host>
+lua test/itest_connection.lua
+```

@@ -8,6 +8,6 @@ Code name: Initial Release
 
 * #1: Setup initial project
 
-## Known Issues
+## Bugfixes
 
-* #16: Websocket connection fails sporadically with error `E-EDL-2: Did not receive response for payload. Username or password may be wrong.`.
+* #16: Fixed sporadic Websocket connection errors

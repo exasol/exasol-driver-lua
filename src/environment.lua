@@ -4,6 +4,9 @@ local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
 local log = require("remotelog")
+local exaerror = require("exaerror")
+
+local WEBSOCKET_PROTOCOL = "wss"
 
 local M = {}
 function M:new()
@@ -33,15 +36,27 @@ local function login(socket, username, password)
 end
 
 function M:connect(sourcename, username, password)
-    local websocket_options = {receive_timeout = 3}
-    local socket = websocket.connect("wss://" .. sourcename, websocket_options)
-    local response = login(socket, username, password)
+    local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
+    local response, err = login(socket, username, password)
+    if err then
+        if err.cause == "closed" then
+            err = exaerror.create("E-EDL-19",
+                                  "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
+                                  {error = tostring(err)})
+        else
+            err = exaerror.create("E-EDL-16", "Login failed: {{error}}",
+                                  {error = tostring(err)})
+        end
+        err:add_mitigations("Check the credentials you provided.")
+        log.warn("%s", err)
+        return nil, err
+    end
     log.trace("Connected to Exasol %s, maximum message size: %d bytes",
               response.releaseVersion, response.maxDataMessageSize)
     local session_id = response.sessionId
     local conn = connection:create(socket, session_id)
     self.connections[session_id] = conn
-    return conn
+    return conn, nil
 end
 
 function M:close()

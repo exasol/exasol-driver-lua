@@ -15,12 +15,8 @@ local log = require("remotelog")
 --
 -- @return created object
 --
-function M.exasol(options)
-    options = options or {}
-    local log_level = string.upper(options.log_level) or "INFO"
-    log.init().set_level(log_level)
-    log.set_client_name("Exasol driver for Lua")
-    log.trace("Created new luasql.exasol environment, log level = %s", log_level)
+function M.exasol()
+    log.trace("Created new luasql.exasol environment")
     return environment:new()
 end
 
