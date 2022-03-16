@@ -36,7 +36,9 @@ end
 
 function M.create_environment()
     local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
-    if log_level == "TRACE" then enable_luws_trace_log() end
+    if log_level == "TRACE" then
+        enable_luws_trace_log()
+    end
     log.set_level(log_level)
     return driver.exasol()
 end

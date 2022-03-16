@@ -23,11 +23,15 @@ function TestConnection:test_connection_fails()
     local real_connection = config.get_connection_params()
     local tests = {
         {
-            props = config.get_connection_params({host = "invalid", port = "1234"}),
+            props = config.get_connection_params({
+                host = "invalid",
+                port = "1234"
+            }),
             expected_error_pattern = ".*E%-EDL%-1: Error connecting to 'wss://invalid:1234': .*"
         }, {
             props = config.get_connection_params({port = "1234"}),
-            expected_error_pattern = ".*E%-EDL%-1: Error connecting to 'wss://" .. real_connection.host .. ":1234': .*"
+            expected_error_pattern = ".*E%-EDL%-1: Error connecting to 'wss://" ..
+                real_connection.host .. ":1234': .*"
         }
     }
     for _, test in ipairs(tests) do
@@ -49,6 +53,25 @@ function TestConnection:test_login_fails()
         table.insert(self.environments, env)
         local sourcename = test.props.host .. ":" .. test.props.port
         local _, err = env:connect(sourcename, test.props.user, test.props.password)
+        assertions.assert_matches_one_of(tostring(err), {
+            "^E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: " ..
+                "'Connection exception %- authentication failed%.''.*",
+            "^E%-EDL%-19: Login failed because socket is closed.*"
+        })
+    end
+end
+
+function TestConnection:test_login_fails()
+    local tests = {
+        {props = config.get_connection_params({user = "unknownUser"})},
+        {props = config.get_connection_params({password = "wrong password"})}
+    }
+    for _, test in ipairs(tests) do
+        local env = config.create_environment()
+        table.insert(self.environments, env)
+        local sourcename = test.props.host .. ":" .. test.props.port
+        local _, err = env:connect(sourcename, test.props.user,
+                                   test.props.password)
         assertions.assert_matches_one_of(tostring(err), {
             "^E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: " ..
                 "'Connection exception %- authentication failed%.''.*",
