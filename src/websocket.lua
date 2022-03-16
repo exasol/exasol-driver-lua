@@ -86,8 +86,11 @@ function M:send_raw(payload, ignore_response)
         end
         err = self:wait_for_response(RECEIVE_TIMEOUT_SECONDS)
         self.data_handler:expected_data_received()
-        if err then return nil, err end
-        return self.data_handler:get_data(), nil
+        if err then
+            return nil, err
+        else
+            return self.data_handler:get_data(), nil
+        end
     else
         exaerror.create("E-EDL-3", "Error sending payload {{payload}}: {{error}}", {payload = payload, error = err}):raise()
     end
