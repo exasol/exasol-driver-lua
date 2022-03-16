@@ -8,8 +8,8 @@ function TestSmokeTest:test_version() luaunit.assertEquals(driver.VERSION, "0.1.
 function TestSmokeTest:test_connection_fails()
     local env = driver.exasol({log_level = "TRACE"})
     luaunit.assertErrorMsgMatches(
-        ".*E%-EDL%-1: Error connecting to 'wss://wronghost:1234':.*",
-        function() env:connect("wronghost:1234", "user", "password") end)
+        ".*E%-EDL%-1: Error connecting to 'wss://invalid:1234':.*",
+        function() env:connect("invalid:1234", "user", "password") end)
     env:close()
 end
 
