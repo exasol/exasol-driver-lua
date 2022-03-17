@@ -1,43 +1,67 @@
 @startuml seq_close
 !include ../clean.skin
 
-title: Closing Connection
+title: Closing the Database Connection
 
 participant "Client Code" as client <<external>>
-participant Environment as env
-participant Connection as conn
-participant Cursor as cur
-participant Websocket as ws
+box "Exasol Driver for Lua"
+    participant Environment as env << (C,#ADD1B2) >>
+    participant Connection as conn << (C,#ADD1B2) >>
+    participant Cursor as cur << (C,#ADD1B2) >>
+    participant ExasolWebsocket as exaws << (C,#ADD1B2) >>
+    participant Websocket as ws << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
 participant "Exasol Database" as db
 
 activate client
 activate env
 activate conn
 activate cur
+activate exaws
 activate ws
+activate luws
 activate db
 
 client -> env : close()
-env -> conn : close()
-note left: Close all connections
-conn -> cur : close()
-note left: Close all cursors
-alt Cursor with resultset
-    cur -> ws : closeResultSet
-    ws -> db : closeResultSet
-    db --> ws
-    ws --> cur
+loop for all connections
+    env -> conn : close()
+    loop for all cursors
+        conn -> cur : close()
+        alt Cursor with\nresultset
+            cur -> exaws : send_close_\nresultset()
+            exaws -> ws : send_raw(payload)
+            ws -> luws : wssend(socket,\npayload)
+            luws -> db
+            db --> luws
+            luws --> ws
+            ws --> exaws
+            exaws --> cur
+        end
+        cur --> conn
+        destroy cur
+    end
+    conn -> exaws : send_disconnect()
+    exaws -> ws : send_raw(payload)
+    ws -> luws : wssend(socket,\npayload)
+    luws -> db
+    db --> luws
+    luws --> ws
+    ws --> exaws
+    exaws --> conn
+    conn -> exaws : close()
+    exaws -> ws : close()
+    ws -> luws : wsclose(socket)
+    luws -> luws : Close socket
+    destroy luws
+    luws --> ws
+    ws --> exaws
+    destroy ws
+    exaws --> conn
+    destroy exaws
+    conn --> env
+    destroy conn
 end
-cur --> conn
-destroy cur
-conn -> ws : disconnect
-ws -> db : disconnect
-db --> ws
-ws --> conn
-conn -> ws : close socket
-destroy ws
-conn --> env
-destroy conn
 env --> client
 destroy env
 

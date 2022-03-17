@@ -3,6 +3,7 @@ local M = {}
 -- luacheck: globals wsopen wssend wsreceive wsclose
 require("luws")
 local exaerror = require("exaerror")
+-- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
 

@@ -1,3 +1,4 @@
+-- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
 local cursor = require("cursor")

@@ -14,43 +14,62 @@ end box
 participant "Exasol Database" as db
 
 activate client
-activate conn
-activate exaws
-activate ws
 activate db
 
 group Initial Connection
     ?-> ws : connect(url)
     create msghandler
-    ws -> msghandler : Create
-    activate msghandler
-
+    ws -> msghandler : create()
     ws -> luws : wsopen(url, message_handler)
+    activate luws
     luws --> ws : Socket
+    deactivate luws
 end
 
 client -> conn : execute()
+activate conn
 conn -> exaws : send_execute()
+activate exaws
 exaws -> exaws : Encode JSON payload
 exaws -> ws : send_raw(json_payload)
+activate ws
 ws -> luws : wssend(socket, payload)
+activate luws
 luws -> luws : Encode\nWebsocket frame
 luws -> db : socket:send()
+activate db
+luws --> ws
+deactivate luws
 group Wait for response
+    db -> db : Process statement
     loop until data received
         ws -> luws : wsreceive(socket)
+        activate luws
         luws --> ws
+        deactivate luws
     end
-    db -> luws
+    db -> luws: Response
+    deactivate db
+    activate luws
     luws -> luws : Decode\nWebsocket frame
     luws -> msghandler : Message received
+    activate msghandler
+    msghandler -> msghandler : Store message
+    msghandler --> luws
+    deactivate msghandler
+    deactivate luws
 end
 
 ws -> msghandler : get_data()
+activate msghandler
 msghandler --> ws
+deactivate msghandler
 ws --> exaws : Response payload
-exaws -> exaws : Decode JSON payload\nCheck for exception
+deactivate ws
+exaws -> exaws : Decode JSON payload,\ncheck for exception
 exaws --> conn : result set
+deactivate exaws
 conn --> client : cursor
+deactivate conn
 
 @enduml

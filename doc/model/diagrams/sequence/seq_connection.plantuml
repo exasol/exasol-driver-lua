@@ -12,37 +12,46 @@ participant Websocket as ws << (C,#ADD1B2) >>
 end box
 participant "Exasol Database" as db
 
+activate client
 activate db
 client -> entry: exasol()
+activate entry
 create env
-entry -> env: Create
-activate env
+entry -> env: create()
 client <-- entry: Environment
-client -> env: connect()
+deactivate entry
+client -> env: connect(url, user, password)
+activate env
 ' [dsn -> req~connect-with-username-password~1 >> impl,utest,itest]
 create ws
-env -> ws: Connect
+env -> ws: connect(url)
 activate ws
 ws -> db: Connect
+db --> ws
+ws --> env
+deactivate ws
 group Login
     env -> ws: Login command
+    activate ws
     group Websocket Request/Response
         note over ws: See details in separate diagram
         ws -> db: Login command
         db --> ws: Login response
     end
-    ws --> env: Login response incl. public key
-    env -> env: Encrypt password with public key
-    env -> ws: Username and encrypted password
-    ws -> db: Username and encrypted password
+    ws --> env
+    deactivate ws
+    env -> env: Encrypt password\nwith public key
+    env -> ws: send_login_credentials(username,\nencrypted_password)
+    activate ws
+    ws -> db
     db -> db: Validate credentials
-    db --> ws: Session ID
-    ws --> env: Session ID
+    db --> ws
+    ws --> env
+    deactivate ws
     create conn
-    env -> conn: Create with Session ID
-    activate conn
+    env -> conn: create(session_id)
 end
-activate conn
-client <-- env: Connection
-
+client <-- env: connection
+deactivate env
+ref over client, conn: Use connection, e.g. connection:execute(statement)
 @enduml
