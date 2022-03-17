@@ -13,8 +13,7 @@ end
 local function get_system_env(varname, default)
     local value = get_optional_system_env(varname, default)
     if value == nil and default == nil then
-        error("Environment variable '" .. varname ..
-                  "' required for test is not defined")
+        error("Environment variable '" .. varname .. "' required for test is not defined")
     end
     return value
 end
@@ -25,8 +24,7 @@ function M.get_connection_params(override)
         host = override.host or get_system_env("EXASOL_HOST"),
         port = override.port or get_system_env("EXASOL_PORT", "8563"),
         user = override.user or get_system_env("EXASOL_USER", "sys"),
-        password = override.password or
-            get_system_env("EXASOL_PASSWORD", "exasol"),
+        password = override.password or get_system_env("EXASOL_PASSWORD", "exasol"),
         fingerprint = override.fingerprint or nil
     }
 end
@@ -38,9 +36,7 @@ end
 
 function M.create_environment()
     local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
-    if log_level == "TRACE" then
-        enable_luws_trace_log()
-    end
+    if log_level == "TRACE" then enable_luws_trace_log() end
     log.set_level(log_level)
     return driver.exasol()
 end

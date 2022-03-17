@@ -3,7 +3,7 @@ local luaunit = require("luaunit")
 local M = {}
 
 function M:new(connection)
-    local object = { connection = connection }
+    local object = {connection = connection}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -11,10 +11,7 @@ end
 
 local function execute(connection, statement)
     local cursor, err = connection:execute(statement)
-    if err then
-        luaunit.fail("Expected statement '" .. statement ..
-        "' to succeed but got error " .. tostring(err))
-    end
+    if err then luaunit.fail("Expected statement '" .. statement .. "' to succeed but got error " .. tostring(err)) end
     luaunit.assertNotNil(cursor, "Cursor nil after executing statement" .. statement)
     return cursor
 end
@@ -30,8 +27,8 @@ end
 function M:assert_execute_fails(statement, expected_error_pattern)
     local cursor, err = self.connection:execute(statement)
     err = tostring(err)
-    luaunit.assertStrMatches(tostring(err), expected_error_pattern, 1, #err, "error after executing statement "
-                                                                            .. statement)
+    luaunit.assertStrMatches(tostring(err), expected_error_pattern, 1, #err,
+                             "error after executing statement " .. statement)
     luaunit.assertNil(cursor, "cursor is not nil")
 end
 
@@ -43,8 +40,8 @@ function M.assert_matches_one_of(value, patterns)
             print("Pattern '" .. pattern .. "' does not match '" .. value .. "'")
         end
     end
-    luaunit.fail("Value '" .. value .. "' matched none of the " .. #patterns ..
-    " patterns: " .. table.concat(patterns, ", "))
+    luaunit.fail("Value '" .. value .. "' matched none of the " .. #patterns .. " patterns: " ..
+                         table.concat(patterns, ", "))
 end
 
 return M
