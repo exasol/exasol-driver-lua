@@ -6,7 +6,7 @@ local log = require("remotelog")
 local raw_websocket = require("websocket")
 
 local function create(websocket)
-    local object = { websocket = websocket }
+    local object = {websocket = websocket}
     object.closed = false
     M.__index = M
     setmetatable(object, M)
