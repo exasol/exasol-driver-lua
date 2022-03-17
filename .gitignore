@@ -28,5 +28,6 @@
 *.md.html
 
 # PlantUML diagrams
+/doc/model/diagrams/**/*.svg
 /doc/model/diagrams/**/*.png
 /doc/model/diagrams/**/*.cmapx

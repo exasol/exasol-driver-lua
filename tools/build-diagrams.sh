@@ -14,9 +14,9 @@ readonly diagrams_dir="$base_dir/doc/model/diagrams"
 expected_diagram_count=$(find "$diagrams_dir" -name "*.plantuml" | wc --lines)
 readonly expected_diagram_count
 
-plantuml -tpng -failonerror -failonwarn -failfast2 -verbose "$diagrams_dir/**/*.plantuml"
+plantuml -tsvg -failonerror -failonwarn -failfast2 -verbose "$diagrams_dir/**/*.plantuml"
 
-actual_diagram_count=$(find "$diagrams_dir" -name "*.png" | wc --lines)
+actual_diagram_count=$(find "$diagrams_dir" -name "*.svg" | wc --lines)
 readonly actual_diagram_count
 
 if [ "$expected_diagram_count" -ne "$actual_diagram_count" ]; then
