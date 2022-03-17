@@ -1,0 +1,56 @@
+@startuml seq_websocket_request_response
+!include ../clean.skin
+
+title: Detailed Websocket Request and Response\n(Example request: execute statement)
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant "Connection" as conn << (C,#ADD1B2) >>
+    participant "ExasolWebsocket" as exaws << (C,#ADD1B2) >>
+    participant "Websocket" as ws << (C,#ADD1B2) >>
+    participant "Message Handler" as msghandler << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
+participant "Exasol Database" as db
+
+activate client
+activate conn
+activate exaws
+activate ws
+activate db
+
+group Initial Connection
+    ?-> ws : connect(url)
+    create msghandler
+    ws -> msghandler : Create
+    activate msghandler
+
+    ws -> luws : wsopen(url, message_handler)
+    luws --> ws : Socket
+end
+
+client -> conn : execute()
+conn -> exaws : send_execute()
+exaws -> exaws : Encode JSON payload
+exaws -> ws : send_raw(json_payload)
+ws -> luws : wssend(socket, payload)
+luws -> luws : Encode\nWebsocket frame
+luws -> db : socket:send()
+group Wait for response
+    loop until data received
+        ws -> luws : wsreceive(socket)
+        luws --> ws
+    end
+    db -> luws
+    luws -> luws : Decode\nWebsocket frame
+    luws -> msghandler : Message received
+end
+
+ws -> msghandler : get_data()
+msghandler --> ws
+ws --> exaws : Response payload
+exaws -> exaws : Decode JSON payload\nCheck for exception
+exaws --> conn : result set
+conn --> client : cursor
+
+@enduml

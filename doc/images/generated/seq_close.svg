@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="539px" preserveAspectRatio="none" style="width:715px;height:539px;background:#FFFFFF;" version="1.1" viewBox="0 0 715 539" width="715px" zoomAndPan="magnify"><defs/><g><rect height="30.4883" style="stroke:#00000000;stroke-width:1.0;fill:none;" width="155" x="281.75" y="10"/><text fill="#000000" font-family="Calibri" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="141" x="288.75" y="30.5352">Closing Connection</text><rect fill="#FFFFFF" height="414.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="58" y="108.4648"/><rect fill="#FFFFFF" height="405.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="169.5" y="108.4648"/><rect fill="#FFFFFF" height="391.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="280.5" y="108.4648"/><rect fill="#FFFFFF" height="249.8184" style="stroke:#181818;stroke-width:1.0;" width="10" x="371.5" y="108.4648"/><rect fill="#FFFFFF" height="377.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="500.5" y="108.4648"/><rect fill="#FFFFFF" height="414.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="629.5" y="108.4648"/><rect height="117.8867" style="stroke:#000000;stroke-width:1.5;fill:none;" width="375.5" x="334" y="227.3965"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="63" x2="63" y1="98.4648" y2="532.2148"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="174" x2="174" y1="98.4648" y2="532.2148"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="285" x2="285" y1="98.4648" y2="532.2148"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="376" x2="376" y1="98.4648" y2="532.2148"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="505" x2="505" y1="98.4648" y2="532.2148"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="634.5" x2="634.5" y1="98.4648" y2="532.2148"/><rect fill="#E2E2F0" height="50.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="98" x="14" y="46.4883"/><text fill="#000000" font-family="Calibri" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="71" x="27.5" y="69.0234">«external»</text><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="80" x="23" y="85.5117">Client Code</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="105" x="122" y="62.9766"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="87" x="131" y="85.5117">Environment</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="97" x="237" y="62.9766"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="79" x="246" y="85.5117">Connection</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="65" x="344" y="62.9766"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="47" x="353" y="85.5117">Cursor</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="91" x="460" y="62.9766"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="73" x="469" y="85.5117">Websocket</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="130" x="569.5" y="62.9766"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="112" x="578.5" y="85.5117">Exasol Database</text><rect fill="#FFFFFF" height="414.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="58" y="108.4648"/><rect fill="#FFFFFF" height="405.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="169.5" y="108.4648"/><rect fill="#FFFFFF" height="391.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="280.5" y="108.4648"/><rect fill="#FFFFFF" height="249.8184" style="stroke:#181818;stroke-width:1.0;" width="10" x="371.5" y="108.4648"/><rect fill="#FFFFFF" height="377.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="500.5" y="108.4648"/><rect fill="#FFFFFF" height="414.75" style="stroke:#181818;stroke-width:1.0;" width="10" x="629.5" y="108.4648"/><polygon fill="#181818" points="157.5,129.7754,167.5,133.7754,157.5,137.7754" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="68" x2="163.5" y1="133.7754" y2="133.7754"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="77" y="127.0332">close()</text><polygon fill="#181818" points="268.5,166.0859,278.5,170.0859,268.5,174.0859" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="179.5" x2="274.5" y1="170.0859" y2="170.0859"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="188.5" y="163.3438">close()</text><path d="M5,146.7754 L5,175.7754 L165,175.7754 L165,156.7754 L155,146.7754 L5,146.7754 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M155,146.7754 L155,156.7754 L165,156.7754 L155,146.7754 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="135" x="13" y="166.3438">Close all connections</text><polygon fill="#181818" points="359.5,205.3965,369.5,209.3965,359.5,213.3965" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="290.5" x2="365.5" y1="209.3965" y2="209.3965"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="299.5" y="202.6543">close()</text><path d="M145,186.0859 L145,215.0859 L275,215.0859 L275,196.0859 L265,186.0859 L145,186.0859 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M265,186.0859 L265,196.0859 L275,196.0859 L265,186.0859 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="105" x="153" y="205.6543">Close all cursors</text><path d="M334,227.3965 L400,227.3965 L400,238.707 L390,248.707 L334,248.707 L334,227.3965 " fill="#EEEEEE" style="stroke:#000000;stroke-width:1.5;"/><rect fill="none" height="117.8867" style="stroke:#000000;stroke-width:1.5;" width="375.5" x="334" y="227.3965"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="17" x="351" y="242.9648">alt</text><text fill="#000000" font-family="Calibri" font-size="11" font-weight="bold" lengthAdjust="spacing" textLength="126" x="417" y="242.0313">[Cursor with resultset]</text><polygon fill="#181818" points="488.5,271.9727,498.5,275.9727,488.5,279.9727" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="381.5" x2="494.5" y1="275.9727" y2="275.9727"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="91" x="390.5" y="269.2305">closeResultSet</text><polygon fill="#181818" points="617.5,305.2832,627.5,309.2832,617.5,313.2832" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="510.5" x2="623.5" y1="309.2832" y2="309.2832"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="91" x="519.5" y="302.541">closeResultSet</text><polygon fill="#181818" points="521.5,319.2832,511.5,323.2832,521.5,327.2832" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="515.5" x2="628.5" y1="323.2832" y2="323.2832"/><polygon fill="#181818" points="392.5,333.2832,382.5,337.2832,392.5,341.2832" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="386.5" x2="499.5" y1="337.2832" y2="337.2832"/><polygon fill="#181818" points="301.5,354.2832,291.5,358.2832,301.5,362.2832" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="295.5" x2="375.5" y1="358.2832" y2="358.2832"/><line style="stroke:#A80036;stroke-width:2.0;" x1="367.5" x2="385.5" y1="349.2832" y2="367.2832"/><line style="stroke:#A80036;stroke-width:2.0;" x1="367.5" x2="385.5" y1="367.2832" y2="349.2832"/><polygon fill="#181818" points="488.5,387.5938,498.5,391.5938,488.5,395.5938" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="290.5" x2="494.5" y1="391.5938" y2="391.5938"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="69" x="299.5" y="384.8516">disconnect</text><polygon fill="#181818" points="617.5,420.9043,627.5,424.9043,617.5,428.9043" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="510.5" x2="623.5" y1="424.9043" y2="424.9043"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="69" x="519.5" y="418.1621">disconnect</text><polygon fill="#181818" points="521.5,434.9043,511.5,438.9043,521.5,442.9043" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="515.5" x2="628.5" y1="438.9043" y2="438.9043"/><polygon fill="#181818" points="301.5,448.9043,291.5,452.9043,301.5,456.9043" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="295.5" x2="499.5" y1="452.9043" y2="452.9043"/><polygon fill="#181818" points="493.5,482.2148,503.5,486.2148,493.5,490.2148" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="290.5" x2="499.5" y1="486.2148" y2="486.2148"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="79" x="299.5" y="479.4727">close socket</text><line style="stroke:#A80036;stroke-width:2.0;" x1="496.5" x2="514.5" y1="477.2148" y2="495.2148"/><line style="stroke:#A80036;stroke-width:2.0;" x1="496.5" x2="514.5" y1="495.2148" y2="477.2148"/><polygon fill="#181818" points="190.5,496.2148,180.5,500.2148,190.5,504.2148" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="184.5" x2="284.5" y1="500.2148" y2="500.2148"/><line style="stroke:#A80036;stroke-width:2.0;" x1="276.5" x2="294.5" y1="491.2148" y2="509.2148"/><line style="stroke:#A80036;stroke-width:2.0;" x1="276.5" x2="294.5" y1="509.2148" y2="491.2148"/><polygon fill="#181818" points="79,510.2148,69,514.2148,79,518.2148" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="73" x2="173.5" y1="514.2148" y2="514.2148"/><line style="stroke:#A80036;stroke-width:2.0;" x1="165.5" x2="183.5" y1="505.2148" y2="523.2148"/><line style="stroke:#A80036;stroke-width:2.0;" x1="165.5" x2="183.5" y1="523.2148" y2="505.2148"/><!--MD5=[145704560a5c6ee08988bad056ffffd6]
+@startuml seq_close
+!include ../clean.skin
+
+title: Closing Connection
+
+participant "Client Code" as client <<external>>
+participant Environment as env
+participant Connection as conn
+participant Cursor as cur
+participant Websocket as ws
+participant "Exasol Database" as db
+
+activate client
+activate env
+activate conn
+activate cur
+activate ws
+activate db
+
+client -> env : close()
+env -> conn : close()
+note left: Close all connections
+conn -> cur : close()
+note left: Close all cursors
+alt Cursor with resultset
+    cur -> ws : closeResultSet
+    ws -> db : closeResultSet
+    db - -> ws
+    ws - -> cur
+end
+cur - -> conn
+destroy cur
+conn -> ws : disconnect
+ws -> db : disconnect
+db - -> ws
+ws - -> conn
+conn -> ws : close socket
+destroy ws
+conn - -> env
+destroy conn
+env - -> client
+destroy env
+
+@enduml
+
+@startuml seq_close
+hide empty methods
+hide empty attributes
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+skinparam defaultFontName Calibri
+
+skinparam padding 2
+
+title: Closing Connection
+
+participant "Client Code" as client <<external>>
+participant Environment as env
+participant Connection as conn
+participant Cursor as cur
+participant Websocket as ws
+participant "Exasol Database" as db
+
+activate client
+activate env
+activate conn
+activate cur
+activate ws
+activate db
+
+client -> env : close()
+env -> conn : close()
+note left: Close all connections
+conn -> cur : close()
+note left: Close all cursors
+alt Cursor with resultset
+    cur -> ws : closeResultSet
+    ws -> db : closeResultSet
+    db - -> ws
+    ws - -> cur
+end
+cur - -> conn
+destroy cur
+conn -> ws : disconnect
+ws -> db : disconnect
+db - -> ws
+ws - -> conn
+conn -> ws : close socket
+destroy ws
+conn - -> env
+destroy conn
+env - -> client
+destroy env
+
+@enduml
+
+PlantUML version 1.2022.2(Sat Mar 05 17:30:19 CET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: DE
+--></g></svg>

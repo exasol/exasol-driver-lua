@@ -29,16 +29,16 @@ alt Cursor with resultset
     ws --> cur
 end
 cur --> conn
-deactivate cur
+destroy cur
 conn -> ws : disconnect
 ws -> db : disconnect
 db --> ws
 ws --> conn
 conn -> ws : close socket
-deactivate ws
+destroy ws
 conn --> env
-deactivate conn
+destroy conn
 env --> client
-deactivate env
+destroy env
 
 @enduml

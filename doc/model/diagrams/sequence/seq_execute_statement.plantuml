@@ -1,12 +1,12 @@
-@startuml seq_execute
+@startuml seq_execute_statement
 !include ../clean.skin
 
-title: Executing Statements
+title: Executing Statements and fetch results
 
 participant "Client Code" as client <<external>>
-participant Connection as conn
-participant Cursor as cur
-participant Websocket as ws
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant Websocket as ws << (C,#ADD1B2) >>
 participant "Exasol Database" as db
 
 activate client
@@ -15,29 +15,33 @@ activate conn
 activate ws
 client -> conn: execute(statement)
 conn -> ws: execute
-ws -> db: execute
-db -> db: Execute query
-db --> ws
-note left: Data or resultset handle
-ws --> conn
+group Websocket Request/Response
+    note over ws: See details in separate diagram
+    ws -> db: execute
+    db -> db: Execute query
+    db --> ws
+end
+ws --> conn: Resultset or resultset handle
+create cur
 conn -> cur: create
 activate cur
 conn --> client
-group Fetch result
+
+loop Fetch results until all rows fetched
     client -> cur: fetch()
-    alt No resultset handle, less than 1000 rows
-        cur --> client: Row data
-    else Resultset handle, more than 1000 rows
+    alt If DB has returned a resultset handle\nand no more rows available in local list
         cur -> ws : fetch(resultset_handle)
         ws -> db : fetch(resultset_handle)
         db --> ws
         ws --> cur
-        cur --> client : Row data
+        cur -> cur : Store data in local list
     end
+    cur -> cur : Get next row from local list
+    cur --> client
 end
 group Close cursor
     client -> cur : close()
-    alt No result set handle, less than 1000 rows
+    alt No resultset handle
         note right of cur: Nothing to do when no resultset is used
     else Result set handle, more than 1000 rows
         cur -> ws : close resultset

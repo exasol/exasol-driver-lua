@@ -26,10 +26,10 @@ Software Developers use this library for writing Lua applications that access an
 
 The following list gives you an overview of terms and abbreviations commonly used in OFT documents.
 
-* **EDL**: Exasol driver for Lua
+* **EDL**: Exasol Driver for Lua
 * **LuaSQL**: A database connectivity library for the Lua programming language
 * **Client code**: A Lua program that uses EDL
-* **UDF / User defined functions**: Extension point in the Exasol database that allows users to write their own SQL functions, see the [documentation](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm) for details
+* **UDF** / **User defined function**: Extension point in the Exasol database that allows users to write their own SQL functions, see the [documentation](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm) for details
 * **Virtual Schema**: Projection of an external data source that can be access like an Exasol database schema.
 * **Virtual Schema adapter**: Plug-in for Exasol based on the Virtual Schema API that translates between Exasol and the data source.
 
@@ -46,7 +46,7 @@ Rationale:
 
 LuaSQL is a mature library used in many projects. Lua developers are already familiar with its API. Implementing the LuaSQL API avoids reinventing the wheel and potential mistakes when designing a new API from scratch.
 
-Extending the API with Exasol specific extensions is however possible and already done for other databases.
+Extending the API with Exasol specific functions is however possible and already done for other databases.
 
 Needs: req
 

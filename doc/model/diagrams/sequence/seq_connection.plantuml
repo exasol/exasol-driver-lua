@@ -1,50 +1,48 @@
 @startuml seq_connection
 !include ../clean.skin
 
-title: Create Connection
+title: Connecting to the Database
 
 participant "Client Code" as client <<external>>
-participant entry
-participant Environment as env
-participant Connection as conn
-participant Cursor as cur
-participant Websocket as ws
+box "Exasol Driver for Lua"
+participant "Entry Point"  as entry
+participant Environment as env << (C,#ADD1B2) >>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Websocket as ws << (C,#ADD1B2) >>
+end box
 participant "Exasol Database" as db
 
 activate db
 client -> entry: exasol()
+create env
 entry -> env: Create
 activate env
 client <-- entry: Environment
 client -> env: connect()
 ' [dsn -> req~connect-with-username-password~1 >> impl,utest,itest]
+create ws
+env -> ws: Connect
+activate ws
+ws -> db: Connect
 group Login
-    env -> ws: Connect
-    activate ws
-    ws -> db: Connect
     env -> ws: Login command
-    ws -> db: Login command
-    db --> ws: Login response
-    ws --> env: Login response
-    env -> env: Encrypt password
+    group Websocket Request/Response
+        note over ws: See details in separate diagram
+        ws -> db: Login command
+        db --> ws: Login response
+    end
+    ws --> env: Login response incl. public key
+    env -> env: Encrypt password with public key
     env -> ws: Username and encrypted password
     ws -> db: Username and encrypted password
+    db -> db: Validate credentials
     db --> ws: Session ID
     ws --> env: Session ID
+    create conn
     env -> conn: Create with Session ID
     activate conn
 end
 activate conn
 client <-- env: Connection
-
-
-group Close
-    client -> env: close()
-    env -> conn: close()
-    conn -> cur: close()
-    deactivate cur
-    deactivate conn
-    deactivate env
-end
 
 @enduml

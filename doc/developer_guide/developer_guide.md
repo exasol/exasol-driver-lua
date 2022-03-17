@@ -9,16 +9,17 @@ This project has the following prerequisites:
 * [Lua](https://www.lua.org/) &ge; 5.4
 * [Luarocks](https://luarocks.org/) &ge; 3.8: Package manager for Lua
 * [OpenSSL](https://www.openssl.org/) &ge; 1.1: Library used for TLS connections and RSA encryption
+* [PlantUML](https://plantuml.com/): Tool for generating images from UML diagrams
 
 Install the prerequisites like this:
 
 * macOS:
     ```sh
-    brew install lua luarocks openssl@1.1
+    brew install lua luarocks openssl@1.1 plantuml
     ```
 * Fedora: Installing `luaossl` via luarocks fails on Fedora 35 with a compile error. That's why we install `lua-luaossl` via `yum`:
     ```sh
-    sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl
+    sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl plantuml
     ```
 
 ### Install Runtime and Test Dependencies
@@ -94,3 +95,19 @@ Run the formatter like this:
 ```
 
 **This will overwrite sources directly**
+
+## Generate UML Images From UML Diagrams
+
+To generate images from the UML diagrams in [/doc/model/diagrams](../model/diagrams/), run
+
+```sh
+./tools/build-diagrams.sh
+```
+
+## Run Requirements Tracing
+
+To run the requirements tracing with [OpenFastTrace](https://github.com/itsallcode/openfasttrace), run
+
+```sh
+./tools/trace-requirements.sh
+```

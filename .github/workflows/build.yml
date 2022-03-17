@@ -133,6 +133,8 @@ jobs:
 #      - name: Trace requirements
 #        run: ./tools/trace-requirements.sh
 
+  ## This is a separate job because it requires running apt-get which takes > 40s.
+  ## When to other job also uses apt-get this can be moved back.
   plantuml:
     strategy:
        fail-fast: true
@@ -155,3 +157,13 @@ jobs:
 
       - name: Build diagrams
         run: ./tools/build-diagrams.sh
+
+      - name: Check if diagrams are up-to-date
+        run: |
+          if [[ `git status --porcelain` ]]; then
+            echo "ERROR: Generated diagrams are not up-to-date."
+            echo "Please run './tools/build-diagrams.sh' and commit the changes."
+            exit 1
+          else
+            echo "Diagrams are up-to-date"
+          fi
