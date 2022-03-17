@@ -3,9 +3,7 @@
 --
 -- @module M
 --
-local M = {
-    VERSION = "0.1.0",
-}
+local M = {VERSION = "0.1.0"}
 
 local environment = require("environment")
 local log = require("remotelog")
