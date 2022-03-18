@@ -1,4 +1,4 @@
-local luaunit = require("luaunit")
+require("busted.runner")()
 local driver = require("luasqlexasol")
 
 TestSmokeTest = {}

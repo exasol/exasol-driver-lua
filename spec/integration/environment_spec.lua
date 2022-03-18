@@ -1,0 +1,30 @@
+---@diagnostic disable: undefined-global
+-- luacheck: globals describe, it, before_each, after_each
+require("busted.runner")()
+local driver = require("luasqlexasol")
+local config = require("config")
+
+local connection_params = config.get_connection_params()
+
+describe("Environment", function ()
+    local env = nil
+    before_each(function ()
+        env = driver.exasol()
+    end)
+    after_each(function ()
+        env:close()
+        env=nil
+    end)
+
+    it("returns an error when connecting to an invalid host", function ()
+        assert.has_error(function ()
+            env:connect("invalid:8563", "user", "password")
+        end, "E-EDL-1: Error connecting to 'wss://invalid:8563': 'Connection to invalid:8563 failed: host or service not provided, or not known'")
+    end)
+
+    it("returns an error when connecting to an invalid port", function ()
+        assert.has_error(function ()
+            env:connect("localhost:8563", "user", "password")
+        end, "E-EDL-1: Error connecting to 'wss://localhost:8563': 'Connection to localhost:8563 failed: connection refused'")
+    end)
+end)

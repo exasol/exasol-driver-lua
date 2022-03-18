@@ -1,4 +1,4 @@
-local luaunit = require("luaunit")
+require("busted.runner")()
 local config = require("config")
 local assertions = require("assertions")
 

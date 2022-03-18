@@ -1,21 +1,11 @@
-local luaunit = require("luaunit")
+require("busted.runner")()
 local driver = require("luasqlexasol")
 local config = require("config")
 local assertions = require("assertions")
 
-TestConnection = {}
-
-function TestConnection:setUp()
-    self.environments = {}
-    self.connections = {}
-end
-
-function TestConnection:tearDown()
-    for _, environment in ipairs(self.environments) do environment:close() end
-    self.environments = {}
-    for _, connection in ipairs(self.connections) do connection:close() end
-    self.connections = {}
-end
+describe("Connection", function ()
+    
+end)
 
 function TestConnection:test_version() luaunit.assertEquals(driver.VERSION, "0.1.0") end
 
