@@ -1,14 +1,14 @@
-@startuml seq_connection
+@startuml seq_connection_create
 !include ../clean.skin
 
-title: Connecting to the Database
+title: Connecting to the Database and logging in
 
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
 participant "Entry Point"  as entry
 participant Environment as env << (C,#ADD1B2) >>
 participant Connection as conn << (C,#ADD1B2) >>
-participant Websocket as ws << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
 end box
 participant "Exasol Database" as db
 
@@ -20,7 +20,7 @@ create env
 entry -> env: create()
 client <-- entry: Environment
 deactivate entry
-client -> env: connect(url, user, password)
+client -> env: connect(host_and_port, user, password)
 activate env
 ' [dsn -> req~connect-with-username-password~1 >> impl,utest,itest]
 create ws
@@ -31,22 +31,26 @@ db --> ws
 ws --> env
 deactivate ws
 group Login
-    env -> ws: Login command
+    env -> ws: send_login_command()
     activate ws
     group Websocket Request/Response
         note over ws: See details in separate diagram
         ws -> db: Login command
-        db --> ws: Login response
+        activate db
+        db --> ws: Login response\nincl. public key
+        deactivate db
     end
-    ws --> env
+    ws --> env: Public key
     deactivate ws
     env -> env: Encrypt password\nwith public key
     env -> ws: send_login_credentials(username,\nencrypted_password)
     activate ws
-    ws -> db
+    ws -> db: Credentials
+    activate db
     db -> db: Validate credentials
-    db --> ws
-    ws --> env
+    db --> ws: Session ID
+    deactivate db
+    ws --> env: Session ID
     deactivate ws
     create conn
     env -> conn: create(session_id)

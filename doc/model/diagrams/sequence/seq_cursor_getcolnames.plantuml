@@ -1,0 +1,22 @@
+@startuml seq_cursor_getcolnames
+!include ../clean.skin
+
+title: Get column names from a Cursor
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate db
+
+ref over client, cur: Use connection to execute a statement and get a cursor
+
+client -> cur : getcolnames()
+activate cur
+cur -> cur : Get column names\nfrom local result
+cur --> client : List of column names
+deactivate cur
+
+@enduml

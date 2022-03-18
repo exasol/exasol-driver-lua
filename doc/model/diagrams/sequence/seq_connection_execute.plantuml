@@ -1,0 +1,39 @@
+@startuml seq_connection_execute
+!include ../clean.skin
+
+title: Executing Statements
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+client -> conn: execute(statement)
+activate conn
+conn -> ws: send_execute(statement)
+activate ws
+
+ws -> db: execute
+activate db
+db -> db: Execute query
+db --> ws: Resultset
+deactivate db
+
+ws --> conn: Resultset
+deactivate ws
+alt Resultset handle available
+    create cur
+    conn -> cur: create(session_id,\nmetadata, resultset_handle)
+else No resultset handle available
+    create cur
+    conn -> cur: create(session_id,\nmetadata, nil)
+end
+conn --> client
+deactivate conn
+
+ref over client, cur: Use cursor to fetch rows and get metadata
+
+@enduml

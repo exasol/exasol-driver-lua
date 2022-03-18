@@ -158,14 +158,5 @@ jobs:
       - name: Build diagrams
         run: ./tools/build-diagrams.sh
 
-      - name: Check if diagrams are up-to-date
-        run: |
-          if [[ `git status --porcelain` ]]; then
-            echo "ERROR: Generated diagrams are not up-to-date:"
-            git status --porcelain
-            git diff
-            echo "Please run './tools/build-diagrams.sh' and commit the changes."
-            exit 1
-          else
-            echo "Diagrams are up-to-date"
-          fi
+      # Checking if diagrams are up-to-date is not stable because
+      # different versions of PlantUML generate different images.

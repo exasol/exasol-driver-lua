@@ -1,7 +1,7 @@
 @startuml cl_exasol_driver_lua
 !include ../clean.skin
 
-title: Exasol Driver for Lua
+title: Class Diagram Exasol Driver for Lua
 
 package luasql.exasol {
     '[dsn -> req~luasql-entry-point~1 >> impl,utest]
@@ -50,9 +50,9 @@ package luasql.exasol {
             +get_data(): string
             +has_received_data(): boolean
         }
-        ExasolWebsocket .l.> Websocket : use
+        ExasolWebsocket -- Websocket : use
         Websocket .l.> togglebits.luws : use
-        Websocket .l.> WebsocketDatahandler : use
+        Websocket -- WebsocketDatahandler : use
     }
 }
 package togglebits <<external>> {
@@ -64,10 +64,10 @@ package togglebits <<external>> {
     }
 }
 entry -> Environment : create
-Environment o-- Connection : +Composition
-Connection o-- Cursor : +Composition
+Environment "1" *-- "many" Connection : +Composition
+Connection "1" *-- "many" Cursor : +Composition
 'Environment -> ExasolWebsocket : create
-Connection .l.> ExasolWebsocket : use
+Connection "1" -- "1" ExasolWebsocket : use
 Cursor .l.> ExasolWebsocket : use
 
 url of togglebits is [[https://github.com/toggledbits/LuWS]]

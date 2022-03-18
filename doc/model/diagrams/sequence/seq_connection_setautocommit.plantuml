@@ -1,0 +1,28 @@
+@startuml seq_connection_setautocommit
+!include ../clean.skin
+
+title: Setting Autocommit for a Connection
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+client -> conn: setautocommit(boolean)
+activate conn
+conn -> ws : send_set_attribute(\nautocommit=true/false)
+activate ws
+ws -> db
+activate db
+db -> db : Update autocommit\nstatus for session
+db --> ws
+deactivate db
+ws -> conn
+deactivate ws
+conn --> client: Success (boolean)
+deactivate conn
+
+@enduml
