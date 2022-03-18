@@ -46,7 +46,7 @@ See [Diagram source](./model/diagrams/sequence/seq_environment_close.plantuml).
 
 ![Sequence Diagram: Executing Statements and fetching results](./images/generated/seq_connection_execute.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_execute_statement.plantuml).
+See [Diagram source](./model/diagrams/sequence/seq_connection_execute.plantuml).
 
 ### Setting Autocommit for the Connection
 
