@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="302px" preserveAspectRatio="none" style="width:732px;height:302px;background:#FFFFFF;" version="1.1" viewBox="0 0 732 302" width="732px" zoomAndPan="magnify"><defs/><g><rect fill="#FFFFFF" height="219.8633" style="stroke:#181818;stroke-width:1.0;" width="10" x="49" y="66.9766"/><rect fill="#FFFFFF" height="185.5527" style="stroke:#181818;stroke-width:1.0;" width="10" x="235" y="92.2871"/><rect fill="#FFFFFF" height="103.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="420" y="140.9082"/><rect fill="#FFFFFF" height="219.8633" style="stroke:#181818;stroke-width:1.0;" width="10" x="577" y="66.9766"/><rect fill="#FFFFFF" height="75.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="582" y="154.9082"/><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="54" x2="54" y1="56.9766" y2="295.8398"/><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="239.5" x2="239.5" y1="56.9766" y2="295.8398"/><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="425" x2="425" y1="56.9766" y2="295.8398"/><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="582" x2="582" y1="56.9766" y2="295.8398"/><rect fill="#E2E2F0" height="50.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="98" x="5" y="5"/><text fill="#000000" font-family="Calibri" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="71" x="18.5" y="27.5352">«external»</text><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="80" x="14" y="44.0234">Client Code</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="125" x="177.5" y="19.9766"/><ellipse cx="195.5" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M197.9731,44.1196 Q197.3921,44.4185 196.7529,44.5679 Q196.1138,44.7173 195.4082,44.7173 Q192.9014,44.7173 191.5815,43.0654 Q190.2617,41.4136 190.2617,38.2925 Q190.2617,35.1631 191.5815,33.5112 Q192.9014,31.8594 195.4082,31.8594 Q196.1138,31.8594 196.7612,32.0088 Q197.4087,32.1582 197.9731,32.457 L197.9731,35.1797 Q197.3423,34.5986 196.7488,34.3289 Q196.1553,34.0591 195.5244,34.0591 Q194.1797,34.0591 193.4949,35.1257 Q192.8101,36.1924 192.8101,38.2925 Q192.8101,40.3843 193.4949,41.4509 Q194.1797,42.5176 195.5244,42.5176 Q196.1553,42.5176 196.7488,42.2478 Q197.3423,41.978 197.9731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="79" x="214.5" y="42.5117">Connection</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="164" x="343" y="19.9766"/><ellipse cx="361" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M363.4731,44.1196 Q362.8921,44.4185 362.2529,44.5679 Q361.6138,44.7173 360.9082,44.7173 Q358.4014,44.7173 357.0815,43.0654 Q355.7617,41.4136 355.7617,38.2925 Q355.7617,35.1631 357.0815,33.5112 Q358.4014,31.8594 360.9082,31.8594 Q361.6138,31.8594 362.2612,32.0088 Q362.9087,32.1582 363.4731,32.457 L363.4731,35.1797 Q362.8423,34.5986 362.2488,34.3289 Q361.6553,34.0591 361.0244,34.0591 Q359.6797,34.0591 358.9949,35.1257 Q358.3101,36.1924 358.3101,38.2925 Q358.3101,40.3843 358.9949,41.4509 Q359.6797,42.5176 361.0244,42.5176 Q361.6553,42.5176 362.2488,42.2478 Q362.8423,41.978 363.4731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="118" x="380" y="42.5117">ExasolWebsocket</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="130" x="517" y="21.4883"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="112" x="526" y="44.0234">Exasol Database</text><rect fill="#FFFFFF" height="219.8633" style="stroke:#181818;stroke-width:1.0;" width="10" x="49" y="66.9766"/><rect fill="#FFFFFF" height="185.5527" style="stroke:#181818;stroke-width:1.0;" width="10" x="235" y="92.2871"/><rect fill="#FFFFFF" height="103.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="420" y="140.9082"/><rect fill="#FFFFFF" height="219.8633" style="stroke:#181818;stroke-width:1.0;" width="10" x="577" y="66.9766"/><rect fill="#FFFFFF" height="75.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="582" y="154.9082"/><polygon fill="#181818" points="223,88.2871,233,92.2871,223,96.2871" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="59" x2="229" y1="92.2871" y2="92.2871"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="153" x="68" y="85.5449">setautocommit(boolean)</text><polygon fill="#181818" points="408,136.9082,418,140.9082,408,144.9082" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="245" x2="414" y1="140.9082" y2="140.9082"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="121" x="254" y="118.8555">send_set_attribute(</text><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="152" x="254" y="134.166">autocommit=true/false)</text><polygon fill="#181818" points="570,150.9082,580,154.9082,570,158.9082" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="430" x2="576" y1="154.9082" y2="154.9082"/><line style="stroke:#181818;stroke-width:1.0;" x1="592" x2="634" y1="203.5293" y2="203.5293"/><line style="stroke:#181818;stroke-width:1.0;" x1="634" x2="634" y1="203.5293" y2="216.5293"/><line style="stroke:#181818;stroke-width:1.0;" x1="593" x2="634" y1="216.5293" y2="216.5293"/><polygon fill="#181818" points="603,212.5293,593,216.5293,603,220.5293" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="124" x="601" y="181.4766">Update autocommit</text><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="113" x="601" y="196.7871">status for session</text><polygon fill="#181818" points="441,226.5293,431,230.5293,441,234.5293" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="435" x2="576" y1="230.5293" y2="230.5293"/><polygon fill="#181818" points="256,240.5293,246,244.5293,256,248.5293" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="250" x2="424" y1="244.5293" y2="244.5293"/><polygon fill="#181818" points="70,273.8398,60,277.8398,70,281.8398" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="64" x2="239" y1="277.8398" y2="277.8398"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="112" x="78" y="271.0977">Success (boolean)</text><!--MD5=[f2fafc1a3879ff841a55573d9dd07c27]
+@startuml seq_connection_setautocommit
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+' [dsn -> req~luasql-connection-setautocommit~1 >> impl,utest,itest]
+client -> conn: setautocommit(boolean)
+activate conn
+conn -> ws : send_set_attribute(\nautocommit=true/false)
+activate ws
+ws -> db
+activate db
+db -> db : Update autocommit\nstatus for session
+db - -> ws
+deactivate db
+ws -> conn
+deactivate ws
+conn - -> client: Success (boolean)
+deactivate conn
+
+@enduml
+
+@startuml seq_connection_setautocommit
+hide empty methods
+hide empty attributes
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+skinparam defaultFontName Calibri
+
+skinparam padding 2
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+client -> conn: setautocommit(boolean)
+activate conn
+conn -> ws : send_set_attribute(\nautocommit=true/false)
+activate ws
+ws -> db
+activate db
+db -> db : Update autocommit\nstatus for session
+db - -> ws
+deactivate db
+ws -> conn
+deactivate ws
+conn - -> client: Success (boolean)
+deactivate conn
+
+@enduml
+
+PlantUML version 1.2022.2(Sat Mar 05 17:30:19 CET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: DE
+--></g></svg>

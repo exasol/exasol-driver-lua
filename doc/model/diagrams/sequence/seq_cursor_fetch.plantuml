@@ -1,0 +1,36 @@
+@startuml seq_cursor_fetch
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate db
+
+ref over client, cur: Use connection to execute a statement and get a cursor
+
+loop Fetch results until fetch() returns nil
+    ' [dsn -> req~luasql-cursor-fetch~1 >> impl,utest,itest]
+    client -> cur: fetch()
+    activate cur
+    alt If DB has returned a resultset handle\nand no more rows available in local list
+        cur -> ws : send_fetch(resultset_handle)
+        activate ws
+        ws -> db
+        activate db
+        db --> ws
+        deactivate db
+        ws --> cur
+        deactivate ws
+        cur -> cur : Store data in local list
+    end
+    cur -> cur : Get next row from local list
+    cur --> client : Row or nil if no more rows available
+    deactivate cur
+end
+
+ref over client, cur: Close cursor
+
+@enduml

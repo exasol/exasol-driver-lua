@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="516px" preserveAspectRatio="none" style="width:870px;height:516px;background:#FFFFFF;" version="1.1" viewBox="0 0 870 516" width="870px" zoomAndPan="magnify"><defs/><g><rect fill="#FFFFFF" height="433.7695" style="stroke:#181818;stroke-width:1.0;" width="10" x="49" y="66.9766"/><rect fill="#FFFFFF" height="347.0156" style="stroke:#181818;stroke-width:1.0;" width="10" x="202" y="92.2871"/><rect fill="#FFFFFF" height="146.2422" style="stroke:#181818;stroke-width:1.0;" width="10" x="594" y="125.5977"/><rect fill="#FFFFFF" height="433.7695" style="stroke:#181818;stroke-width:1.0;" width="10" x="751" y="66.9766"/><rect fill="#FFFFFF" height="79.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="756" y="158.9082"/><rect height="139.4629" style="stroke:#000000;stroke-width:1.5;fill:none;" width="382.5" x="134.5" y="286.8398"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="54" x2="54" y1="56.9766" y2="509.7461"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="206.5" x2="206.5" y1="56.9766" y2="509.7461"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="460" x2="460" y1="411.9922" y2="509.7461"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="599" x2="599" y1="56.9766" y2="509.7461"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="756" x2="756" y1="56.9766" y2="509.7461"/><rect fill="#E2E2F0" height="50.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="98" x="5" y="5"/><text fill="#000000" font-family="Calibri" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="71" x="18.5" y="27.5352">«external»</text><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="80" x="14" y="44.0234">Client Code</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="125" x="144.5" y="19.9766"/><ellipse cx="162.5" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M164.9731,44.1196 Q164.3921,44.4185 163.7529,44.5679 Q163.1138,44.7173 162.4082,44.7173 Q159.9014,44.7173 158.5815,43.0654 Q157.2617,41.4136 157.2617,38.2925 Q157.2617,35.1631 158.5815,33.5112 Q159.9014,31.8594 162.4082,31.8594 Q163.1138,31.8594 163.7612,32.0088 Q164.4087,32.1582 164.9731,32.457 L164.9731,35.1797 Q164.3423,34.5986 163.7488,34.3289 Q163.1553,34.0591 162.5244,34.0591 Q161.1797,34.0591 160.4949,35.1257 Q159.8101,36.1924 159.8101,38.2925 Q159.8101,40.3843 160.4949,41.4509 Q161.1797,42.5176 162.5244,42.5176 Q163.1553,42.5176 163.7488,42.2478 Q164.3423,41.978 164.9731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="79" x="181.5" y="42.5117">Connection</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="164" x="517" y="19.9766"/><ellipse cx="535" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M537.4731,44.1196 Q536.8921,44.4185 536.2529,44.5679 Q535.6138,44.7173 534.9082,44.7173 Q532.4014,44.7173 531.0815,43.0654 Q529.7617,41.4136 529.7617,38.2925 Q529.7617,35.1631 531.0815,33.5112 Q532.4014,31.8594 534.9082,31.8594 Q535.6138,31.8594 536.2612,32.0088 Q536.9087,32.1582 537.4731,32.457 L537.4731,35.1797 Q536.8423,34.5986 536.2488,34.3289 Q535.6553,34.0591 535.0244,34.0591 Q533.6797,34.0591 532.9949,35.1257 Q532.3101,36.1924 532.3101,38.2925 Q532.3101,40.3843 532.9949,41.4509 Q533.6797,42.5176 535.0244,42.5176 Q535.6553,42.5176 536.2488,42.2478 Q536.8423,41.978 537.4731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="118" x="554" y="42.5117">ExasolWebsocket</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="130" x="691" y="21.4883"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="112" x="700" y="44.0234">Exasol Database</text><rect fill="#FFFFFF" height="433.7695" style="stroke:#181818;stroke-width:1.0;" width="10" x="49" y="66.9766"/><rect fill="#FFFFFF" height="347.0156" style="stroke:#181818;stroke-width:1.0;" width="10" x="202" y="92.2871"/><rect fill="#FFFFFF" height="146.2422" style="stroke:#181818;stroke-width:1.0;" width="10" x="594" y="125.5977"/><rect fill="#FFFFFF" height="433.7695" style="stroke:#181818;stroke-width:1.0;" width="10" x="751" y="66.9766"/><rect fill="#FFFFFF" height="79.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="756" y="158.9082"/><polygon fill="#181818" points="190,88.2871,200,92.2871,190,96.2871" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="59" x2="196" y1="92.2871" y2="92.2871"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="120" x="68" y="85.5449">execute(statement)</text><polygon fill="#181818" points="582,121.5977,592,125.5977,582,129.5977" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="212" x2="588" y1="125.5977" y2="125.5977"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="157" x="221" y="118.8555">send_execute(statement)</text><polygon fill="#181818" points="744,154.9082,754,158.9082,744,162.9082" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="604" x2="750" y1="158.9082" y2="158.9082"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="49" x="613" y="152.166">execute</text><line style="stroke:#181818;stroke-width:1.0;" x1="766" x2="808" y1="192.2188" y2="192.2188"/><line style="stroke:#181818;stroke-width:1.0;" x1="808" x2="808" y1="192.2188" y2="205.2188"/><line style="stroke:#181818;stroke-width:1.0;" x1="767" x2="808" y1="205.2188" y2="205.2188"/><polygon fill="#181818" points="777,201.2188,767,205.2188,777,209.2188" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="88" x="775" y="185.4766">Execute query</text><polygon fill="#181818" points="615,234.5293,605,238.5293,615,242.5293" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="609" x2="750" y1="238.5293" y2="238.5293"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="58" x="623" y="231.7871">Resultset</text><polygon fill="#181818" points="223,267.8398,213,271.8398,223,275.8398" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="217" x2="598" y1="271.8398" y2="271.8398"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="58" x="231" y="265.0977">Resultset</text><path d="M134.5,286.8398 L200.5,286.8398 L200.5,298.1504 L190.5,308.1504 L134.5,308.1504 L134.5,286.8398 " fill="#EEEEEE" style="stroke:#000000;stroke-width:1.5;"/><rect fill="none" height="139.4629" style="stroke:#000000;stroke-width:1.5;" width="382.5" x="134.5" y="286.8398"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="17" x="151.5" y="302.4082">alt</text><text fill="#000000" font-family="Calibri" font-size="11" font-weight="bold" lengthAdjust="spacing" textLength="154" x="217.5" y="301.4746">[Resultset handle available]</text><polygon fill="#181818" points="402,346.7266,412,350.7266,402,354.7266" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="212" x2="408" y1="350.7266" y2="350.7266"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="113" x="221" y="328.6738">create(session_id,</text><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="174" x="221" y="343.9844">metadata, resultset_handle)</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="93" x="414" y="311.7266"/><ellipse cx="432" cy="329.7266" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M434.4731,335.8696 Q433.8921,336.1685 433.2529,336.3179 Q432.6138,336.4673 431.9082,336.4673 Q429.4014,336.4673 428.0815,334.8154 Q426.7617,333.1636 426.7617,330.0425 Q426.7617,326.9131 428.0815,325.2612 Q429.4014,323.6094 431.9082,323.6094 Q432.6138,323.6094 433.2612,323.7588 Q433.9087,323.9082 434.4731,324.207 L434.4731,326.9297 Q433.8423,326.3486 433.2488,326.0789 Q432.6553,325.8091 432.0244,325.8091 Q430.6797,325.8091 429.9949,326.8757 Q429.3101,327.9424 429.3101,330.0425 Q429.3101,332.1343 429.9949,333.2009 Q430.6797,334.2676 432.0244,334.2676 Q432.6553,334.2676 433.2488,333.9978 Q433.8423,333.728 434.4731,333.147 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="47" x="451" y="334.2617">Cursor</text><line style="stroke:#000000;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="134.5" x2="517" y1="359.7266" y2="359.7266"/><text fill="#000000" font-family="Calibri" font-size="11" font-weight="bold" lengthAdjust="spacing" textLength="170" x="141.5" y="372.3613">[No resultset handle available]</text><polygon fill="#181818" points="402,414.3027,412,418.3027,402,422.3027" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="212" x2="408" y1="418.3027" y2="418.3027"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="113" x="221" y="396.25">create(session_id,</text><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="86" x="221" y="411.5605">metadata, nil)</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="93" x="414" y="379.3027"/><ellipse cx="432" cy="397.3027" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M434.4731,403.4458 Q433.8921,403.7446 433.2529,403.894 Q432.6138,404.0435 431.9082,404.0435 Q429.4014,404.0435 428.0815,402.3916 Q426.7617,400.7397 426.7617,397.6187 Q426.7617,394.4893 428.0815,392.8374 Q429.4014,391.1855 431.9082,391.1855 Q432.6138,391.1855 433.2612,391.335 Q433.9087,391.4844 434.4731,391.7832 L434.4731,394.5059 Q433.8423,393.9248 433.2488,393.655 Q432.6553,393.3853 432.0244,393.3853 Q430.6797,393.3853 429.9949,394.4519 Q429.3101,395.5186 429.3101,397.6187 Q429.3101,399.7104 429.9949,400.7771 Q430.6797,401.8438 432.0244,401.8438 Q432.6553,401.8438 433.2488,401.574 Q433.8423,401.3042 434.4731,400.7231 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="47" x="451" y="401.8379">Cursor</text><polygon fill="#181818" points="70,435.3027,60,439.3027,70,443.3027" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="64" x2="206" y1="439.3027" y2="439.3027"/><rect height="47.4434" style="stroke:#000000;stroke-width:1.5;fill:none;" width="508" x="2" y="447.3027"/><path d="M2,447.3027 L70,447.3027 L70,458.3027 L60,468.3027 L2,468.3027 L2,447.3027 " fill="#EEEEEE" style="stroke:#000000;stroke-width:2.0;"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="19" x="17" y="463.8711">ref</text><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacing" textLength="246" x="133" y="485.9043">Use cursor to fetch rows and get metadata</text><!--MD5=[cd6e8f5255ff7b48318fbe4c610aa7f4]
+@startuml seq_connection_execute
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+' [dsn -> req~luasql-connection-execute~1 >> impl,utest,itest]
+client -> conn: execute(statement)
+activate conn
+conn -> ws: send_execute(statement)
+activate ws
+
+ws -> db: execute
+activate db
+db -> db: Execute query
+db - -> ws: Resultset
+deactivate db
+
+ws - -> conn: Resultset
+deactivate ws
+alt Resultset handle available
+    create cur
+    conn -> cur: create(session_id,\nmetadata, resultset_handle)
+else No resultset handle available
+    create cur
+    conn -> cur: create(session_id,\nmetadata, nil)
+end
+conn - -> client
+deactivate conn
+
+ref over client, cur: Use cursor to fetch rows and get metadata
+
+@enduml
+
+@startuml seq_connection_execute
+hide empty methods
+hide empty attributes
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+skinparam defaultFontName Calibri
+
+skinparam padding 2
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+client -> conn: execute(statement)
+activate conn
+conn -> ws: send_execute(statement)
+activate ws
+
+ws -> db: execute
+activate db
+db -> db: Execute query
+db - -> ws: Resultset
+deactivate db
+
+ws - -> conn: Resultset
+deactivate ws
+alt Resultset handle available
+    create cur
+    conn -> cur: create(session_id,\nmetadata, resultset_handle)
+else No resultset handle available
+    create cur
+    conn -> cur: create(session_id,\nmetadata, nil)
+end
+conn - -> client
+deactivate conn
+
+ref over client, cur: Use cursor to fetch rows and get metadata
+
+@enduml
+
+PlantUML version 1.2022.2(Sat Mar 05 17:30:19 CET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: DE
+--></g></svg>

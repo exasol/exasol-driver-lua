@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="321px" preserveAspectRatio="none" style="width:810px;height:321px;background:#FFFFFF;" version="1.1" viewBox="0 0 810 321" width="810px" zoomAndPan="magnify"><defs/><g><rect fill="#FFFFFF" height="204.1523" style="stroke:#181818;stroke-width:1.0;" width="10" x="289.5" y="92.2871"/><rect fill="#FFFFFF" height="42" style="stroke:#181818;stroke-width:1.0;" width="10" x="566.5" y="214.1289"/><rect fill="#FFFFFF" height="238.4629" style="stroke:#181818;stroke-width:1.0;" width="10" x="723.5" y="66.9766"/><rect fill="#FFFFFF" height="14" style="stroke:#181818;stroke-width:1.0;" width="10" x="728.5" y="228.1289"/><rect height="156.8418" style="stroke:#000000;stroke-width:1.5;fill:none;" width="565.5" x="238" y="107.2871"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="54" x2="54" y1="56.9766" y2="314.4395"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="175" x2="175" y1="56.9766" y2="314.4395"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="294" x2="294" y1="56.9766" y2="314.4395"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="571.5" x2="571.5" y1="56.9766" y2="314.4395"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="728.5" x2="728.5" y1="56.9766" y2="314.4395"/><rect fill="#E2E2F0" height="50.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="98" x="5" y="5"/><text fill="#000000" font-family="Calibri" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="71" x="18.5" y="27.5352">«external»</text><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="80" x="14" y="44.0234">Client Code</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="125" x="113" y="19.9766"/><ellipse cx="131" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M133.4731,44.1196 Q132.8921,44.4185 132.2529,44.5679 Q131.6138,44.7173 130.9082,44.7173 Q128.4014,44.7173 127.0815,43.0654 Q125.7617,41.4136 125.7617,38.2925 Q125.7617,35.1631 127.0815,33.5112 Q128.4014,31.8594 130.9082,31.8594 Q131.6138,31.8594 132.2612,32.0088 Q132.9087,32.1582 133.4731,32.457 L133.4731,35.1797 Q132.8423,34.5986 132.2488,34.3289 Q131.6553,34.0591 131.0244,34.0591 Q129.6797,34.0591 128.9949,35.1257 Q128.3101,36.1924 128.3101,38.2925 Q128.3101,40.3843 128.9949,41.4509 Q129.6797,42.5176 131.0244,42.5176 Q131.6553,42.5176 132.2488,42.2478 Q132.8423,41.978 133.4731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="79" x="150" y="42.5117">Connection</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="93" x="248" y="19.9766"/><ellipse cx="266" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M268.4731,44.1196 Q267.8921,44.4185 267.2529,44.5679 Q266.6138,44.7173 265.9082,44.7173 Q263.4014,44.7173 262.0815,43.0654 Q260.7617,41.4136 260.7617,38.2925 Q260.7617,35.1631 262.0815,33.5112 Q263.4014,31.8594 265.9082,31.8594 Q266.6138,31.8594 267.2612,32.0088 Q267.9087,32.1582 268.4731,32.457 L268.4731,35.1797 Q267.8423,34.5986 267.2488,34.3289 Q266.6553,34.0591 266.0244,34.0591 Q264.6797,34.0591 263.9949,35.1257 Q263.3101,36.1924 263.3101,38.2925 Q263.3101,40.3843 263.9949,41.4509 Q264.6797,42.5176 266.0244,42.5176 Q266.6553,42.5176 267.2488,42.2478 Q267.8423,41.978 268.4731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="47" x="285" y="42.5117">Cursor</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="164" x="489.5" y="19.9766"/><ellipse cx="507.5" cy="37.9766" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M509.9731,44.1196 Q509.3921,44.4185 508.7529,44.5679 Q508.1138,44.7173 507.4082,44.7173 Q504.9014,44.7173 503.5815,43.0654 Q502.2617,41.4136 502.2617,38.2925 Q502.2617,35.1631 503.5815,33.5112 Q504.9014,31.8594 507.4082,31.8594 Q508.1138,31.8594 508.7612,32.0088 Q509.4087,32.1582 509.9731,32.457 L509.9731,35.1797 Q509.3423,34.5986 508.7488,34.3289 Q508.1553,34.0591 507.5244,34.0591 Q506.1797,34.0591 505.4949,35.1257 Q504.8101,36.1924 504.8101,38.2925 Q504.8101,40.3843 505.4949,41.4509 Q506.1797,42.5176 507.5244,42.5176 Q508.1553,42.5176 508.7488,42.2478 Q509.3423,41.978 509.9731,41.397 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="118" x="526.5" y="42.5117">ExasolWebsocket</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="130" x="663.5" y="21.4883"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="112" x="672.5" y="44.0234">Exasol Database</text><rect fill="#FFFFFF" height="204.1523" style="stroke:#181818;stroke-width:1.0;" width="10" x="289.5" y="92.2871"/><rect fill="#FFFFFF" height="42" style="stroke:#181818;stroke-width:1.0;" width="10" x="566.5" y="214.1289"/><rect fill="#FFFFFF" height="238.4629" style="stroke:#181818;stroke-width:1.0;" width="10" x="723.5" y="66.9766"/><rect fill="#FFFFFF" height="14" style="stroke:#181818;stroke-width:1.0;" width="10" x="728.5" y="228.1289"/><polygon fill="#181818" points="277.5,88.2871,287.5,92.2871,277.5,96.2871" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="54" x2="283.5" y1="92.2871" y2="92.2871"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="63" y="85.5449">close()</text><path d="M238,107.2871 L304,107.2871 L304,118.5977 L294,128.5977 L238,128.5977 L238,107.2871 " fill="#EEEEEE" style="stroke:#000000;stroke-width:1.5;"/><rect fill="none" height="156.8418" style="stroke:#000000;stroke-width:1.5;" width="565.5" x="238" y="107.2871"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="17" x="255" y="122.8555">alt</text><text fill="#000000" font-family="Calibri" font-size="11" font-weight="bold" lengthAdjust="spacing" textLength="116" x="321" y="121.9219">[No resultset handle]</text><path d="M304,135.5527 L304,164.5527 L628,164.5527 L628,145.5527 L618,135.5527 L304,135.5527 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M618,135.5527 L618,145.5527 L628,145.5527 L618,135.5527 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="299" x="312" y="155.1211">Nothing to do when no resultset handle is used</text><line style="stroke:#000000;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="238" x2="803.5" y1="170.8633" y2="170.8633"/><text fill="#000000" font-family="Calibri" font-size="11" font-weight="bold" lengthAdjust="spacing" textLength="154" x="245" y="183.498">[Resultset handle available]</text><polygon fill="#181818" points="554.5,210.1289,564.5,214.1289,554.5,218.1289" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="299.5" x2="560.5" y1="214.1289" y2="214.1289"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="244" x="308.5" y="207.3867">send_close_resultset(resultset_handle)</text><polygon fill="#181818" points="716.5,224.1289,726.5,228.1289,716.5,232.1289" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="576.5" x2="722.5" y1="228.1289" y2="228.1289"/><polygon fill="#181818" points="587.5,238.1289,577.5,242.1289,587.5,246.1289" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="581.5" x2="722.5" y1="242.1289" y2="242.1289"/><polygon fill="#181818" points="310.5,252.1289,300.5,256.1289,310.5,260.1289" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="304.5" x2="570.5" y1="256.1289" y2="256.1289"/><polygon fill="#181818" points="65,292.4395,55,296.4395,65,300.4395" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="59" x2="293.5" y1="296.4395" y2="296.4395"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="112" x="73" y="289.6973">Success (boolean)</text><line style="stroke:#A80036;stroke-width:2.0;" x1="285.5" x2="303.5" y1="287.4395" y2="305.4395"/><line style="stroke:#A80036;stroke-width:2.0;" x1="285.5" x2="303.5" y1="305.4395" y2="287.4395"/><!--MD5=[363c85c76096a54d1c619360e702ed5a]
+@startuml seq_cursor_close
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate db
+
+' [dsn -> req~luasql-cursor-close~1 >> impl,utest,itest]
+client -> cur : close()
+activate cur
+alt No resultset handle
+    note right of cur: Nothing to do when no resultset handle is used
+else Resultset handle available
+    cur -> ws : send_close_resultset(resultset_handle)
+    activate ws
+    ws -> db
+    activate db
+    db - -> ws
+    deactivate db
+    ws - -> cur
+    deactivate ws
+end
+cur - -> client: Success (boolean)
+deactivate cur
+destroy cur
+deactivate cur
+
+
+@enduml
+
+@startuml seq_cursor_close
+hide empty methods
+hide empty attributes
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+skinparam defaultFontName Calibri
+
+skinparam padding 2
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate db
+
+client -> cur : close()
+activate cur
+alt No resultset handle
+    note right of cur: Nothing to do when no resultset handle is used
+else Resultset handle available
+    cur -> ws : send_close_resultset(resultset_handle)
+    activate ws
+    ws -> db
+    activate db
+    db - -> ws
+    deactivate db
+    ws - -> cur
+    deactivate ws
+end
+cur - -> client: Success (boolean)
+deactivate cur
+destroy cur
+deactivate cur
+
+
+@enduml
+
+PlantUML version 1.2022.2(Sat Mar 05 17:30:19 CET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: DE
+--></g></svg>

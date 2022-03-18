@@ -1,0 +1,27 @@
+@startuml seq_environment_close
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant Environment as env << (C,#ADD1B2) >>
+    participant Connection as conn << (C,#ADD1B2) >>
+end box
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+' [dsn -> req~luasql-environment-close~1 >> impl,utest,itest]
+client -> env : close()
+activate env
+loop for all connections
+    env -> conn : close()
+    activate conn
+    ref over conn, db: Close connection and its cursors
+    conn --> env
+    destroy conn
+end
+env --> client: Success (boolean)
+destroy env
+
+@enduml

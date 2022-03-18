@@ -1,3 +1,4 @@
+-- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
@@ -30,6 +31,7 @@ function M:create(websocket, session_id, result_set)
     return object
 end
 
+-- [impl -> dsn~luasql-cursor-fetch~0]
 function M:fetch(table, modestring)
     if self.closed then
         exaerror.create("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
@@ -51,14 +53,17 @@ function M:fetch(table, modestring)
     return table
 end
 
+-- [impl -> dsn~luasql-cursor-getcolnames~0]
 function M:getcolnames()
     error("getcolnames will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
+-- [impl -> dsn~luasql-cursor-getcoltypes~0]
 function M:getcoltypes()
     error("getcoltypes will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
+-- [impl -> dsn~luasql-cursor-close~0]
 function M:close()
     if self.closed then
         log.warn("Attempted to close an already closed cursor")

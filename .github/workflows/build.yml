@@ -95,7 +95,7 @@ jobs:
 
       - name: Validate tools
         if: ${{ always() }}
-        run: shellcheck --check-sourced --severity=style tools/runtests.sh tools/trace-requirements.sh
+        run: shellcheck --check-sourced --severity=style tools/*.sh
 
       - name: Run static code analysis
         if: ${{ always() }}
@@ -132,3 +132,31 @@ jobs:
 #          distribution: 'temurin'
 #      - name: Trace requirements
 #        run: ./tools/trace-requirements.sh
+
+  ## This is a separate job because it requires running apt-get which takes > 40s.
+  ## When to other job also uses apt-get this can be moved back.
+  plantuml:
+    strategy:
+       fail-fast: true
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    name: "Build Plantuml diagrams"
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install Plantuml
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y plantuml
+
+      - name: Build diagrams
+        run: ./tools/build-diagrams.sh
+
+      # Checking if diagrams are up-to-date is not stable because
+      # different versions of PlantUML generate different images.

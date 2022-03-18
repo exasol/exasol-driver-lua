@@ -3,6 +3,7 @@ local websocket = require("exasol_websocket")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
+-- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
@@ -33,6 +34,7 @@ local function login(socket, username, password)
     return socket:send_login_credentials(username, encrypted_password)
 end
 
+-- [impl -> dsn~luasql-environment-connect~0]
 function M:connect(sourcename, username, password)
     local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
@@ -56,6 +58,7 @@ function M:connect(sourcename, username, password)
     return conn, nil
 end
 
+-- [impl -> dsn~luasql-environment-close~0]
 function M:close()
     log.trace("Closing environment: close all %d connections", #self.connections)
     for _, conn in pairs(self.connections) do conn:close() end

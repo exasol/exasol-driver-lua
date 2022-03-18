@@ -2,6 +2,7 @@ local M = {}
 
 local lunajson = require("lunajson")
 local exaerror = require("exaerror")
+-- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local raw_websocket = require("websocket")
 

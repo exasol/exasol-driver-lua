@@ -1,0 +1,70 @@
+@startuml cl_exasol_driver_lua
+!include ../clean.skin
+
+package luasql.exasol {
+    class entry {
+        + exasol()
+    }
+    class Environment {
+        + connect(sourcename, username, password): Connection
+        + close(): boolean
+    }
+    class Connection {
+        + execute(statement): Cursor
+        + commit(): boolean
+        + rollback(): boolean
+        + setautocommit(boolean): boolean
+        + close(): boolean
+    }
+    class Cursor {
+        + close(): boolean
+        + fetch([table[,modestring]]): table
+        + getcolnames(): list (table)
+        + getcoltypes(): list (table)
+    }
+    package websocket {
+        class Websocket {
+            +connect(url): Websocket
+            +send_raw(payload, ignore_response): string
+            +close(): boolean
+        }
+        class ExasolWebsocket {
+            +connect(url): ExasolWebsocket
+            +send_login_command(): response, error
+            +send_login_credentials(username, encrypted_password): response, error
+            +send_disconnect(): error
+            +send_execute(statement): response, error
+            -_send_json(payload, ignore_response): response, error
+            +close(): boolean
+        }
+        class WebsocketDatahandler {
+            +handle_data(socket, opcode, message): void
+            +expect_data(): void
+            +expected_data_received(): void
+            +get_data(): string
+            +has_received_data(): boolean
+        }
+        ExasolWebsocket "1" o-- "1" Websocket
+        Websocket .l.> togglebits.luws : use
+        Websocket "1" o-- "1" WebsocketDatahandler
+    }
+}
+package togglebits <<external>> {
+    class luws {
+        +wsopen(url, message_handler, options): socket
+        +wssend(socket, opcode, data)
+        +wsreceive(socket)
+        +wsclose(socket)
+    }
+}
+entry -> Environment : create
+Environment "1" *-- "many" Connection : +Composition
+Connection "1" *-- "many" Cursor : +Composition
+'Environment -> ExasolWebsocket : create
+Connection "1" o-- "1" ExasolWebsocket
+Cursor o-- ExasolWebsocket
+
+url of togglebits is [[https://github.com/toggledbits/LuWS]]
+url of togglebits.luws is [[https://github.com/toggledbits/LuWS]]
+
+@enduml

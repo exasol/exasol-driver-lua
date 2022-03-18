@@ -1,0 +1,22 @@
+@startuml seq_cursor_getcoltypes
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate db
+
+ref over client, cur: Use connection to execute a statement and get a cursor
+
+' [dsn -> req~luasql-cursor-getcoltypes~1 >> impl,utest,itest]
+client -> cur : getcoltypes()
+activate cur
+cur -> cur : Get column types\nfrom local result
+cur --> client : List of column types
+deactivate cur
+
+
+@enduml

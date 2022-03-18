@@ -1,0 +1,33 @@
+@startuml seq_cursor_close
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant Cursor as cur << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate db
+
+' [dsn -> req~luasql-cursor-close~1 >> impl,utest,itest]
+client -> cur : close()
+activate cur
+alt No resultset handle
+    note right of cur: Nothing to do when no resultset handle is used
+else Resultset handle available
+    cur -> ws : send_close_resultset(resultset_handle)
+    activate ws
+    ws -> db
+    activate db
+    db --> ws
+    deactivate db
+    ws --> cur
+    deactivate ws
+end
+cur --> client: Success (boolean)
+deactivate cur
+destroy cur
+deactivate cur
+
+
+@enduml

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="685px" preserveAspectRatio="none" style="width:994px;height:685px;background:#FFFFFF;" version="1.1" viewBox="0 0 994 685" width="994px" zoomAndPan="magnify"><defs/><g><rect fill="#DDDDDD" height="666.4121" style="stroke:#181818;stroke-width:0.5;" width="705" x="137.5" y="6"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="141" x="419.5" y="20.5684">Exasol Driver for Lua</text><rect fill="#FFFFFF" height="578.125" style="stroke:#181818;stroke-width:1.0;" width="10" x="49" y="91.2871"/><rect fill="#FFFFFF" height="543.8145" style="stroke:#181818;stroke-width:1.0;" width="10" x="199" y="116.5977"/><rect fill="#FFFFFF" height="66.4434" style="stroke:#181818;stroke-width:1.0;" width="10" x="318" y="180.1738"/><rect fill="#FFFFFF" height="151.9316" style="stroke:#181818;stroke-width:1.0;" width="10" x="456.5" y="286.9277"/><rect fill="#FFFFFF" height="154.9316" style="stroke:#181818;stroke-width:1.0;" width="10" x="456.5" y="472.1699"/><rect fill="#FFFFFF" height="104.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="608" y="320.2383"/><rect fill="#FFFFFF" height="107.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="608" y="505.4805"/><rect fill="#FFFFFF" height="42" style="stroke:#181818;stroke-width:1.0;" width="10" x="755.5" y="368.8594"/><rect fill="#FFFFFF" height="39.3105" style="stroke:#181818;stroke-width:1.0;" width="10" x="755.5" y="538.791"/><rect fill="#FFFFFF" height="578.125" style="stroke:#181818;stroke-width:1.0;" width="10" x="908.5" y="91.2871"/><rect height="123.0195" style="stroke:#000000;stroke-width:1.5;fill:none;" width="857" x="131.5" y="131.5977"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="54" x2="54" y1="81.2871" y2="678.4121"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="203.5" x2="203.5" y1="81.2871" y2="678.4121"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="322.5" x2="322.5" y1="81.2871" y2="678.4121"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="461.5" x2="461.5" y1="81.2871" y2="678.4121"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="612.5" x2="612.5" y1="81.2871" y2="678.4121"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="760.5" x2="760.5" y1="81.2871" y2="678.4121"/><line style="stroke:#181818;stroke-width:0.5;fill:none;stroke-dasharray:5.0,5.0;" x1="913.5" x2="913.5" y1="81.2871" y2="678.4121"/><rect fill="#E2E2F0" height="50.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="98" x="5" y="29.3105"/><text fill="#000000" font-family="Calibri" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="71" x="18.5" y="51.8457">«external»</text><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="80" x="14" y="68.334">Client Code</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="125" x="141.5" y="44.2871"/><ellipse cx="159.5" cy="62.2871" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M161.9731,68.4302 Q161.3921,68.729 160.7529,68.8784 Q160.1138,69.0278 159.4082,69.0278 Q156.9014,69.0278 155.5815,67.376 Q154.2617,65.7241 154.2617,62.603 Q154.2617,59.4736 155.5815,57.8218 Q156.9014,56.1699 159.4082,56.1699 Q160.1138,56.1699 160.7612,56.3193 Q161.4087,56.4688 161.9731,56.7676 L161.9731,59.4902 Q161.3423,58.9092 160.7488,58.6394 Q160.1553,58.3696 159.5244,58.3696 Q158.1797,58.3696 157.4949,59.4363 Q156.8101,60.5029 156.8101,62.603 Q156.8101,64.6948 157.4949,65.7615 Q158.1797,66.8281 159.5244,66.8281 Q160.1553,66.8281 160.7488,66.5583 Q161.3423,66.2886 161.9731,65.7075 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="79" x="178.5" y="66.8223">Connection</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="93" x="276.5" y="44.2871"/><ellipse cx="294.5" cy="62.2871" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M296.9731,68.4302 Q296.3921,68.729 295.7529,68.8784 Q295.1138,69.0278 294.4082,69.0278 Q291.9014,69.0278 290.5815,67.376 Q289.2617,65.7241 289.2617,62.603 Q289.2617,59.4736 290.5815,57.8218 Q291.9014,56.1699 294.4082,56.1699 Q295.1138,56.1699 295.7612,56.3193 Q296.4087,56.4688 296.9731,56.7676 L296.9731,59.4902 Q296.3423,58.9092 295.7488,58.6394 Q295.1553,58.3696 294.5244,58.3696 Q293.1797,58.3696 292.4949,59.4363 Q291.8101,60.5029 291.8101,62.603 Q291.8101,64.6948 292.4949,65.7615 Q293.1797,66.8281 294.5244,66.8281 Q295.1553,66.8281 295.7488,66.5583 Q296.3423,66.2886 296.9731,65.7075 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="47" x="313.5" y="66.8223">Cursor</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="164" x="379.5" y="44.2871"/><ellipse cx="397.5" cy="62.2871" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M399.9731,68.4302 Q399.3921,68.729 398.7529,68.8784 Q398.1138,69.0278 397.4082,69.0278 Q394.9014,69.0278 393.5815,67.376 Q392.2617,65.7241 392.2617,62.603 Q392.2617,59.4736 393.5815,57.8218 Q394.9014,56.1699 397.4082,56.1699 Q398.1138,56.1699 398.7612,56.3193 Q399.4087,56.4688 399.9731,56.7676 L399.9731,59.4902 Q399.3423,58.9092 398.7488,58.6394 Q398.1553,58.3696 397.5244,58.3696 Q396.1797,58.3696 395.4949,59.4363 Q394.8101,60.5029 394.8101,62.603 Q394.8101,64.6948 395.4949,65.7615 Q396.1797,66.8281 397.5244,66.8281 Q398.1553,66.8281 398.7488,66.5583 Q399.3423,66.2886 399.9731,65.7075 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="118" x="416.5" y="66.8223">ExasolWebsocket</text><rect fill="#E2E2F0" height="36" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="119" x="553.5" y="44.2871"/><ellipse cx="571.5" cy="62.2871" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M573.9731,68.4302 Q573.3921,68.729 572.7529,68.8784 Q572.1138,69.0278 571.4082,69.0278 Q568.9014,69.0278 567.5815,67.376 Q566.2617,65.7241 566.2617,62.603 Q566.2617,59.4736 567.5815,57.8218 Q568.9014,56.1699 571.4082,56.1699 Q572.1138,56.1699 572.7612,56.3193 Q573.4087,56.4688 573.9731,56.7676 L573.9731,59.4902 Q573.3423,58.9092 572.7488,58.6394 Q572.1553,58.3696 571.5244,58.3696 Q570.1797,58.3696 569.4949,59.4363 Q568.8101,60.5029 568.8101,62.603 Q568.8101,64.6948 569.4949,65.7615 Q570.1797,66.8281 571.5244,66.8281 Q572.1553,66.8281 572.7488,66.5583 Q573.3423,66.2886 573.9731,65.7075 Z " fill="#000000"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="73" x="590.5" y="66.8223">Websocket</text><rect fill="#E2E2F0" height="50.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="156" x="682.5" y="29.3105"/><text fill="#000000" font-family="Calibri" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="138" x="691.5" y="51.8457">«Third party library»</text><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="85" x="718" y="68.334">LuWS Socket</text><rect fill="#E2E2F0" height="34.4883" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="130" x="848.5" y="45.7988"/><text fill="#000000" font-family="Calibri" font-size="14" lengthAdjust="spacing" textLength="112" x="857.5" y="68.334">Exasol Database</text><rect fill="#FFFFFF" height="578.125" style="stroke:#181818;stroke-width:1.0;" width="10" x="49" y="91.2871"/><rect fill="#FFFFFF" height="543.8145" style="stroke:#181818;stroke-width:1.0;" width="10" x="199" y="116.5977"/><rect fill="#FFFFFF" height="66.4434" style="stroke:#181818;stroke-width:1.0;" width="10" x="318" y="180.1738"/><rect fill="#FFFFFF" height="151.9316" style="stroke:#181818;stroke-width:1.0;" width="10" x="456.5" y="286.9277"/><rect fill="#FFFFFF" height="154.9316" style="stroke:#181818;stroke-width:1.0;" width="10" x="456.5" y="472.1699"/><rect fill="#FFFFFF" height="104.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="608" y="320.2383"/><rect fill="#FFFFFF" height="107.6211" style="stroke:#181818;stroke-width:1.0;" width="10" x="608" y="505.4805"/><rect fill="#FFFFFF" height="42" style="stroke:#181818;stroke-width:1.0;" width="10" x="755.5" y="368.8594"/><rect fill="#FFFFFF" height="39.3105" style="stroke:#181818;stroke-width:1.0;" width="10" x="755.5" y="538.791"/><rect fill="#FFFFFF" height="578.125" style="stroke:#181818;stroke-width:1.0;" width="10" x="908.5" y="91.2871"/><polygon fill="#181818" points="187,112.5977,197,116.5977,187,120.5977" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="59" x2="193" y1="116.5977" y2="116.5977"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="68" y="109.8555">close()</text><path d="M131.5,131.5977 L209.5,131.5977 L209.5,142.9082 L199.5,152.9082 L131.5,152.9082 L131.5,131.5977 " fill="#EEEEEE" style="stroke:#000000;stroke-width:1.5;"/><rect fill="none" height="123.0195" style="stroke:#000000;stroke-width:1.5;" width="857" x="131.5" y="131.5977"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="29" x="148.5" y="147.166">loop</text><text fill="#000000" font-family="Calibri" font-size="11" font-weight="bold" lengthAdjust="spacing" textLength="89" x="226.5" y="146.2324">[for all cursors]</text><polygon fill="#181818" points="306,176.1738,316,180.1738,306,184.1738" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="209" x2="312" y1="180.1738" y2="180.1738"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="218" y="173.4316">close()</text><rect height="47.4434" style="stroke:#000000;stroke-width:1.5;fill:none;" width="708" x="273.5" y="188.1738"/><path d="M273.5,188.1738 L341.5,188.1738 L341.5,199.1738 L331.5,209.1738 L273.5,209.1738 L273.5,188.1738 " fill="#EEEEEE" style="stroke:#000000;stroke-width:2.0;"/><text fill="#000000" font-family="Calibri" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="19" x="288.5" y="204.7422">ref</text><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacing" textLength="150" x="552.5" y="226.7754">Close resultset and cursor</text><polygon fill="#181818" points="220,242.6172,210,246.6172,220,250.6172" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="214" x2="322" y1="246.6172" y2="246.6172"/><line style="stroke:#A80036;stroke-width:2.0;" x1="314" x2="332" y1="237.6172" y2="255.6172"/><line style="stroke:#A80036;stroke-width:2.0;" x1="314" x2="332" y1="255.6172" y2="237.6172"/><polygon fill="#181818" points="444.5,282.9277,454.5,286.9277,444.5,290.9277" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="209" x2="450.5" y1="286.9277" y2="286.9277"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="114" x="218" y="280.1855">send_disconnect()</text><polygon fill="#181818" points="596,316.2383,606,320.2383,596,324.2383" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="466.5" x2="602" y1="320.2383" y2="320.2383"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="116" x="475.5" y="313.4961">send_raw(payload)</text><polygon fill="#181818" points="743.5,364.8594,753.5,368.8594,743.5,372.8594" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="618" x2="749.5" y1="368.8594" y2="368.8594"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="97" x="627" y="346.8066">wssend(socket,</text><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="53" x="627" y="362.1172">payload)</text><polygon fill="#181818" points="896.5,378.8594,906.5,382.8594,896.5,386.8594" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="765.5" x2="902.5" y1="382.8594" y2="382.8594"/><polygon fill="#181818" points="776.5,392.8594,766.5,396.8594,776.5,400.8594" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="770.5" x2="907.5" y1="396.8594" y2="396.8594"/><polygon fill="#181818" points="629,406.8594,619,410.8594,629,414.8594" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="623" x2="759.5" y1="410.8594" y2="410.8594"/><polygon fill="#181818" points="477.5,420.8594,467.5,424.8594,477.5,428.8594" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="471.5" x2="612" y1="424.8594" y2="424.8594"/><polygon fill="#181818" points="220,434.8594,210,438.8594,220,442.8594" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="214" x2="460.5" y1="438.8594" y2="438.8594"/><polygon fill="#181818" points="444.5,468.1699,454.5,472.1699,444.5,476.1699" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="209" x2="450.5" y1="472.1699" y2="472.1699"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="218" y="465.4277">close()</text><polygon fill="#181818" points="596,501.4805,606,505.4805,596,509.4805" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="466.5" x2="602" y1="505.4805" y2="505.4805"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="41" x="475.5" y="498.7383">close()</text><polygon fill="#181818" points="743.5,534.791,753.5,538.791,743.5,542.791" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="618" x2="749.5" y1="538.791" y2="538.791"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="100" x="627" y="532.0488">wsclose(socket)</text><line style="stroke:#181818;stroke-width:1.0;" x1="765.5" x2="807.5" y1="572.1016" y2="572.1016"/><line style="stroke:#181818;stroke-width:1.0;" x1="807.5" x2="807.5" y1="572.1016" y2="585.1016"/><line style="stroke:#181818;stroke-width:1.0;" x1="766.5" x2="807.5" y1="585.1016" y2="585.1016"/><polygon fill="#181818" points="776.5,581.1016,766.5,585.1016,776.5,589.1016" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="81" x="774.5" y="565.3594">Close socket</text><line style="stroke:#A80036;stroke-width:2.0;" x1="751.5" x2="769.5" y1="576.1016" y2="594.1016"/><line style="stroke:#A80036;stroke-width:2.0;" x1="751.5" x2="769.5" y1="594.1016" y2="576.1016"/><polygon fill="#181818" points="629,595.1016,619,599.1016,629,603.1016" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="623" x2="759.5" y1="599.1016" y2="599.1016"/><polygon fill="#181818" points="477.5,609.1016,467.5,613.1016,477.5,617.1016" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="471.5" x2="612" y1="613.1016" y2="613.1016"/><line style="stroke:#A80036;stroke-width:2.0;" x1="604" x2="622" y1="604.1016" y2="622.1016"/><line style="stroke:#A80036;stroke-width:2.0;" x1="604" x2="622" y1="622.1016" y2="604.1016"/><polygon fill="#181818" points="220,623.1016,210,627.1016,220,631.1016" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="214" x2="460.5" y1="627.1016" y2="627.1016"/><line style="stroke:#A80036;stroke-width:2.0;" x1="452.5" x2="470.5" y1="618.1016" y2="636.1016"/><line style="stroke:#A80036;stroke-width:2.0;" x1="452.5" x2="470.5" y1="636.1016" y2="618.1016"/><polygon fill="#181818" points="70,656.4121,60,660.4121,70,664.4121" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="64" x2="203" y1="660.4121" y2="660.4121"/><text fill="#000000" font-family="Calibri" font-size="13" lengthAdjust="spacing" textLength="112" x="78" y="653.6699">Success (boolean)</text><line style="stroke:#A80036;stroke-width:2.0;" x1="195" x2="213" y1="651.4121" y2="669.4121"/><line style="stroke:#A80036;stroke-width:2.0;" x1="195" x2="213" y1="669.4121" y2="651.4121"/><!--MD5=[afc0d62ba8ed27e229920445c00401e6]
+@startuml seq_connection_close
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant Connection as conn << (C,#ADD1B2) >>
+    participant Cursor as cur << (C,#ADD1B2) >>
+    participant ExasolWebsocket as exaws << (C,#ADD1B2) >>
+    participant Websocket as ws << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+' [dsn -> req~luasql-connection-close~1 >> impl,utest,itest]
+client -> conn : close()
+activate conn
+loop for all cursors
+    conn -> cur : close()
+    activate cur
+    ref over cur, db: Close resultset and cursor
+    cur - -> conn
+    destroy cur
+end
+conn -> exaws : send_disconnect()
+activate exaws
+exaws -> ws : send_raw(payload)
+activate ws
+ws -> luws : wssend(socket,\npayload)
+activate luws
+luws -> db
+db - -> luws
+luws - -> ws
+deactivate luws
+ws - -> exaws
+deactivate ws
+exaws - -> conn
+deactivate exaws
+conn -> exaws : close()
+activate exaws
+exaws -> ws : close()
+activate ws
+ws -> luws : wsclose(socket)
+activate luws
+luws -> luws : Close socket
+destroy luws
+luws - -> ws
+ws - -> exaws
+destroy ws
+exaws - -> conn
+destroy exaws
+conn - -> client: Success (boolean)
+destroy conn
+
+
+@enduml
+
+@startuml seq_connection_close
+hide empty methods
+hide empty attributes
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+skinparam defaultFontName Calibri
+
+skinparam padding 2
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant Connection as conn << (C,#ADD1B2) >>
+    participant Cursor as cur << (C,#ADD1B2) >>
+    participant ExasolWebsocket as exaws << (C,#ADD1B2) >>
+    participant Websocket as ws << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+client -> conn : close()
+activate conn
+loop for all cursors
+    conn -> cur : close()
+    activate cur
+    ref over cur, db: Close resultset and cursor
+    cur - -> conn
+    destroy cur
+end
+conn -> exaws : send_disconnect()
+activate exaws
+exaws -> ws : send_raw(payload)
+activate ws
+ws -> luws : wssend(socket,\npayload)
+activate luws
+luws -> db
+db - -> luws
+luws - -> ws
+deactivate luws
+ws - -> exaws
+deactivate ws
+exaws - -> conn
+deactivate exaws
+conn -> exaws : close()
+activate exaws
+exaws -> ws : close()
+activate ws
+ws -> luws : wsclose(socket)
+activate luws
+luws -> luws : Close socket
+destroy luws
+luws - -> ws
+ws - -> exaws
+destroy ws
+exaws - -> conn
+destroy exaws
+conn - -> client: Success (boolean)
+destroy conn
+
+
+@enduml
+
+PlantUML version 1.2022.2(Sat Mar 05 17:30:19 CET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: DE
+--></g></svg>

@@ -1,0 +1,76 @@
+@startuml seq_websocket_request_response
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant "Connection" as conn << (C,#ADD1B2) >>
+    participant "ExasolWebsocket" as exaws << (C,#ADD1B2) >>
+    participant "Websocket" as ws << (C,#ADD1B2) >>
+    participant "Message Handler" as msghandler << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+group Initial Connection
+    ?-> ws : connect(url)
+    create msghandler
+    ws -> msghandler : create()
+    ws -> luws : wsopen(url, message_handler)
+    activate luws
+    luws --> ws : Socket
+    deactivate luws
+end
+
+client -> conn : execute()
+activate conn
+conn -> exaws : send_execute()
+activate exaws
+exaws -> exaws : Encode JSON payload
+exaws -> ws : send_raw(json_payload)
+activate ws
+ws -> luws : wssend(socket, payload)
+activate luws
+luws -> luws : Encode\nWebsocket frame
+luws -> db : socket:send()
+activate db
+luws --> ws
+deactivate luws
+group Wait for response
+    db -> db : Process statement
+    loop until data received
+        'activate luws
+        ws -> luws : wsreceive(socket)
+        activate luws
+        luws --> ws : no data available
+    end
+    db -> luws: Response
+    deactivate db
+    activate luws
+    deactivate luws
+    luws -> luws : Decode\nWebsocket frame
+    luws -> msghandler : Message received
+    activate msghandler
+    msghandler -> msghandler : Store message
+    msghandler --> luws
+    deactivate msghandler
+    deactivate luws
+    luws --> ws : data available
+    deactivate luws
+end
+
+ws -> msghandler : get_data()
+activate msghandler
+msghandler --> ws
+deactivate msghandler
+ws --> exaws : Response payload
+deactivate ws
+exaws -> exaws : Decode JSON payload,\ncheck for exception
+exaws --> conn : result set
+deactivate exaws
+conn --> client : cursor
+deactivate conn
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml seq_connection_close
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant Connection as conn << (C,#ADD1B2) >>
+    participant Cursor as cur << (C,#ADD1B2) >>
+    participant ExasolWebsocket as exaws << (C,#ADD1B2) >>
+    participant Websocket as ws << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+' [dsn -> req~luasql-connection-close~1 >> impl,utest,itest]
+client -> conn : close()
+activate conn
+loop for all cursors
+    conn -> cur : close()
+    activate cur
+    ref over cur, db: Close resultset and cursor
+    cur --> conn
+    destroy cur
+end
+conn -> exaws : send_disconnect()
+activate exaws
+exaws -> ws : send_raw(payload)
+activate ws
+ws -> luws : wssend(socket,\npayload)
+activate luws
+luws -> db
+db --> luws
+luws --> ws
+deactivate luws
+ws --> exaws
+deactivate ws
+exaws --> conn
+deactivate exaws
+conn -> exaws : close()
+activate exaws
+exaws -> ws : close()
+activate ws
+ws -> luws : wsclose(socket)
+activate luws
+luws -> luws : Close socket
+destroy luws
+luws --> ws
+ws --> exaws
+destroy ws
+exaws --> conn
+destroy exaws
+conn --> client: Success (boolean)
+destroy conn
+
+
+@enduml

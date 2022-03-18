@@ -1,0 +1,27 @@
+@startuml seq_connection_commit
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+participant Connection as conn << (C,#ADD1B2) >>
+participant ExasolWebsocket as ws << (C,#ADD1B2) >>
+participant "Exasol Database" as db
+
+activate client
+activate db
+
+' [dsn -> req~luasql-connection-commit~1 >> impl,utest,itest]
+client -> conn: commit()
+activate conn
+conn -> ws: send_execute("COMMIT")
+activate ws
+
+ws -> db: execute
+activate db
+db -> db: Commit
+db --> ws
+deactivate db
+ws --> conn
+conn --> client: Success (boolean)
+deactivate conn
+
+@enduml
