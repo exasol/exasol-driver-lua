@@ -163,6 +163,7 @@ jobs:
           if [[ `git status --porcelain` ]]; then
             echo "ERROR: Generated diagrams are not up-to-date:"
             git status --porcelain
+            git diff
             echo "Please run './tools/build-diagrams.sh' and commit the changes."
             exit 1
           else
