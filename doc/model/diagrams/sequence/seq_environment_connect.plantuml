@@ -1,7 +1,5 @@
-@startuml seq_connection_create
+@startuml seq_environment_connect
 !include ../clean.skin
-
-title: Connecting to the Database and logging in
 
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"

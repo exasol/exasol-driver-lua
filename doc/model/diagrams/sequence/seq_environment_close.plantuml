@@ -1,15 +1,10 @@
 @startuml seq_environment_close
 !include ../clean.skin
 
-title: Closing the Environment
-
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
     participant Environment as env << (C,#ADD1B2) >>
     participant Connection as conn << (C,#ADD1B2) >>
-    participant ExasolWebsocket as exaws << (C,#ADD1B2) >>
-    participant Websocket as ws << (C,#ADD1B2) >>
-    participant "LuWS Socket" as luws <<Third party library>>
 end box
 participant "Exasol Database" as db
 

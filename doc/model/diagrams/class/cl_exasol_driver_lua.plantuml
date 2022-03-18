@@ -1,8 +1,6 @@
 @startuml cl_exasol_driver_lua
 !include ../clean.skin
 
-title: Class Diagram Exasol Driver for Lua
-
 package luasql.exasol {
     '[dsn -> req~luasql-entry-point~1 >> impl,utest]
     class entry {

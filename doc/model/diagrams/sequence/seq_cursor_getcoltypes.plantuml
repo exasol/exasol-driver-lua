@@ -1,8 +1,6 @@
 @startuml seq_cursor_getcoltypes
 !include ../clean.skin
 
-title: Get column types from a Cursor
-
 participant "Client Code" as client <<external>>
 participant Connection as conn << (C,#ADD1B2) >>
 participant Cursor as cur << (C,#ADD1B2) >>

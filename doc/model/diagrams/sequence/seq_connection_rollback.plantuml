@@ -1,8 +1,6 @@
 @startuml seq_connection_rollback
 !include ../clean.skin
 
-title: Rolling back changes for a Connection
-
 participant "Client Code" as client <<external>>
 participant Connection as conn << (C,#ADD1B2) >>
 participant ExasolWebsocket as ws << (C,#ADD1B2) >>

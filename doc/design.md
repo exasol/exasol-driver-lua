@@ -1,5 +1,3 @@
-<head><link href="oft_spec.css" rel="stylesheet"></head>
-
 # Introduction
 
 ## Acknowledgments
@@ -26,27 +24,86 @@ See [Diagram source](./model/diagrams/class/cl_exasol_driver_lua.plantuml).
 
 # Runtime
 
-## Connecting to the Database
+Note: the following sequence diagrams only show a simplified workflow without the `Websocket` class and `luws`. See section [Websocket Request/Response](#websocket-requestresponse) for a detailed description of the request/response cycle.
 
-![Sequence Diagram: Connecting to the database](./images/generated/seq_connection.svg)
+## Environment
 
-See [Diagram source](./model/diagrams/sequence/seq_connection.plantuml).
+### Connecting to the Database
 
-## Executing a Statement and Fetching Results
+![Sequence Diagram: Connecting to the database](./images/generated/seq_environment_connect.svg)
 
-![Sequence Diagram: Executing Statements and fetching results](./images/generated/seq_execute_statement.svg)
+See [Diagram source](./model/diagrams/sequence/seq_environment_connect.plantuml).
+
+### Closing the Environment
+
+![Sequence Diagram: Closing the Environment](./images/generated/seq_environment_close.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_environment_close.plantuml).
+
+## Connection
+
+### Executing a Statement
+
+![Sequence Diagram: Executing Statements and fetching results](./images/generated/seq_connection_execute.svg)
 
 See [Diagram source](./model/diagrams/sequence/seq_execute_statement.plantuml).
 
-## Closing the Connection
+### Setting Autocommit for the Connection
 
-![Sequence Diagram: Closing the Connection](./images/generated/seq_close.svg)
+![Sequence Diagram: Setting Autocommit](./images/generated/seq_connection_setautocommit.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_close.plantuml).
+See [Diagram source](./model/diagrams/sequence/seq_connection_setautocommit.plantuml).
+
+### Commiting a Transaction for the Connection
+
+![Sequence Diagram: Commiting a Transaction](./images/generated/seq_connection_commit.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_connection_commit.plantuml).
+
+### Rolling Back a Transaction for the Connection
+
+![Sequence Diagram: Rolling Back a Transaction](./images/generated/seq_connection_rollback.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_connection_rollback.plantuml).
+
+
+### Closing the Connection
+
+![Sequence Diagram: Closing the Connection](./images/generated/seq_connection_close.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_connection_close.plantuml).
+
+## Cursor
+
+### Fetching Results
+
+![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_fetch.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_cursor_fetch.plantuml).
+
+### Getting Column Names
+
+![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_getcolnames.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_cursor_getcolnames.plantuml).
+
+### Getting Column Types
+
+![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_getcoltypes.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_cursor_getcoltypes.plantuml).
+
+### Closing a Cursor
+
+![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_close.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_cursor_close.plantuml).
 
 # Cross-cutting Concerns
 
 ## Websocket Request/Response
+
+Detailed Websocket Request and Response cycle using `connection:execute()` as an example:
 
 ![Sequence Diagram: Websocket Request/Response](./images/generated/seq_websocket_request_response.svg)
 

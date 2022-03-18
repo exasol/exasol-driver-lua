@@ -1,9 +1,6 @@
 @startuml seq_connection_close
 !include ../clean.skin
 
-title: Closing a Connection
-
-
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
     participant Connection as conn << (C,#ADD1B2) >>

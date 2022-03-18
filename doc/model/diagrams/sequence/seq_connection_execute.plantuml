@@ -1,8 +1,6 @@
 @startuml seq_connection_execute
 !include ../clean.skin
 
-title: Executing Statements
-
 participant "Client Code" as client <<external>>
 participant Connection as conn << (C,#ADD1B2) >>
 participant Cursor as cur << (C,#ADD1B2) >>
