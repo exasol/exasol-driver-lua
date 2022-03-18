@@ -14,6 +14,7 @@ local log = require("remotelog")
 --
 -- @return created object
 --
+-- [impl -> dsn~luasql-entry-point~0]
 function M.exasol()
     log.trace("Created new luasql.exasol environment")
     return environment:new()

@@ -29,12 +29,14 @@ Note: the following sequence diagrams only show a simplified workflow without th
 ## Environment
 
 ### Connecting to the Database
+`dsn~env-connect~1`
 
 ![Sequence Diagram: Connecting to the database](./images/generated/seq_environment_connect.svg)
 
 See [Diagram source](./model/diagrams/sequence/seq_environment_connect.plantuml).
 
 ### Closing the Environment
+`dsn~env-close~1`
 
 ![Sequence Diagram: Closing the Environment](./images/generated/seq_environment_close.svg)
 

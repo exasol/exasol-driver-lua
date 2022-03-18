@@ -9,6 +9,7 @@ participant "Exasol Database" as db
 
 activate client
 activate db
+' [dsn -> req~luasql-connection-execute~1 >> impl,utest,itest]
 client -> conn: execute(statement)
 activate conn
 conn -> ws: send_execute(statement)

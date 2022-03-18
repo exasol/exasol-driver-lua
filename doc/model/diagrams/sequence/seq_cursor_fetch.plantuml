@@ -12,6 +12,7 @@ activate db
 ref over client, cur: Use connection to execute a statement and get a cursor
 
 loop Fetch results until fetch() returns nil
+    ' [dsn -> req~luasql-cursor-fetch~1 >> impl,utest,itest]
     client -> cur: fetch()
     activate cur
     alt If DB has returned a resultset handle\nand no more rows available in local list

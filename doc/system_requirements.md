@@ -59,6 +59,8 @@ Rationale:
 
 The Virtual Schema Adapter for Exasol will be written in Lua and will need access to an Exasol database.
 
+Needs: req
+
 ### Logging
 `feat~logging~1`
 
@@ -85,62 +87,126 @@ Client code can load EDL using a `require` statement and create an [Environment]
 local driver = require("luasqlexasol")
 local env = driver.exasol()
 ```
-
+Covers:
+* `feat~luasql-api~1`
 Needs: dsn
 
 #### Environment Objects
-`req~luasql-environment~1`
 
 An Environment object provides the following methods:
 
-```lua
-env:connect(sourcename[,username[,password]])
-env:close()
-```
+##### Environment:connect()
+`req~luasql-environment-connect~1`
 
+```lua
+environment:connect(sourcename[,username[,password]])
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+##### Environment:close()
+`req~luasql-environment-close~1`
+
+```lua
+environment:close()
+```
+Covers:
+* `feat~luasql-api~1`
 Needs: dsn
 
 #### Connection Objects
-`req~luasql-connection~1`
 
 A Connection object provides the following methods:
 
-```lua
-conn:execute(statement)
-conn:setautocommit(boolean)
-conn:commit()
-conn:rollback()
-conn:close()
-```
+##### Connection:execute()
+`req~luasql-connection-execute~1`
 
+```lua
+connection:execute(statement)
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+##### Connection:setautocommit()
+`req~luasql-connection-setautocommit~1`
+
+```lua
+connection:setautocommit(boolean)
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+##### Connection:commit()
+`req~luasql-connection-commit~1`
+```lua
+connection:commit()
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+##### Connection:rollback()
+`req~luasql-connection-rollback~1`
+```lua
+connection:rollback()
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+##### Connection:close()
+`req~luasql-connection-close~1`
+```lua
+connection:close()
+```
+Covers:
+* `feat~luasql-api~1`
 Needs: dsn
 
 #### Cursor Objects
-`req~luasql-cursor~1`
 
 A Cursor object provides the following methods:
 
+#### Cursor:fetch()
+`req~luasql-cursor-fetch~1`
 ```lua
-cur:fetch([table[,modestring]])
-cur:getcolnames()
-cur:getcoltypes()
-cur:close()
+cursor:fetch([table[,modestring]])
 ```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
 
+#### Cursor:getcolnames()
+`req~luasql-cursor-getcolnames~1`
+```lua
+cursor:getcolnames()
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+#### Cursor:getcoltypes()
+`req~luasql-cursor-getcoltypes~1`
+```lua
+cursor:getcoltypes()
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
+#### Cursor:close()
+`req~luasql-cursor-close~1`
+```lua
+cursor:close()
+```
+Covers:
+* `feat~luasql-api~1`
 Needs: dsn
 
 ### LuaSQL Error Handling
-
-### Connect With Username and Password
-`req~connect-with-username-password~1`
-
-EDL can connect to an Exasol database and authenticate with username and password as credentials.
-
-Covers:
-
-* [feat~luasql-api~1](#luasql-api-interface)
-
-Needs: dsn
 
 ### LuaSQL
 

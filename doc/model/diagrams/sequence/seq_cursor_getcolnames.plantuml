@@ -11,6 +11,7 @@ activate db
 
 ref over client, cur: Use connection to execute a statement and get a cursor
 
+' [dsn -> req~luasql-cursor-getcolnames~1 >> impl,utest,itest]
 client -> cur : getcolnames()
 activate cur
 cur -> cur : Get column names\nfrom local result

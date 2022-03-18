@@ -41,20 +41,23 @@ deactivate luws
 group Wait for response
     db -> db : Process statement
     loop until data received
+        'activate luws
         ws -> luws : wsreceive(socket)
         activate luws
-        luws --> ws
-        deactivate luws
+        luws --> ws : no data available
     end
     db -> luws: Response
     deactivate db
     activate luws
+    deactivate luws
     luws -> luws : Decode\nWebsocket frame
     luws -> msghandler : Message received
     activate msghandler
     msghandler -> msghandler : Store message
     msghandler --> luws
     deactivate msghandler
+    deactivate luws
+    luws --> ws : data available
     deactivate luws
 end
 

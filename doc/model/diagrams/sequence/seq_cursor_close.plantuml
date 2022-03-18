@@ -9,6 +9,7 @@ participant "Exasol Database" as db
 
 activate db
 
+' [dsn -> req~luasql-cursor-close~1 >> impl,utest,itest]
 client -> cur : close()
 activate cur
 alt No resultset handle

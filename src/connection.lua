@@ -15,6 +15,7 @@ function M:create(websocket, session_id)
     return object
 end
 
+-- [impl -> dsn~luasql-connection-execute~0]
 function M:execute(statement)
     if self.closed then exaerror.create("E-EDL-12", "Connection already closed"):raise() end
     log.trace("Executing statement '%s'", statement)
@@ -45,14 +46,18 @@ function M:execute(statement)
     return cur
 end
 
+-- [impl -> dsn~luasql-connection-commit~0]
 function M:commit() error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14") end
 
+-- [impl -> dsn~luasql-connection-rollback~0]
 function M:rollback() error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14") end
 
+-- [impl -> dsn~luasql-connection-setautocommit~0]
 function M:setautocommit(autocommit)
     error("Setautocommit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
+-- [impl -> dsn~luasql-connection-close~0]
 function M:close()
     if self.closed then
         log.warn("Connection with session ID %d already closed", self.session_id)

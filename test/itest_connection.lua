@@ -75,6 +75,8 @@ function TestConnection:test_login_fails()
     end
 end
 
+-- [itest -> dsn~luasql-environment-connect~0]
+-- [itest -> dsn~luasql-entry-point~0]
 function TestConnection:test_login_fails()
     local tests = {
         {props = config.get_connection_params({user = "unknownUser"})},
@@ -93,6 +95,7 @@ function TestConnection:test_login_fails()
     end
 end
 
+-- [itest -> dsn~luasql-environment-connect~0]
 function TestConnection:test_connection_succeeds()
     local connection = config.create_connection()
     table.insert(self.connections, connection)

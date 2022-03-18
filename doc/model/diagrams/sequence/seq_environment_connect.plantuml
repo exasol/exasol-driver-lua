@@ -12,15 +12,16 @@ participant "Exasol Database" as db
 
 activate client
 activate db
+' [dsn -> req~luasql-entry-point~1 >> impl,utest]
 client -> entry: exasol()
 activate entry
 create env
 entry -> env: create()
 client <-- entry: Environment
 deactivate entry
+' [dsn -> req~luasql-environment-connect~1 >> impl,utest,itest]
 client -> env: connect(host_and_port, user, password)
 activate env
-' [dsn -> req~connect-with-username-password~1 >> impl,utest,itest]
 create ws
 env -> ws: connect(url)
 activate ws

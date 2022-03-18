@@ -2,16 +2,13 @@
 !include ../clean.skin
 
 package luasql.exasol {
-    '[dsn -> req~luasql-entry-point~1 >> impl,utest]
     class entry {
         + exasol()
     }
-    '[dsn -> req~luasql-environment~1 >> impl,utest,itest]
     class Environment {
         + connect(sourcename, username, password): Connection
         + close(): boolean
     }
-    '[dsn -> req~luasql-connection~1 >> impl,utest,itest]
     class Connection {
         + execute(statement): Cursor
         + commit(): boolean
@@ -19,7 +16,6 @@ package luasql.exasol {
         + setautocommit(boolean): boolean
         + close(): boolean
     }
-    '[dsn -> req~luasql-cursor~1 >> impl,utest,itest]
     class Cursor {
         + close(): boolean
         + fetch([table[,modestring]]): table

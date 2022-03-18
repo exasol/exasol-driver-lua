@@ -9,6 +9,7 @@ participant "Exasol Database" as db
 activate client
 activate db
 
+' [dsn -> req~luasql-connection-setautocommit~1 >> impl,utest,itest]
 client -> conn: setautocommit(boolean)
 activate conn
 conn -> ws : send_set_attribute(\nautocommit=true/false)
