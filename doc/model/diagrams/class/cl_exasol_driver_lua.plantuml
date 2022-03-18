@@ -48,9 +48,9 @@ package luasql.exasol {
             +get_data(): string
             +has_received_data(): boolean
         }
-        ExasolWebsocket -- Websocket : use
+        ExasolWebsocket "1" o-- "1" Websocket
         Websocket .l.> togglebits.luws : use
-        Websocket -- WebsocketDatahandler : use
+        Websocket "1" o-- "1" WebsocketDatahandler
     }
 }
 package togglebits <<external>> {
@@ -65,8 +65,8 @@ entry -> Environment : create
 Environment "1" *-- "many" Connection : +Composition
 Connection "1" *-- "many" Cursor : +Composition
 'Environment -> ExasolWebsocket : create
-Connection "1" -- "1" ExasolWebsocket : use
-Cursor .l.> ExasolWebsocket : use
+Connection "1" o-- "1" ExasolWebsocket
+Cursor o-- ExasolWebsocket
 
 url of togglebits is [[https://github.com/toggledbits/LuWS]]
 url of togglebits.luws is [[https://github.com/toggledbits/LuWS]]

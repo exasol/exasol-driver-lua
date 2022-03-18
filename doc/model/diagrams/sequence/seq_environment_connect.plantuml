@@ -3,7 +3,7 @@
 
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
-participant "Entry Point"  as entry
+participant "luasqlexasol\ndriver"  as entry
 participant Environment as env << (C,#ADD1B2) >>
 participant Connection as conn << (C,#ADD1B2) >>
 participant ExasolWebsocket as ws << (C,#ADD1B2) >>
@@ -25,19 +25,19 @@ create ws
 env -> ws: connect(url)
 activate ws
 ws -> db: Connect
+activate db
 db --> ws
+deactivate db
 ws --> env
 deactivate ws
-group Login
+group Login command and send credentials
     env -> ws: send_login_command()
     activate ws
-    group Websocket Request/Response
-        note over ws: See details in separate diagram
-        ws -> db: Login command
-        activate db
-        db --> ws: Login response\nincl. public key
-        deactivate db
-    end
+    ws -> db: Login command
+    activate db
+    db -> db : Generate public key
+    db --> ws: Login response\nincl. public key
+    deactivate db
     ws --> env: Public key
     deactivate ws
     env -> env: Encrypt password\nwith public key
