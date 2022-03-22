@@ -53,7 +53,7 @@ jobs:
       - name: Run smoketests
         run: |
           eval $(luarocks path)
-          LOG_LEVEL=TRACE busted --run=smoketest
+          EXASOL_HOST=dummy LOG_LEVEL=TRACE busted --run=smoketest
 
       - name: Spawn Exasol environment
         run: |
