@@ -2,19 +2,33 @@ return {
   _all = {
     coverage = true,
     shuffle = true,
-    lpath = "./src/?.lua;./spec/?.lua"
+    recursive = true,
+    verbose = true,
+    lazy = false,
+    ["auto-insulate"] = true,
+    ["keep-going"] = true,
+    ["defer-print"] = false,
+    lpath = "./src/?.lua;./spec/?.lua",
+    ROOT = {"spec/"},
   },
   default = {
-    verbose = true
+  },
+  ci = {
+    output = "junit",
+    Xoutput = "target/test-reports/test-report.xml"
+  },
+  ci_repeated = {
+    output = "junit",
+    Xoutput = "target/test-reports/test-report-repeated.xml",
+    ["repeat"] = 20
+  },
+  smoketest = {
+    tags = {"smoketest"}
   },
   utest = {
-    tags = "utest",
     ROOT = {"spec/unit"},
-    verbose = true
   },
   itest = {
-    tags = "itest",
     ROOT = {"spec/integration"},
-    verbose = true
   }
 }
