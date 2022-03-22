@@ -65,7 +65,7 @@ function M:wait_for_response(timeout_seconds)
         end
         local total_wait_time_seconds = os.clock() - start
         if self.data_handler:has_received_data() then
-            log.debug("Received result after %fs and %d tries", total_wait_time_seconds, try_count)
+            log.debug("Received result %s after %fs and %d tries", result, total_wait_time_seconds, try_count)
             return nil
         end
         if total_wait_time_seconds >= timeout_seconds then
@@ -73,7 +73,6 @@ function M:wait_for_response(timeout_seconds)
                                    {waiting_time = total_wait_time_seconds, try_count = try_count})
         end
         try_count = try_count + 1
-        log.trace("Wsreceive: result=%s, error=%s. Try again.", result, err)
     end
 end
 
