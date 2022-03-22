@@ -14,12 +14,12 @@ return {
   default = {
   },
   ci = {
-    output = "junit",
-    Xoutput = "target/test-reports/test-report.xml"
+    --output = "junit",
+    --Xoutput = "target/test-reports/test-report.xml"
   },
   ci_repeated = {
-    output = "junit",
-    Xoutput = "target/test-reports/test-report-repeated.xml",
+    --output = "junit",
+    --Xoutput = "target/test-reports/test-report-repeated.xml",
     ["repeat"] = 20
   },
   smoketest = {

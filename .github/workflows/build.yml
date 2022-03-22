@@ -7,7 +7,7 @@ jobs:
        fail-fast: true
        matrix:
           lua_version: [5.4]
-          exasol_version: [7.1.6]
+          exasol_version: [7.1.7]
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
@@ -72,20 +72,6 @@ jobs:
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             tools/runtests.sh --run=ci
-
-      - name: Archive test results
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
-        with:
-          name: test-reports
-          path: target/luaunit-reports/*
-
-      - name: Publish test teports
-        uses: scacap/action-surefire-report@v1
-        if: ${{ always() }}
-        with:
-          report_paths: 'target/test-reports/*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
