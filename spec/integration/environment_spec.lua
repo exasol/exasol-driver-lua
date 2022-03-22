@@ -16,26 +16,22 @@ describe("Environment", function()
     end)
 
     it("throws an error when connecting to an invalid host", function()
-        assert.has_error(function() env:connect("invalid:8563", "user", "password") end,
-                         "E-EDL-1: Error connecting to 'wss://invalid:8563': 'Connection to invalid:8563 failed:" ..
-                                 " host or service not provided, or not known'")
+        assert.error_matches(function() env:connect("invalid:8563", "user", "password") end,
+                             "E%-EDL%-1: Error connecting to 'wss://invalid:8563': " ..
+                                     "'Connection to invalid:8563 failed:.*")
     end)
 
     it("throws an error when connecting to an invalid port", function()
-        assert.has_error(function() env:connect("localhost:1234", "user", "password") end,
-                         "E-EDL-1: Error connecting to 'wss://localhost:1234': 'Connection to localhost:1234 failed:" ..
-                                 " connection refused'")
+        assert.error_matches(function() env:connect("localhost:1234", "user", "password") end,
+                             "E%-EDL%-1: Error connecting to 'wss://localhost:1234': " ..
+                                     "'Connection to localhost:1234 failed:.*")
     end)
 
     it("returns an error when connecting with wrong credendials", function()
         local conn, err = env:connect(connection_params.source_name, "user", "password")
         assert.is_nil(conn)
-        assert.is_same([[E-EDL-16: Login failed: 'E-EDL-10: Received DB status 'error' with code 08004: "..
-                "'Connection exception - authentication failed.''
-
-Mitigations:
-
-* Check the credentials you provided.]], tostring(err))
+        assert.matches("E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: " ..
+                               "'Connection exception %- authentication failed.''.*", tostring(err))
     end)
 
     -- [itest -> dsn~luasql-environment-connect~0]

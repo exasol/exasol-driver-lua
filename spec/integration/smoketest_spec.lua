@@ -15,8 +15,8 @@ describe("Environment", function()
     end)
 
     it("throws an error when connecting to an invalid host", function()
-        assert.has_error(function() env:connect("invalid:8563", "user", "password") end,
-                         "E-EDL-1: Error connecting to 'wss://invalid:8563': 'Connection to invalid:8563 failed:" ..
-                                 " host or service not provided, or not known'")
+        assert.error_matches(function() env:connect("invalid:8563", "user", "password") end,
+                             "E%-EDL%-1: Error connecting to 'wss://invalid:8563': " ..
+                                     "'Connection to invalid:8563 failed:.*")
     end)
 end)
