@@ -11,7 +11,7 @@ local WEBSOCKET_PROTOCOL = "wss"
 
 local M = {}
 function M:new()
-    local object = {closed=false, connections = {}}
+    local object = {closed = false, connections = {}}
     self.__index = self
     setmetatable(object, self)
     return object
@@ -28,9 +28,7 @@ end
 
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
-    if err then
-        return nil, err
-    end
+    if err then return nil, err end
     local encrypted_password = encrypt_password(response.publicKeyModulus, response.publicKeyExponent, password)
     return socket:send_login_credentials(username, encrypted_password)
 end
@@ -71,7 +69,7 @@ function M:close()
 
     log.trace("Closing environment: close all %d connections", #self.connections)
     for _, conn in pairs(self.connections) do conn:close() end
-    self.closed=true
+    self.closed = true
 end
 
 return M

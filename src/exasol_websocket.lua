@@ -76,8 +76,6 @@ function M:_send_json(payload, ignore_response)
     end
 end
 
-function M:close()
-    self.websocket:close()
-end
+function M:close() self.websocket:close() end
 
 return M

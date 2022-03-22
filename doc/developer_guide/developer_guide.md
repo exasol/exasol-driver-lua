@@ -51,6 +51,8 @@ EXASOL_HOST=<host> \
   ./tools/runtests.sh
 ```
 
+This will run all tests and print the test coverage.
+
 The following environment variables have a default value and can be omitted:
 
 * `EXASOL_PORT` = `8563`
@@ -62,9 +64,10 @@ You can enable tracing by setting environment variable `LOG_LEVEL=TRACE`.
 To run a single test:
 
 ```sh
-export LUA_PATH="./src/?.lua;./test/?.lua;$(luarocks path --lr-path)"
 export EXASOL_HOST=<host>
-lua test/itest_connection.lua
+busted spec/integration/connection_spec.lua
+# or
+lua spec/integration/connection_spec.lua
 ```
 
 ## Source Formatter

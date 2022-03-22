@@ -53,7 +53,7 @@ jobs:
       - name: Run smoketests
         run: |
           eval $(luarocks path)
-          LOG_LEVEL=TRACE RUN_ONLY=smoketest.lua ./tools/runtests.sh
+          LOG_LEVEL=TRACE busted spec/integration/smoketest_spec.lua
 
       - name: Spawn Exasol environment
         run: |
@@ -113,7 +113,7 @@ jobs:
               EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
               EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
               EXASOL_USER=sys EXASOL_PASSWORD=exasol \
-              tools/runtests.sh
+              busted
           done
 
       - name: Archive repeated tests results

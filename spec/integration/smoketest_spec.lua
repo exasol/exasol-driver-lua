@@ -1,15 +1,22 @@
+---@diagnostic disable: undefined-global
+-- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local driver = require("luasqlexasol")
+local config = require("config")
 
-TestSmokeTest = {}
+config.configure_logging()
 
-function TestSmokeTest:test_version() luaunit.assertEquals(driver.VERSION, "0.1.0") end
+describe("Environment", function()
+    local env = nil
+    before_each(function() env = driver.exasol() end)
+    after_each(function()
+        env:close()
+        env = nil
+    end)
 
-function TestSmokeTest:test_connection_fails()
-    local env = driver.exasol()
-    luaunit.assertErrorMsgMatches(".*E%-EDL%-1: Error connecting to 'wss://invalid:1234':.*",
-                                  function() env:connect("invalid:1234", "user", "password") end)
-    env:close()
-end
-
-os.exit(luaunit.LuaUnit.run())
+    it("throws an error when connecting to an invalid host", function()
+        assert.has_error(function() env:connect("invalid:8563", "user", "password") end,
+                         "E-EDL-1: Error connecting to 'wss://invalid:8563': 'Connection to invalid:8563 failed:" ..
+                                 " host or service not provided, or not known'")
+    end)
+end)

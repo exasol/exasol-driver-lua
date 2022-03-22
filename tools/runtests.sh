@@ -11,10 +11,8 @@ readonly base_dir
 
 readonly exit_ok=0
 readonly exit_software=2
-readonly src_module_path="$base_dir/src"
-readonly test_module_path="$base_dir/test"
 readonly target_dir="$base_dir/target"
-readonly reports_dir="$target_dir/luaunit-reports"
+readonly reports_dir="$target_dir/test-reports"
 readonly luacov_dir="$target_dir/luacov-reports"
 
 function create_target_directories {
@@ -28,62 +26,8 @@ function create_target_directories {
 # Return error status in case there were failures.
 #
 function run_tests {
-    cd "$test_module_path" || exit
-    if [[ -z "${RUN_ONLY+x}" ]] ; then
-        tests="$(find . -name '*.lua')"
-    else
-        tests="$RUN_ONLY"
-    fi
-    readonly tests
-    test_suites=0
-    failures=0
-    successes=0
-    for testcase in $tests
-    do
-        echo "Running test $testcase"
-        ((test_suites++))
-        testname=$(echo "$testcase" | sed -e s'/.\///' -e s'/\//./g' -e s'/.lua$//')
-        if LUA_PATH="$src_module_path/?.lua;$test_module_path/?.lua;$(luarocks path --lr-path)" \
-            lua -lluacov "$testcase" -v -o junit -n "$reports_dir/$testname"
-        then
-            ((successes++))
-        else
-            ((failures++))
-        fi
-        echo
-    done
-    echo -n "Ran $test_suites test suites. $successes successes, "
-    if [[ "$failures" -eq 0 ]]
-    then
-        echo -e "\033[0;32m$failures failures\033[0m."
-        return "$exit_ok"
-    else
-        echo -e "\033[0;31m$failures failures\033[0m."
-        return "$exit_software"
-    fi
-}
-
-##
-# Collect the coverage results into a single file.
-#
-# Return exit status of coverage collector.
-#
-function collect_coverage_results {
-    echo
-    echo "Collecting code coverage results"
-    luacov --config "$base_dir/.coverage_config.lua"
-    return "$?"
-}
-
-##
-# Move the coverage results into the target directory.
-#
-# Return exit status of `mv` command.
-#
-function move_coverage_results {
-    echo "Moving coverage results to $luacov_dir"
-    mv "$test_module_path"/luacov.*.out "$luacov_dir"
-    return "$?"
+    cd "$base_dir"
+    busted
 }
 
 ##
@@ -96,8 +40,6 @@ function print_coverage_summary {
 
 create_target_directories
 run_tests \
-&& collect_coverage_results \
-&& move_coverage_results \
 && print_coverage_summary \
 || exit "$exit_software"
 

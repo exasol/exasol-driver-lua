@@ -1,48 +1,63 @@
+---@diagnostic disable: undefined-global
+-- luacheck: globals describe it before_each after_each
 require("busted.runner")()
+local driver = require("luasqlexasol")
 local config = require("config")
-local assertions = require("assertions")
 
-TestCursor = {}
+config.configure_logging()
 
-function TestCursor:setUp()
-    self.connection = config.create_connection()
-    luaunit.assertNotNil(self.connection)
-    self.assertions = assertions:new(self.connection)
-end
+describe("Cursor", function()
+    local env = nil
+    local connection = nil
+    before_each(function()
+        env = driver.exasol()
+        local connection_params = config.get_connection_params()
+        connection = assert(env:connect(connection_params.source_name, connection_params.user,
+                                        connection_params.password))
+    end)
+    after_each(function()
+        if connection then connection:close() end
+        env:close()
+        env = nil
+        connection = nil
+    end)
 
-function TestCursor:tearDown()
-    self.connection:close()
-    self.connection = nil
-end
+    it("returns simple result", function()
+        local cursor = assert(connection:execute("select 1"))
+        assert.is_same({1}, cursor:fetch())
+        assert.is_nil(cursor:fetch())
+    end)
 
-function TestCursor:test_query_fails()
-    self.assertions:assert_execute_fails("select", "E%-EDL%-6: Error executing statement 'select': E%-EDL%-10: " ..
-                                                 "Received DB status 'error' with code 42000: 'syntax error, " ..
-                                                 "unexpected ';' %[line 1, column 7%] %(Session: %d+%)'")
-end
+    it("returns empty result", function()
+        local cursor = assert(connection:execute("select * from dual where 1 = 2"))
+        assert.is_nil(cursor:fetch())
+    end)
 
-function TestCursor:test_select_single_column_single_row() self.assertions:assert_rows("select 1", {{1}}) end
+    it("returns multiple columns for single row", function()
+        local cursor = assert(connection:execute("select 'a', 'b', 'c'"))
+        assert.is_same({"a", "b", "c"}, cursor:fetch())
+        assert.is_nil(cursor:fetch())
+    end)
 
-function TestCursor:test_select_multiple_columns_single_row()
-    self.assertions:assert_rows("select 'a', 'b', 'c'", {{"a", "b", "c"}})
-end
+    it("returns multiple columns for multiple row", function()
+        local cursor =
+                assert(connection:execute("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
+        assert.is_same({1, "a"}, cursor:fetch())
+        assert.is_same({2, "b"}, cursor:fetch())
+        assert.is_same({3, "c"}, cursor:fetch())
+        assert.is_nil(cursor:fetch())
+    end)
 
-function TestCursor:test_select_multiple_columns_multiple_rows()
-    self.assertions:assert_rows("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)",
-                                {{1, "a"}, {2, "b"}, {3, "c"}})
-end
+    it("fails fetching when curser is already closed", function()
+        local cursor = assert(connection:execute("select 1"))
+        cursor:close()
+        assert.has_error(function() cursor:fetch() end,
+                         "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+    end)
 
-function TestCursor:test_using_closed_cursor_fails()
-    local cursor = assert(self.connection:execute("select 1"))
-    cursor:close()
-    luaunit.assertErrorMsgMatches(".*E%-EDL%-13: Cursor closed while trying to fetch datasets from cursor",
-                                  function() cursor:fetch() end)
-end
-
-function TestCursor:test_closing_closed_cursor_succeeds()
-    local cursor = assert(self.connection:execute("select 1"))
-    cursor:close()
-    cursor:close()
-end
-
-os.exit(luaunit.LuaUnit.run())
+    it("doesn't fail when closing a closed cursor", function()
+        local cursor = assert(connection:execute("select 1"))
+        cursor:close()
+        cursor:close()
+    end)
+end)
