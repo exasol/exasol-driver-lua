@@ -47,5 +47,5 @@ build = {
     modules = {
         luasqlexasol = "src/luasqlexasol.lua"
     },
-    copy_directories = { "doc", "test" }
+    copy_directories = { "doc", "spec" }
 }
