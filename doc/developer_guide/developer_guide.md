@@ -22,7 +22,7 @@ Install the prerequisites like this:
     sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl plantuml
     ```
 
-### Install Runtime and Test Dependencies
+### Install Runtime Dependencies
 
 See the [list of dependencies](../../dependencies.md) for details. Install dependencies by executing:
 
@@ -35,6 +35,27 @@ On macOS you may need to specify the path to OpenSSL:
 ```sh
 openssl=/usr/local/Cellar/openssl@1.1/1.1.1m/
 luarocks install --local --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
+```
+
+### Install Test and Build Dependencies
+
+```sh
+luarocks install --local busted
+```
+
+#### Troubleshooting `lua-cjson` installation
+
+If installation of `lua-cjson` fails with the following error:
+
+```
+lua_cjson.c:743:19: error: implicit declaration of function 'lua_objlen' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+            len = lua_objlen(l, -1);
+```
+
+Then install it with these options:
+
+```sh
+luarocks install lua-cjson --local "CFLAGS=-O3 -Wall -pedantic -DNDEBUG -DLUA_COMPAT_5_3"
 ```
 
 ## Running Tests
