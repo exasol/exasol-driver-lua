@@ -1,6 +1,6 @@
 local M = {}
 
-local lunajson = require("lunajson")
+local cjson = require("cjson")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
@@ -54,7 +54,7 @@ local function get_response_error(response)
 end
 
 function M:_send_json(payload, ignore_response)
-    local raw_payload = lunajson.encode(payload)
+    local raw_payload = cjson.encode(payload)
     log.trace("Sending payload '%s'", raw_payload)
     local raw_response, err = self.websocket:send_raw(raw_payload, ignore_response)
     if ignore_response then return nil, nil end
@@ -67,7 +67,7 @@ function M:_send_json(payload, ignore_response)
     end
 
     log.trace("Received response of %d bytes", #raw_response)
-    local response = lunajson.decode(raw_response)
+    local response = cjson.decode(raw_response)
     err = get_response_error(response)
     if err then
         return nil, err

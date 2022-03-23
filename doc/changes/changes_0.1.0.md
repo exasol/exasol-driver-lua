@@ -15,6 +15,7 @@ Code name: Initial Release
 ## Refactoring
 
 * #25: Migrated tests to busted
+* #18: Replaced lunajson with cjson
 
 ## Documentation
 

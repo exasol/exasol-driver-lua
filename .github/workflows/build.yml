@@ -99,12 +99,6 @@ jobs:
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             busted --run=ci_repeated
 
-      - name: Archive repeated tests results
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: repeated-test-reports
-          path: target/luaunit-reports/*
 
 ## Deactivated until requirements and coverage are added
 
