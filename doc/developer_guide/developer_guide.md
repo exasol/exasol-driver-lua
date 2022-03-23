@@ -45,14 +45,14 @@ luarocks install --local busted
 
 #### Troubleshooting `lua-cjson` installation
 
-If installation of `lua-cjson` fails with the following error:
+`lua-cjson` is pinned to version `2.1.0` because later versions fail installation with error `undefined symbol: lua_objlen` or `implicit declaration of function 'lua_objlen' is invalid in C99`:
 
 ```
 lua_cjson.c:743:19: error: implicit declaration of function 'lua_objlen' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
             len = lua_objlen(l, -1);
 ```
 
-Then install it with these options:
+To use the latest version you can optionally install it with additional build flags:
 
 ```sh
 luarocks install lua-cjson --local "CFLAGS=-O3 -Wall -pedantic -DNDEBUG -DLUA_COMPAT_5_3"

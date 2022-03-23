@@ -28,7 +28,7 @@ dependencies = {
     "luasocket >= 3.0rc1-2",
     "luasec >= 1.0.2-1",
     "luaossl >= 20200709-0",
-    "lua-cjson >= 2.1.0.6-1",
+    "lua-cjson == 2.1.0", -- pinned to prevent "undefined symbol: lua_objlen" in 2.1.0.6
     "base64 >= 1.5-3",
     "exaerror >= 1.2.2-1",
     "remotelog >= 1.1.1-1"
