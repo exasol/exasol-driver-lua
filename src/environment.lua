@@ -1,5 +1,4 @@
 local connection = require("connection")
-local websocket = require("exasol_websocket")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
@@ -9,9 +8,18 @@ local exaerror = require("exaerror")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
+local function load_exasol_websocket(args)
+    if args and args.exasol_websocket then
+        return args.exasol_websocket
+    else
+        return require("exasol_websocket")
+    end
+end
+
 local M = {}
-function M:new()
+function M:new(args)
     local object = {closed = false, connections = {}}
+    object.exasol_websocket = load_exasol_websocket(args)
     self.__index = self
     setmetatable(object, self)
     return object
@@ -38,7 +46,7 @@ function M:connect(sourcename, username, password)
     if self.closed then
         exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
     end
-    local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
+    local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
     if err then
         socket:close()
