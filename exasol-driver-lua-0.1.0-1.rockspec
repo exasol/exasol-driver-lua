@@ -24,7 +24,7 @@ description = {
 }
 
 dependencies = {
-    "lua >= 5.4, <= 5.4",
+    "lua == 5.4",
     "luasocket >= 3.0rc1-2",
     "luasec >= 1.0.2-1",
     "luaossl >= 20200709-0",
