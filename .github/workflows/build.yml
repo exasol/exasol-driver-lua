@@ -45,6 +45,8 @@ jobs:
 
       - name: Install Lua dependencies
         run: |
+          # Installing lua-cjson requires macro LUA_COMPAT_5_3
+          luarocks install --local lua-cjson "CFLAGS=-O3 -Wall -pedantic -DNDEBUG -DLUA_COMPAT_5_3"
           luarocks install --local --deps-only *.rockspec
 
       - name: "Build"
