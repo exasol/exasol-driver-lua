@@ -26,10 +26,12 @@ local exaerror = require("exaerror")
 
 describe("Environment", function()
     local env = nil
+
     before_each(function()
         reset_websocket_stub(websocket_stub)
         env = environment:new({exasol_websocket = websocket_stub})
     end)
+
     after_each(function()
         env:close()
         env = nil
@@ -47,6 +49,7 @@ describe("Environment", function()
         assert.is_not_nil(conn)
     end)
 
+    -- [utest -> dsn~luasql-environment-connect~0]
     it("returns login error for failed login", function()
         websocket_stub.send_login_credentials = function() return nil, exaerror.create("mock error") end
         local conn, err = env:connect("host:1234", "user", "password")
@@ -58,6 +61,7 @@ Mitigations:
 * Check the credentials you provided.]], tostring(err))
     end)
 
+    -- [utest -> dsn~luasql-environment-connect~0]
     it("returns login error for closed socket", function()
         websocket_stub.send_login_credentials = function()
             local err = exaerror.create("mock error")

@@ -9,7 +9,9 @@ local connection_params = config.get_connection_params()
 
 describe("Environment", function()
     local env = nil
+
     before_each(function() env = driver.exasol() end)
+
     after_each(function()
         env:close()
         env = nil
@@ -48,6 +50,7 @@ describe("Environment", function()
                          "E-EDL-21: Attempt to connect using an environment that is already closed")
     end)
 
+    -- [itest -> dsn~luasql-environment-close~0]
     it("closes connection when closing an environment", function()
         local conn, err = env:connect(connection_params.source_name, connection_params.user, connection_params.password)
         assert.is_nil(err)

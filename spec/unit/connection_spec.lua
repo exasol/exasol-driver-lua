@@ -10,4 +10,6 @@ describe("Connection", function()
         env:close()
         env = nil
     end)
+
+    pending("Tests will be added in https://github.com/exasol/exasol-driver-lua/issues/17")
 end)

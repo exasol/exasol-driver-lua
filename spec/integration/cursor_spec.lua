@@ -9,12 +9,14 @@ config.configure_logging()
 describe("Cursor", function()
     local env = nil
     local connection = nil
+
     before_each(function()
         env = driver.exasol()
         local connection_params = config.get_connection_params()
         connection = assert(env:connect(connection_params.source_name, connection_params.user,
                                         connection_params.password))
     end)
+
     after_each(function()
         if connection then connection:close() end
         env:close()
@@ -22,6 +24,7 @@ describe("Cursor", function()
         connection = nil
     end)
 
+    -- [itest -> dsn~luasql-cursor-fetch~0]
     it("returns simple result", function()
         local cursor = assert(connection:execute("select 1"))
         assert.is_same({1}, cursor:fetch())
@@ -48,6 +51,7 @@ describe("Cursor", function()
         assert.is_nil(cursor:fetch())
     end)
 
+    -- [itest -> dsn~luasql-cursor-close~0]
     it("fails fetching when curser is already closed", function()
         local cursor = assert(connection:execute("select 1"))
         cursor:close()

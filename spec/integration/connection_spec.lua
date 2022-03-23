@@ -9,12 +9,14 @@ config.configure_logging()
 describe("Connection", function()
     local env = nil
     local connection = nil
+
     before_each(function()
         env = driver.exasol()
         local connection_params = config.get_connection_params()
         connection = assert(env:connect(connection_params.source_name, connection_params.user,
                                         connection_params.password))
     end)
+
     after_each(function()
         if connection then connection:close() end
         env:close()
@@ -22,6 +24,7 @@ describe("Connection", function()
         connection = nil
     end)
 
+    -- [itest -> dsn~luasql-connection-execute~0]
     it("executes a query", function()
         local cursor = assert(connection:execute("select 1"))
         assert.is_same({1}, cursor:fetch())
@@ -45,6 +48,7 @@ describe("Connection", function()
         connection:close()
     end)
 
+    -- [itest -> dsn~luasql-connection-close~0]
     it("closes cursors", function()
         local cursor = assert(connection:execute("select 1"))
         connection:close()

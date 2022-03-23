@@ -14,7 +14,7 @@ participant "Exasol Database" as db
 activate client
 activate db
 
-' [dsn -> req~luasql-connection-close~1 >> impl,utest,itest]
+' [dsn -> req~luasql-connection-close~1 >> impl,itest]
 client -> conn : close()
 activate conn
 loop for all cursors

@@ -29,6 +29,7 @@ describe("Entry point", function()
         assert.not_equal(env1, env2)
     end)
 
+    -- [utest -> dsn~logging-with-remotelog~1]
     it("uses remotelog",
        function() assert.spy(log_mock.trace).was.called_with("Created new luasql.exasol environment") end)
 end)

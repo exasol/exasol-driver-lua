@@ -11,7 +11,7 @@ participant "Exasol Database" as db
 activate client
 activate db
 
-' [dsn -> req~luasql-environment-close~1 >> impl,utest,itest]
+' [dsn -> req~luasql-environment-close~1 >> impl,itest]
 client -> env : close()
 activate env
 loop for all connections

@@ -128,7 +128,7 @@ Covers:
 * `req~console-logging~1`
 * `req~remote-logging~1`
 
-Needs: impl
+Needs: impl, utest
 
 # Design Decisions
 

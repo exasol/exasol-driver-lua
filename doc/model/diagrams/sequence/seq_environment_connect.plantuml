@@ -12,7 +12,7 @@ participant "Exasol Database" as db
 
 activate client
 activate db
-' [dsn -> req~luasql-entry-point~1 >> impl,utest]
+' [dsn -> req~luasql-entry-point~1 >> impl,itest]
 client -> entry: exasol()
 activate entry
 create env

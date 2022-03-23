@@ -8,7 +8,9 @@ config.configure_logging()
 
 describe("Smoketest", function()
     local env = nil
+
     before_each(function() env = driver.exasol() end)
+
     after_each(function()
         env:close()
         env = nil
