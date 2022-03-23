@@ -1,15 +1,24 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local driver = require("luasqlexasol")
+local connection = require("connection")
+local SESSION_ID = 12345
+
+local websocket_stub = {}
+
+
 
 describe("Connection", function()
-    local env = nil
-    before_each(function() env = driver.exasol() end)
+    local conn = nil
+    before_each(function() conn = connection:create(websocket_stub, SESSION_ID) end)
     after_each(function()
         env:close()
-        env = nil
+        conn = nil
     end)
 
-    pending("Tests will be added in https://github.com/exasol/exasol-driver-lua/issues/17")
+    it("returns a cursor with results", function ()
+        local cursor = assert(conn:execute("statement"))
+        assert.is_same({1}, cursor:fetch())
+        assert.is_same({1}, cursor:fetch())
+    end)
 end)
