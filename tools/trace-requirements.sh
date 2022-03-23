@@ -18,10 +18,10 @@ if [[ ! -f "$tmp_file" ]]; then
     curl --output "$tmp_file" "$url"
 fi
 
-java -jar "$tmp_file" trace --output-format html --report-verbosity all "$base_dir/doc" "$base_dir/src" "$base_dir/test" > target/req-tracing-report.html || true
+java -jar "$tmp_file" trace --output-format html --report-verbosity all "$base_dir/doc" "$base_dir/src" "$base_dir/spec" > target/req-tracing-report.html || true
 
 # Trace all
-java -jar "$tmp_file" trace "$base_dir/doc" "$base_dir/src" "$base_dir/test"
+java -jar "$tmp_file" trace "$base_dir/doc" "$base_dir/src" "$base_dir/spec"
 
 # Trace only feat,req,dsn
-#java -jar "$tmp_file" trace --wanted-artifact-types feat,req,dsn "$base_dir/doc" "$base_dir/src" "$base_dir/test"
+#java -jar "$tmp_file" trace --wanted-artifact-types feat,req,dsn "$base_dir/doc" "$base_dir/src" "$base_dir/spec"

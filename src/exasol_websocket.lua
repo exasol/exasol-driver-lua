@@ -19,15 +19,20 @@ function M.connect(url)
     return create(websocket)
 end
 
-function M:send_login_command() return self:_send_json({command = "login", protocolVersion = 3}) end
-
-function M:send_disconnect()
-    local _, err = self:_send_json({command = "disconnect"}, true)
-    return err
+function M:send_login_command()
+    log.debug("Sending login command")
+    return self:_send_json({command = "login", protocolVersion = 3})
 end
 
 function M:send_login_credentials(username, encrypted_password)
+    log.debug("Sending login credentials")
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
+end
+
+function M:send_disconnect()
+    log.debug("Sending disconnect command")
+    local _, err = self:_send_json({command = "disconnect"}, true)
+    return err
 end
 
 function M:send_execute(statement)

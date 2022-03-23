@@ -53,7 +53,7 @@ jobs:
       - name: Run smoketests
         run: |
           eval $(luarocks path)
-          LOG_LEVEL=TRACE RUN_ONLY=smoketest.lua ./tools/runtests.sh
+          EXASOL_HOST=dummy LOG_LEVEL=TRACE busted --run=smoketest
 
       - name: Spawn Exasol environment
         run: |
@@ -71,21 +71,7 @@ jobs:
             EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
-            tools/runtests.sh
-
-      - name: Archive test results
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
-        with:
-          name: test-reports
-          path: target/luaunit-reports/*
-
-      - name: Publish test teports
-        uses: scacap/action-surefire-report@v1
-        if: ${{ always() }}
-        with:
-          report_paths: 'target/luaunit-reports/*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+            tools/runtests.sh --run=ci
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
@@ -107,14 +93,11 @@ jobs:
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
           eval $(luarocks path)
-          for run in {1..20}; do
-            echo "Starting test run $run"
-            LOG_LEVEL=DEBUG \
-              EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
-              EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
-              EXASOL_USER=sys EXASOL_PASSWORD=exasol \
-              tools/runtests.sh
-          done
+          LOG_LEVEL=DEBUG \
+            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
+            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            busted --run=ci_repeated
 
       - name: Archive repeated tests results
         if: ${{ always() }}

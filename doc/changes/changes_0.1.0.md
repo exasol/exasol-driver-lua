@@ -12,6 +12,10 @@ Code name: Initial Release
 
 * #16: Fixed sporadic Websocket connection errors
 
+## Refactoring
+
+* #25: Migrated tests to busted
+
 ## Documentation
 
 * #17: Added requirements and design documents

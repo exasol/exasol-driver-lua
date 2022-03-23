@@ -1,4 +1,4 @@
-local luaunit = require("luaunit")
+require("busted.runner")()
 local driver = require("luasqlexasol")
 local log = require("remotelog")
 
@@ -20,9 +20,12 @@ end
 
 function M.get_connection_params(override)
     override = override or {}
+    local host = override.host or get_system_env("EXASOL_HOST")
+    local port = override.port or get_system_env("EXASOL_PORT", "8563")
     return {
-        host = override.host or get_system_env("EXASOL_HOST"),
-        port = override.port or get_system_env("EXASOL_PORT", "8563"),
+        host = host,
+        port = port,
+        source_name = string.format("%s:%s", host, port),
         user = override.user or get_system_env("EXASOL_USER", "sys"),
         password = override.password or get_system_env("EXASOL_PASSWORD", "exasol"),
         fingerprint = override.fingerprint or nil
@@ -30,24 +33,28 @@ function M.get_connection_params(override)
 end
 
 local function enable_luws_trace_log()
+    log.debug("Enable luws tracing")
     -- luacheck: globals debug_mode
     debug_mode = 1
 end
 
 function M.create_environment()
-    local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
-    if log_level == "TRACE" then enable_luws_trace_log() end
-    log.set_level(log_level)
+    M.configure_logging()
     return driver.exasol()
+end
+
+function M.configure_logging()
+    local luws_trace = get_optional_system_env("LUWS_TRACE", nil)
+    if luws_trace == "TRACE" then enable_luws_trace_log() end
+    local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
+    log.set_level(log_level)
 end
 
 function M.create_connection()
     local params = M.get_connection_params()
     local env = M.create_environment()
     local source_name = params.host .. ":" .. params.port
-    local conn, err = env:connect(source_name, params.user, params.password)
-    luaunit.assertNil(err, "no error when connecting to " .. source_name)
-    luaunit.assertNotNil(conn, "connection available")
+    local conn = assert(env:connect(source_name, params.user, params.password))
     return conn
 end
 

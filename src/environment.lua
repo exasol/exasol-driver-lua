@@ -1,5 +1,4 @@
 local connection = require("connection")
-local websocket = require("exasol_websocket")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
@@ -9,9 +8,18 @@ local exaerror = require("exaerror")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
+local function load_exasol_websocket(args)
+    if args and args.exasol_websocket then
+        return args.exasol_websocket
+    else
+        return require("exasol_websocket")
+    end
+end
+
 local M = {}
-function M:new()
-    local object = {connections = {}}
+function M:new(args)
+    local object = {closed = false, connections = {}}
+    object.exasol_websocket = load_exasol_websocket(args)
     self.__index = self
     setmetatable(object, self)
     return object
@@ -27,18 +35,21 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
 end
 
 local function login(socket, username, password)
-    log.trace("Sending login command")
-    local response = socket:send_login_command()
+    local response, err = socket:send_login_command()
+    if err then return nil, err end
     local encrypted_password = encrypt_password(response.publicKeyModulus, response.publicKeyExponent, password)
-    log.trace("Login as user '%s'", username)
     return socket:send_login_credentials(username, encrypted_password)
 end
 
 -- [impl -> dsn~luasql-environment-connect~0]
 function M:connect(sourcename, username, password)
-    local socket = websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
+    if self.closed then
+        exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
+    end
+    local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
     if err then
+        socket:close()
         if err.cause == "closed" then
             err = exaerror.create("E-EDL-19",
                                   "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
@@ -47,7 +58,6 @@ function M:connect(sourcename, username, password)
             err = exaerror.create("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
         end
         err:add_mitigations("Check the credentials you provided.")
-        log.warn("%s", err)
         return nil, err
     end
     log.trace("Connected to Exasol %s, maximum message size: %d bytes", response.releaseVersion,
@@ -60,8 +70,14 @@ end
 
 -- [impl -> dsn~luasql-environment-close~0]
 function M:close()
+    if self.closed then
+        log.warn(tostring(exaerror.create("E-EDL-20", "Attempted to close an already closed environment")))
+        return
+    end
+
     log.trace("Closing environment: close all %d connections", #self.connections)
     for _, conn in pairs(self.connections) do conn:close() end
+    self.closed = true
 end
 
 return M

@@ -24,7 +24,7 @@ description = {
 }
 
 dependencies = {
-    "lua >= 5.3, <= 5.4",
+    "lua == 5.4",
     "luasocket >= 3.0rc1-2",
     "luasec >= 1.0.2-1",
     "luaossl >= 20200709-0",
@@ -35,7 +35,8 @@ dependencies = {
 }
 
 build_dependencies = {
-    "luaunit >= 3.4-1",
+    "busted >= 2.0.0-1",
+    "mockagne >= 1.0-2",
     "luacov >= 0.15.0-1",
     "luacov-coveralls >= 0.2.3-1",
     "luacheck >= 0.25.0-1"
@@ -46,5 +47,5 @@ build = {
     modules = {
         luasqlexasol = "src/luasqlexasol.lua"
     },
-    copy_directories = { "doc", "test" }
+    copy_directories = { "doc", "spec" }
 }

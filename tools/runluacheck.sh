@@ -8,7 +8,7 @@ base_dir="$( cd "$(dirname "$0")/.." >/dev/null 2>&1 ; pwd -P )"
 readonly base_dir
 
 readonly src_module_path="$base_dir/src"
-readonly test_module_path="$base_dir/test"
+readonly test_module_path="$base_dir/spec"
 
 luacheck "$src_module_path" --max-line-length 120 --codes --exclude-files src/luws.lua
 

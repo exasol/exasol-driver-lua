@@ -64,7 +64,7 @@ function M:close()
         return
     end
     local cursors = self.cursors
-    log.trace("Closing Session session ID %d: and its %d cursors", #cursors, self.session_id)
+    log.debug("Closing Session session %d and its %d cursors", self.session_id, #cursors)
     for _, cur in ipairs(cursors) do cur:close() end
     local err = self.websocket:send_disconnect()
     if err then

@@ -1,5 +1,6 @@
 # Lua
 /test/luacov.stats.out
+/luacov.stats.out
 /target/
 
 # Eclipse and Maven
