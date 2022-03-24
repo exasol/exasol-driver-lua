@@ -24,44 +24,55 @@ describe("Cursor", function()
         connection = nil
     end)
 
-    -- [itest -> dsn~luasql-cursor-fetch~0]
-    it("returns simple result", function()
-        local cursor = assert(connection:execute("select 1"))
-        assert.is_same({1}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
+    describe("fetch()", function()
+        -- [itest -> dsn~luasql-cursor-fetch~0]
+        it("returns simple result", function()
+            local cursor = assert(connection:execute("select 1"))
+            assert.is_same({1}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns empty result", function()
+            local cursor = assert(connection:execute("select * from dual where 1 = 2"))
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns multiple columns for single row", function()
+            local cursor = assert(connection:execute("select 'a', 'b', 'c'"))
+            assert.is_same({"a", "b", "c"}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+      
+        it("returns table with alphanumeric indices", function()
+            local cursor = assert(connection:execute("select 1 as a, 2 as b"))
+            assert.is_same({A= 1, B= 2}, cursor:fetch({}, "a"))
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns multiple columns for multiple row", function()
+            local cursor = assert(connection:execute(
+                                          "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
+            assert.is_same({1, "a"}, cursor:fetch())
+            assert.is_same({2, "b"}, cursor:fetch())
+            assert.is_same({3, "c"}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        -- [itest -> dsn~luasql-cursor-close~0]
+        it("fails when curser is already closed", function()
+            local cursor = assert(connection:execute("select 1"))
+            cursor:close()
+            assert.has_error(function() cursor:fetch() end,
+                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+        end)
+
     end)
 
-    it("returns empty result", function()
-        local cursor = assert(connection:execute("select * from dual where 1 = 2"))
-        assert.is_nil(cursor:fetch())
-    end)
-
-    it("returns multiple columns for single row", function()
-        local cursor = assert(connection:execute("select 'a', 'b', 'c'"))
-        assert.is_same({"a", "b", "c"}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
-    end)
-
-    it("returns multiple columns for multiple row", function()
-        local cursor =
-                assert(connection:execute("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
-        assert.is_same({1, "a"}, cursor:fetch())
-        assert.is_same({2, "b"}, cursor:fetch())
-        assert.is_same({3, "c"}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
-    end)
-
-    -- [itest -> dsn~luasql-cursor-close~0]
-    it("fails fetching when curser is already closed", function()
-        local cursor = assert(connection:execute("select 1"))
-        cursor:close()
-        assert.has_error(function() cursor:fetch() end,
-                         "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
-    end)
-
-    it("doesn't fail when closing a closed cursor", function()
-        local cursor = assert(connection:execute("select 1"))
-        cursor:close()
-        cursor:close()
+    describe("close()", function()
+        it("doesn't fail when called twice", function()
+            local cursor = assert(connection:execute("select 1"))
+            cursor:close()
+            cursor:close()
+        end)
     end)
 end)
