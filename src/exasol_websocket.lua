@@ -16,7 +16,7 @@ end
 
 function M.connect(url)
     local websocket<const> = raw_websocket.connect(url)
-    return M.create(websocket)
+    return M._create(websocket)
 end
 
 function M:send_login_command()

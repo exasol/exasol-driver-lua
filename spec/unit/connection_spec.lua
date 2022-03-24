@@ -33,93 +33,106 @@ end
 
 describe("Connection", function()
     local conn = nil
+
     before_each(function()
         conn = connection:create(websocket_stub, SESSION_ID)
         execute_result = {}
     end)
+
     after_each(function()
         conn:close()
         conn = nil
     end)
 
-    it("throws error no results available", function()
-        simulate_result(0, {})
-        assert.has_error(function() conn:execute("statement") end, [[E-EDL-7: Got no results for statement 'statement'
+    describe("execute()", function()
+        it("throws error when no results available", function()
+            simulate_result(0, {})
+            assert.has_error(function() conn:execute("statement") end,
+                             [[E-EDL-7: Got no results for statement 'statement'
 
 Mitigations:
 
 * This is an internal software error. Please report it via the project's ticket tracker.]])
-    end)
+        end)
 
-    it("returns error if more than one results available", function()
-        simulate_result(2, {})
-        local cursor, err = conn:execute("statement")
-        assert.is_nil(cursor)
-        assert.is_same([[E-EDL-8: Got 2 results for statement 'statement' but at most one is supported
+        it("returns error if more than one results available", function()
+            simulate_result(2, {})
+            local cursor, err = conn:execute("statement")
+            assert.is_nil(cursor)
+            assert.is_same([[E-EDL-8: Got 2 results for statement 'statement' but at most one is supported
 
 Mitigations:
 
 * Use only statements that return a single result]], tostring(err))
-    end)
+        end)
 
-    it("throws error for unknown result type", function()
-        simulate_result(1, {{resultType = "unknown"}})
-        assert.has_error(function() conn:execute("statement") end, [[E-EDL-9: Got unexpected result type 'unknown'
+        it("throws error for unknown result type", function()
+            simulate_result(1, {{resultType = "unknown"}})
+            assert.has_error(function() conn:execute("statement") end, [[E-EDL-9: Got unexpected result type 'unknown'
 
 Mitigations:
 
 * This is an internal software error. Please report it via the project's ticket tracker.]])
+        end)
+
+        it("returns a cursor with results", function()
+            simulate_result_set({numRows = 1, numColumns = 1, data = {{1}}})
+            local cursor = assert(conn:execute("statement"))
+            assert.is_same({1}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns an error if execution returned an error", function()
+            simulate_error("mock error")
+            local cursor, err = conn:execute("statement")
+            assert.is_nil(cursor)
+            assert.is_same("E-EDL-6: Error executing statement 'statement': mock error", tostring(err))
+        end)
+
+        it("returns a cursor with multiple rows", function()
+            simulate_result_set({numRows = 3, numColumns = 1, data = {{1, 2, 3}}})
+            local cursor = assert(conn:execute("statement"))
+            assert.is_same({1}, cursor:fetch())
+            assert.is_same({2}, cursor:fetch())
+            assert.is_same({3}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns a cursor with multiple columns", function()
+            simulate_result_set({numRows = 1, numColumns = 3, data = {{1}, {2}, {3}}})
+            local cursor = assert(conn:execute("statement"))
+            assert.is_same({1, 2, 3}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("throws error when connection is closed", function()
+            conn:close()
+            assert.has_error(function() conn:execute("statement") end,
+                             "E-EDL-12: Connection already closed when trying to call 'execute'")
+        end)
     end)
 
-    it("returns a cursor with results", function()
-        simulate_result_set({numRows = 1, numColumns = 1, data = {{1}}})
-        local cursor = assert(conn:execute("statement"))
-        assert.is_same({1}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
+    describe("commit()", function()
+        it("throws error when connection is closed", function()
+            conn:close()
+            assert.has_error(function() conn:commit() end,
+                             "E-EDL-12: Connection already closed when trying to call 'commit'")
+        end)
     end)
 
-    it("returns an error if execution returned an error", function()
-        simulate_error("mock error")
-        local cursor, err = conn:execute("statement")
-        assert.is_nil(cursor)
-        assert.is_same("E-EDL-6: Error executing statement 'statement': mock error", tostring(err))
+    describe("rollback()", function()
+        it("throws error when connection is closed", function()
+            conn:close()
+            assert.has_error(function() conn:rollback() end,
+                             "E-EDL-12: Connection already closed when trying to call 'rollback'")
+        end)
     end)
 
-    it("returns a cursor with multiple rows", function()
-        simulate_result_set({numRows = 3, numColumns = 1, data = {{1, 2, 3}}})
-        local cursor = assert(conn:execute("statement"))
-        assert.is_same({1}, cursor:fetch())
-        assert.is_same({2}, cursor:fetch())
-        assert.is_same({3}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
-    end)
-
-    it("returns a cursor with multiple columns", function()
-        simulate_result_set({numRows = 1, numColumns = 3, data = {{1}, {2}, {3}}})
-        local cursor = assert(conn:execute("statement"))
-        assert.is_same({1, 2, 3}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
-    end)
-
-    it("throws error when trying to call execute() on a closed connection", function()
-        conn:close()
-        assert.has_error(function() conn:execute("statement") end,
-                         "E-EDL-12: Connection already closed when trying to call 'execute'")
-    end)
-
-    it("throws error when trying to call commit() on a closed connection", function()
-        conn:close()
-        assert.has_error(function() conn:commit() end,
-                         "E-EDL-12: Connection already closed when trying to call 'commit'")
-    end)
-    it("throws error when trying to call rollback() on a closed connection", function()
-        conn:close()
-        assert.has_error(function() conn:rollback() end,
-                         "E-EDL-12: Connection already closed when trying to call 'rollback'")
-    end)
-    it("throws error when trying to call setautocommit() on a closed connection", function()
-        conn:close()
-        assert.has_error(function() conn:setautocommit(true) end,
-                         "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+    describe("setautocommit()", function()
+        it("throws error when connection is closed", function()
+            conn:close()
+            assert.has_error(function() conn:setautocommit(true) end,
+                             "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+        end)
     end)
 end)
