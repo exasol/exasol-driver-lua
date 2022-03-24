@@ -43,37 +43,47 @@ describe("Environment", function()
         assert.is_not_nil(conn)
     end)
 
-    it("connects to a db", function()
-        local conn, err = env:connect("host:1234", "user", "password")
-        assert.is_nil(err)
-        assert.is_not_nil(conn)
-    end)
+    describe("connect()", function()
 
-    -- [utest -> dsn~luasql-environment-connect~0]
-    it("returns login error for failed login", function()
-        websocket_stub.send_login_credentials = function() return nil, exaerror.create("mock error") end
-        local conn, err = env:connect("host:1234", "user", "password")
-        assert.is_nil(conn)
-        assert.is.same([[E-EDL-16: Login failed: 'mock error'
+        it("connects to a db", function()
+            local conn, err = env:connect("host:1234", "user", "password")
+            assert.is_nil(err)
+            assert.is_not_nil(conn)
+        end)
 
-Mitigations:
-
-* Check the credentials you provided.]], tostring(err))
-    end)
-
-    -- [utest -> dsn~luasql-environment-connect~0]
-    it("returns login error for closed socket", function()
-        websocket_stub.send_login_credentials = function()
-            local err = exaerror.create("mock error")
-            err.cause = "closed"
-            return nil, err
-        end
-        local conn, err = env:connect("host:1234", "user", "password")
-        assert.is_nil(conn)
-        assert.is.same([[E-EDL-19: Login failed because socket is closed. Probably credentials are wrong: 'mock error'
+        -- [utest -> dsn~luasql-environment-connect~0]
+        it("returns login error for failed login", function()
+            websocket_stub.send_login_credentials = function() return nil, exaerror.create("mock error") end
+            local conn, err = env:connect("host:1234", "user", "password")
+            assert.is_nil(conn)
+            assert.is.same([[E-EDL-16: Login failed: 'mock error'
 
 Mitigations:
 
 * Check the credentials you provided.]], tostring(err))
+        end)
+
+        -- [utest -> dsn~luasql-environment-connect~0]
+        it("returns login error for closed socket", function()
+            websocket_stub.send_login_credentials = function()
+                local err = exaerror.create("mock error")
+                err.cause = "closed"
+                return nil, err
+            end
+            local conn, err = env:connect("host:1234", "user", "password")
+            assert.is_nil(conn)
+            assert.is.same(
+                    [[E-EDL-19: Login failed because socket is closed. Probably credentials are wrong: 'mock error'
+
+Mitigations:
+
+* Check the credentials you provided.]], tostring(err))
+        end)
+
+        it("throws error when connection is closed", function()
+            env:close()
+            assert.has_error(function() env:connect("host:1234", "user", "password") end,
+                             "E-EDL-21: Attempt to connect using an environment that is already closed")
+        end)
     end)
 end)

@@ -13,11 +13,6 @@ readonly target_dir="$base_dir/target"
 readonly reports_dir="$target_dir/test-reports"
 readonly luacov_dir="$target_dir/luacov-reports"
 
-function create_target_directories {
-    mkdir -p "$reports_dir"
-    mkdir -p "$luacov_dir"
-}
-
 ##
 # Print the summary section of the code coverage report to the console
 #
@@ -26,7 +21,10 @@ function print_coverage_summary {
     grep --after 500 'File\s*Hits' "$luacov_dir/luacov.report.out"
 }
 
-create_target_directories
+rm -rf "$luacov_dir"
+mkdir -p "$reports_dir"
+mkdir -p "$luacov_dir"
+
 cd "$base_dir"
 busted "$@"
 print_coverage_summary
