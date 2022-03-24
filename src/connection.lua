@@ -15,9 +15,16 @@ function M:create(websocket, session_id)
     return object
 end
 
+function M:_verify_connection_open(operation)
+    if self.closed then
+        exaerror.create("E-EDL-12", "Connection already closed when trying to call {{operation}}",
+                        {operation = operation}):raise()
+    end
+end
+
 -- [impl -> dsn~luasql-connection-execute~0]
 function M:execute(statement)
-    if self.closed then exaerror.create("E-EDL-12", "Connection already closed"):raise() end
+    self:_verify_connection_open("execute")
     log.trace("Executing statement '%s'", statement)
     local result, err = self.websocket:send_execute(statement)
     if err then
@@ -27,19 +34,21 @@ function M:execute(statement)
     local num_results = result.numResults
     if num_results == 0 then
         local args = {statement = statement}
-        exaerror.create("E-EDL-7", "Got no results for statement '{{statement}}'", args):add_ticket_mitigation():raise()
+        exaerror.create("E-EDL-7", "Got no results for statement {{statement}}", args):add_ticket_mitigation():raise()
     end
     if num_results > 1 then
-        exaerror.create("E-EDL-8",
-                        "Got {{numResults}} results for statement '{{statement}}' but at most one is supported",
-                        {numResults = num_results, statement = statement}):add_ticket_mitigation():raise()
+        return nil,
+               exaerror.create("E-EDL-8",
+                               "Got {{numResults}} results for statement {{statement}} but at most one is supported",
+                               {numResults = num_results, statement = statement}):add_mitigations(
+                       "Use only statements that return a single result")
     end
     local first_result = result.results[1]
     local result_type = first_result.resultType
     if result_type == "rowCount" then return first_result.rowCount, nil end
     if result_type ~= "resultSet" then
-        local args = {resultType = result_type}
-        exaerror.create("E-EDL-9", "Got unexpected result type {{resultType}}", args):add_ticket_mitigation():raise()
+        local args = {result_type = result_type or "nil"}
+        exaerror.create("E-EDL-9", "Got unexpected result type {{result_type}}", args):add_ticket_mitigation():raise()
     end
     local cur = cursor:create(self.websocket, self.session_id, first_result.resultSet)
     table.insert(self.cursors, cur)
@@ -47,13 +56,20 @@ function M:execute(statement)
 end
 
 -- [impl -> dsn~luasql-connection-commit~0]
-function M:commit() error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14") end
+function M:commit()
+    self:_verify_connection_open("commit")
+    error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+end
 
 -- [impl -> dsn~luasql-connection-rollback~0]
-function M:rollback() error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14") end
+function M:rollback()
+    self:_verify_connection_open("rollback")
+    error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+end
 
 -- [impl -> dsn~luasql-connection-setautocommit~0]
 function M:setautocommit(autocommit)
+    self:_verify_connection_open("setautocommit")
     error("Setautocommit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 

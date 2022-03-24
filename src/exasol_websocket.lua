@@ -6,8 +6,8 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 local raw_websocket = require("websocket")
 
-local function create(websocket)
-    local object = {websocket = websocket}
+function M._create(websocket)
+    local object = {websocket = websocket, closed = false}
     object.closed = false
     M.__index = M
     setmetatable(object, M)
@@ -16,7 +16,7 @@ end
 
 function M.connect(url)
     local websocket<const> = raw_websocket.connect(url)
-    return create(websocket)
+    return M.create(websocket)
 end
 
 function M:send_login_command()
@@ -43,8 +43,8 @@ end
 local function get_response_error(response)
     if response.status == "ok" then return nil end
     if response.exception then
-        local sqlCode = response.exception.sqlCode
-        local text = response.exception.text
+        local sqlCode = response.exception.sqlCode or "nil"
+        local text = response.exception.text or "nil"
         return exaerror.create("E-EDL-10", "Received DB status {{status}} with code {{sqlCode|uq}}: {{text}}",
                                {status = response.status, sqlCode = sqlCode, text = text})
     else
@@ -55,7 +55,12 @@ end
 
 function M:_send_json(payload, ignore_response)
     local raw_payload = cjson.encode(payload)
-    log.trace("Sending payload '%s'", raw_payload)
+    if self.closed then
+        exaerror.create("E-EDL-22", "Websocket already closed when trying to send payload {{payload}}",
+                        {payload = raw_payload}):raise()
+    end
+
+    log.trace("Sending payload '%s', ignore response=%s", raw_payload, ignore_response)
     local raw_response, err = self.websocket:send_raw(raw_payload, ignore_response)
     if ignore_response then return nil, nil end
     if err then return nil, err end
@@ -76,6 +81,9 @@ function M:_send_json(payload, ignore_response)
     end
 end
 
-function M:close() self.websocket:close() end
+function M:close()
+    self.closed = true
+    self.websocket:close()
+end
 
 return M

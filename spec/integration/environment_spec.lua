@@ -52,9 +52,10 @@ describe("Environment", function()
 
     -- [itest -> dsn~luasql-environment-close~0]
     it("closes connection when closing an environment", function()
-        local conn, err = env:connect(connection_params.source_name, connection_params.user, connection_params.password)
-        assert.is_nil(err)
+        local conn = assert(env:connect(connection_params.source_name, connection_params.user,
+                                        connection_params.password))
         env:close()
-        assert.has_error(function() conn:execute("select 1") end, "E-EDL-12: Connection already closed")
+        assert.has_error(function() conn:execute("select 1") end,
+                         "E-EDL-12: Connection already closed when trying to call 'execute'")
     end)
 end)
