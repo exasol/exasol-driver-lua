@@ -1,45 +1,73 @@
-local M = {}
-
 local cjson = require("cjson")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local raw_websocket = require("websocket")
 
-function M._create(websocket)
+--- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
+--- @class ExasolWebsocket
+--- @field private websocket Websocket the raw websocket
+local ExasolWebsocket = {}
+
+--- Creates a new Exasol websocket.
+---@param websocket Websocket
+---@return ExasolWebsocket exasolWebsocket the new websocket
+function ExasolWebsocket._create(websocket)
     local object = {websocket = websocket, closed = false}
     object.closed = false
-    M.__index = M
-    setmetatable(object, M)
+    ExasolWebsocket.__index = ExasolWebsocket
+    setmetatable(object, ExasolWebsocket)
     return object
 end
 
-function M.connect(url)
+--- Creates a new Exasol websocket.
+---@param url string the websocket URL, e.g."wss://exasoldb.example.com:8563"
+---@return ExasolWebsocket exasolWebsocket the new websocket
+function ExasolWebsocket.connect(url)
     local websocket<const> = raw_websocket.connect(url)
-    return M._create(websocket)
+    return ExasolWebsocket._create(websocket)
 end
 
-function M:send_login_command()
+--- Sends the login command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
+--- This returns a public RSA key used for encrypting the password before sending it with the
+--- send_login_credentials() method.
+--- @return table response_data from the database
+--- @return string|table err if an error occurred
+function ExasolWebsocket:send_login_command()
     log.debug("Sending login command")
     return self:_send_json({command = "login", protocolVersion = 3})
 end
 
-function M:send_login_credentials(username, encrypted_password)
+--- Sends the login credentials, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
+--- @param username string the username
+--- @param encrypted_password string the password encrypted with the public key returned by send_login_command()
+--- @return table response_data from the database
+--- @return string|table err if an error occurred
+function ExasolWebsocket:send_login_credentials(username, encrypted_password)
     log.debug("Sending login credentials")
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
 end
 
-function M:send_disconnect()
+--- Sends the disconnect command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md
+--- @return string|table err if an error occurred
+function ExasolWebsocket:send_disconnect()
     log.debug("Sending disconnect command")
     local _, err = self:_send_json({command = "disconnect"}, true)
     return err
 end
 
-function M:send_execute(statement)
+--- Sends the execute command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md
+--- @param statement string the SQL statement to execute
+--- @return table response_data from the database
+--- @return string|table err if an error occurred
+function ExasolWebsocket:send_execute(statement)
     local payload = {command = "execute", sqlText = statement, attributes = {}}
     return self:_send_json(payload)
 end
 
+--- Extract the error from the given database response
+--- @param response table the response from the database
+--- @return nil|table err an error if the response contains an exception or nil if there is no exception
 local function get_response_error(response)
     if response.status == "ok" then return nil end
     if response.exception then
@@ -53,7 +81,13 @@ local function get_response_error(response)
     end
 end
 
-function M:_send_json(payload, ignore_response)
+--- Send the given table serialized to JSON payload request to the database and optionally wait for the response
+--- and deserialize it from JSON.
+--- @param payload table the payload to send
+--- @param ignore_response boolean false if we expect a response, else true.
+--- @return table response_data received response or nil if ignore_response was true or an error occurred.
+--- @return table|string err if an error occurred
+function ExasolWebsocket:_send_json(payload, ignore_response)
     local raw_payload = cjson.encode(payload)
     if self.closed then
         exaerror.create("E-EDL-22", "Websocket already closed when trying to send payload {{payload}}",
@@ -81,9 +115,17 @@ function M:_send_json(payload, ignore_response)
     end
 end
 
-function M:close()
+--- Closes the websocket
+--- @return boolean result true if the operation was successful
+function ExasolWebsocket:close()
+    if self.closed then
+        log.warn("Trying to close a Websocket that is already closed")
+        return true
+    end
     self.closed = true
     self.websocket:close()
+    self.websocket = nil
+    return true
 end
 
-return M
+return ExasolWebsocket

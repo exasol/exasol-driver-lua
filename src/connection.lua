@@ -3,11 +3,18 @@ local log = require("remotelog")
 local exaerror = require("exaerror")
 local cursor = require("cursor")
 
--- luacheck: ignore 212 # unused argument self
+--- This class represents a database connection and provides methods for interacting with the database,
+--- e.g. executing queries.
+--- @class Connection
+--- @field private websocket ExasolWebsocket the websocket
+--- @field private session_id string the session id for this connection
+local Connection = {}
 
-local M = {}
-
-function M:create(websocket, session_id)
+--- Create a new instance of the Connection class.
+--- @param websocket ExasolWebsocket websocket connection to the database
+--- @param session_id string session ID of the current database connection
+--- @return Connection connection the new instance
+function Connection:create(websocket, session_id)
     log.trace("Created new connection with session ID %d", session_id)
     local object = {websocket = websocket, session_id = session_id, closed = false, cursors = {}}
     self.__index = self
@@ -15,15 +22,24 @@ function M:create(websocket, session_id)
     return object
 end
 
-function M:_verify_connection_open(operation)
+--- Verify that this connection is open before executing an operation
+--- @param operation string the operation to be executed. This will be used in the error message.
+--- @raise an error if this connection is closed
+function Connection:_verify_connection_open(operation)
     if self.closed then
         exaerror.create("E-EDL-12", "Connection already closed when trying to call {{operation}}",
                         {operation = operation}):raise()
     end
 end
 
--- [impl -> dsn~luasql-connection-execute~0]
-function M:execute(statement)
+--- Executes the given SQL statement.
+--- @param statement string the SQL statement to execute
+--- @return Cursor|number|nil result a Cursor object if there are results, the number of rows affected by the command
+---   or nil in case there was an error executing the statement
+--- @return nil|string|table error in case there was an error executing the statement or nil if the statement
+---   was executed successfully
+--- [impl -> dsn~luasql-connection-execute~0]
+function Connection:execute(statement)
     self:_verify_connection_open("execute")
     log.trace("Executing statement '%s'", statement)
     local result, err = self.websocket:send_execute(statement)
@@ -55,29 +71,39 @@ function M:execute(statement)
     return cur
 end
 
--- [impl -> dsn~luasql-connection-commit~0]
-function M:commit()
+--- Commits the current transaction. This feature might not work on database systems that do not implement transactions.
+--- @return boolean result true in case of success and false when the operation could not be performed
+--- [impl -> dsn~luasql-connection-commit~0]
+function Connection:commit()
     self:_verify_connection_open("commit")
     error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
--- [impl -> dsn~luasql-connection-rollback~0]
-function M:rollback()
+--- Rolls back the current transaction.
+--- @return boolean result true in case of success and false when the operation could not be performed
+--- [impl -> dsn~luasql-connection-rollback~0]
+function Connection:rollback()
     self:_verify_connection_open("rollback")
     error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
--- [impl -> dsn~luasql-connection-setautocommit~0]
-function M:setautocommit(autocommit)
+--- Turns on or off the "auto commit" mode.
+--- @param autocommit boolean true to enable auto commit, false to disable auto commit
+--- @return boolean result true in case of success and false when the operation could not be performed
+--- [impl -> dsn~luasql-connection-setautocommit~0]
+-- luacheck: ignore 212 # unused argument autocommit
+function Connection:setautocommit(autocommit)
     self:_verify_connection_open("setautocommit")
-    error("Setautocommit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+    error("Setautocommit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/24")
 end
 
--- [impl -> dsn~luasql-connection-close~0]
-function M:close()
+--- Closes this connection and all cursors created using this connection.
+--- @return boolean result true in case of success and false in case of failure
+--- [impl -> dsn~luasql-connection-close~0]
+function Connection:close()
     if self.closed then
         log.warn("Connection with session ID %d already closed", self.session_id)
-        return
+        return true
     end
     local cursors = self.cursors
     log.debug("Closing Session session %d and its %d cursors", self.session_id, #cursors)
@@ -89,6 +115,7 @@ function M:close()
     end
     self.websocket:close()
     self.closed = true
+    return true
 end
 
-return M
+return Connection

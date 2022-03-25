@@ -117,6 +117,15 @@ Mitigations:
             assert.is_same({id = 2, name = "b", active = false}, cur:fetch({}, "a"))
             assert.is_nil(cur:fetch())
         end)
+
+        it("closes the cursor if there are no more rows left", function()
+            local cur = create_cursor(DEFAULT_RESULT_SET)
+            assert.is_not_nil(cur:fetch())
+            assert.is_not_nil(cur:fetch())
+            assert.is_nil(cur:fetch())
+            assert.has_error(function() cur:fetch() end,
+                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+        end)
     end)
 
     describe("close()", function()
@@ -124,6 +133,17 @@ Mitigations:
             local cur = create_cursor({numRows = 0, numColumns = 0, columns = {}})
             cur:close()
             cur:close()
+        end)
+
+        it("returns true when called once", function()
+            local cur = create_cursor({numRows = 0, numColumns = 0, columns = {}})
+            assert.is_true(cur:close())
+        end)
+
+        it("returns fallse when called a second time", function()
+            local cur = create_cursor({numRows = 0, numColumns = 0, columns = {}})
+            cur:close()
+            assert.is_false(cur:close())
         end)
 
         it("does not close the websocket", function()
