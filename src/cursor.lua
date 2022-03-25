@@ -15,10 +15,9 @@ local function create_col_name_provider(column_names) return function(col_index)
 
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
-        exaerror.create("E-EDL-24",
-                        "Result set reports {{expected_col_count}} but only {{actual_col_count}} columns are available",
-                        {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}):add_ticket_mitigation()
-                :raise()
+        local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
+        exaerror.create("E-EDL-24", "Result set reports {{expected_col_count}} but only " ..
+                                "{{actual_col_count}} columns are available", args):add_ticket_mitigation():raise()
     end
     local names = {}
     for _, column in ipairs(result_set.columns) do table.insert(names, column.name) end
@@ -63,7 +62,8 @@ function M:_fill_row(table, modestring)
     for col = 1, self.num_columns do
         local col_name = col_name_provider(col)
         if not col_name then
-            exaerror.create("E-EDL-23", "No column name found for index {{index}}", {index = col}):add_ticket_mitigation()
+            local args = {index = col}
+            exaerror.create("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
                     :raise()
         end
         table[col_name] = self.data[col][self.current_row]

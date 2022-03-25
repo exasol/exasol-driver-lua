@@ -42,10 +42,22 @@ describe("Cursor", function()
             assert.is_same({"a", "b", "c"}, cursor:fetch())
             assert.is_nil(cursor:fetch())
         end)
-      
+
         it("returns table with alphanumeric indices", function()
             local cursor = assert(connection:execute("select 1 as a, 2 as b"))
-            assert.is_same({A= 1, B= 2}, cursor:fetch({}, "a"))
+            assert.is_same({A = 1, B = 2}, cursor:fetch({}, "a"))
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns table with numeric indices", function()
+            local cursor = assert(connection:execute("select 1 as a, 2 as b"))
+            assert.is_same({1, 2}, cursor:fetch({}, "n"))
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("uses numeric indices by default", function()
+            local cursor = assert(connection:execute("select 1 as a, 2 as b"))
+            assert.is_same({1, 2}, cursor:fetch({}))
             assert.is_nil(cursor:fetch())
         end)
 

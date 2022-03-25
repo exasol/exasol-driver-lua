@@ -33,9 +33,11 @@ end
 
 describe("Connection", function()
     local conn = nil
+    local websocket_mock = nil
 
     before_each(function()
-        conn = connection:create(websocket_stub, SESSION_ID)
+        websocket_mock = mock(websocket_stub, false)
+        conn = connection:create(websocket_mock, SESSION_ID)
         execute_result = {}
     end)
 
@@ -133,6 +135,21 @@ Mitigations:
             conn:close()
             assert.has_error(function() conn:setautocommit(true) end,
                              "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+        end)
+    end)
+
+    describe("close()", function()
+        it("closes the websocket", function()
+            websocket_mock.close:clear()
+            conn:close()
+            assert.stub(websocket_mock.close).was.called()
+        end)
+
+        it("closes the websocket only once", function()
+            conn:close()
+            websocket_mock.close:clear()
+            conn:close()
+            assert.stub(websocket_mock.close).was.not_called()
         end)
     end)
 end)
