@@ -17,14 +17,14 @@ local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused var
 local Cursor = {}
 
 --- This result table index provider returns the column index.
---- This is for fetch mode "n" (i.e. numeric indices in the result table).
+--- This is used for fetch mode "n" (numeric indices in the result table).
 --- To avoid creating a new function for each row we create this only once and re-use it.
 --- @param col_index number the column index
 --- @return number col_index the column index
 local function col_index_provider(col_index) return col_index end
 
 --- This function creates a result table index provider that returns the column name.
---- This is for fetch mode "a" (i.e. alphanumeric indices in the result table).
+--- This is used for fetch mode "a" (alphanumeric indices in the result table).
 --- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
 --- @param column_names table a list of column names
 --- @return function result result table index provider that maps the column index to column names
@@ -76,9 +76,9 @@ end
 
 --- Gets a result table index provider for the given fetch mode.
 --- @param modestring "a"|"n" the fetch mode: "a" for alphanumeric indices, "n" for numeric indices (default)
---- @return function result a function that maps column indices to a table index in the result table
+--- @return function result_table_index_provider a function that maps column indices to a table index
+---   in the result table
 function Cursor:_get_result_table_index_provider(modestring)
-    modestring = modestring or FETCH_MODE_NUMERIC_INDICES
     if modestring ~= FETCH_MODE_NUMERIC_INDICES then
         return self.col_name_provider
     else
@@ -92,9 +92,9 @@ end
 ---                   "a" for alphanumeric indices, "n" for numeric indices (default)
 function Cursor:_fill_row(table, modestring)
     log.trace("Fetching row %d of %d with mode %s", self.current_row, self.num_rows, modestring)
-    local col_name_provider = self:_get_result_table_index_provider(modestring)
+    local result_table_index_provider = self:_get_result_table_index_provider(modestring)
     for col = 1, self.num_columns do
-        local col_name = col_name_provider(col)
+        local col_name = result_table_index_provider(col)
         if not col_name then
             local args = {index = col}
             exaerror.create("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
@@ -125,9 +125,9 @@ end
 --- see https://www.kyne.com.au/~mark/software/lua-cjson-manual.html#_decode and
 --- https://www.kyne.com.au/~mark/software/lua-cjson-manual.html#_null for details.
 ---
---- @param table table the table to which the result will be copied or nil
---- @param modestring "a"|"n" the mode as described above
---- @return table row_data row data as described above or nil if there are no more rows
+--- @param table table|nil the table to which the result will be copied or nil to return a new table
+--- @param modestring nil|"a"|"n" the mode as described above
+--- @return table|nil row_data row data as described above or nil if there are no more rows
 --- [impl -> dsn~luasql-cursor-fetch~0]
 function Cursor:fetch(table, modestring)
     if self.closed then
@@ -139,6 +139,7 @@ function Cursor:fetch(table, modestring)
         return nil
     end
     table = table or {}
+    modestring = modestring or FETCH_MODE_NUMERIC_INDICES
     self:_fill_row(table, modestring)
     self.current_row = self.current_row + 1
     return table

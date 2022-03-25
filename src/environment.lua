@@ -65,7 +65,7 @@ end
 ---   "exasoldb.example.com:8563". Note that the port is mandatory.
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
---- @return Connection connection a new Connection or nil if the connection failed
+--- @return Connection|nil connection a new Connection or nil if the connection failed
 --- @return nil|table|string err an error or nil if the connection was successful
 --- [impl -> dsn~luasql-environment-connect~0]
 function Environment:connect(sourcename, username, password)

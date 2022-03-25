@@ -10,8 +10,8 @@ local raw_websocket = require("websocket")
 local ExasolWebsocket = {}
 
 --- Creates a new Exasol websocket.
----@param websocket Websocket
----@return ExasolWebsocket exasolWebsocket the new websocket
+--- @param websocket Websocket
+--- @return ExasolWebsocket exasol_websocket the new websocket
 function ExasolWebsocket._create(websocket)
     local object = {websocket = websocket, closed = false}
     object.closed = false
@@ -21,8 +21,8 @@ function ExasolWebsocket._create(websocket)
 end
 
 --- Creates a new Exasol websocket.
----@param url string the websocket URL, e.g."wss://exasoldb.example.com:8563"
----@return ExasolWebsocket exasolWebsocket the new websocket
+--- @param url string the websocket URL, e.g."wss://exasoldb.example.com:8563"
+--- @return ExasolWebsocket exasolWebsocket the new websocket
 function ExasolWebsocket.connect(url)
     local websocket<const> = raw_websocket.connect(url)
     return ExasolWebsocket._create(websocket)
@@ -31,8 +31,8 @@ end
 --- Sends the login command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 --- This returns a public RSA key used for encrypting the password before sending it with the
 --- send_login_credentials() method.
---- @return table response_data from the database
---- @return string|table err if an error occurred
+--- @return table|nil response_data from the database or nil if an error occurred
+--- @return string|table|nil err if an error occurred or nil if the operation was successful
 function ExasolWebsocket:send_login_command()
     log.debug("Sending login command")
     return self:_send_json({command = "login", protocolVersion = 3})
@@ -41,15 +41,15 @@ end
 --- Sends the login credentials, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 --- @param username string the username
 --- @param encrypted_password string the password encrypted with the public key returned by send_login_command()
---- @return table response_data from the database
---- @return string|table err if an error occurred
+--- @return table|nil response_data from the database or nil if an error occurred
+--- @return string|table|nil err if an error occurred or nil if the operation was successful
 function ExasolWebsocket:send_login_credentials(username, encrypted_password)
     log.debug("Sending login credentials")
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
 end
 
 --- Sends the disconnect command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md
---- @return string|table err if an error occurred
+--- @return string|table|nil err if an error occurred or nil if the operation was successful
 function ExasolWebsocket:send_disconnect()
     log.debug("Sending disconnect command")
     local _, err = self:_send_json({command = "disconnect"}, true)
@@ -58,8 +58,8 @@ end
 
 --- Sends the execute command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md
 --- @param statement string the SQL statement to execute
---- @return table response_data from the database
---- @return string|table err if an error occurred
+--- @return table|nil response_data from the database or nil if an error occurred
+--- @return string|table|nil err if an error occurred or nil if the operation was successful
 function ExasolWebsocket:send_execute(statement)
     local payload = {command = "execute", sqlText = statement, attributes = {}}
     return self:_send_json(payload)
@@ -81,12 +81,12 @@ local function get_response_error(response)
     end
 end
 
---- Send the given table serialized to JSON payload request to the database and optionally wait for the response
+--- Send the given payload serialized to JSON to the database and optionally wait for the response
 --- and deserialize it from JSON.
 --- @param payload table the payload to send
---- @param ignore_response boolean false if we expect a response, else true.
---- @return table response_data received response or nil if ignore_response was true or an error occurred.
---- @return table|string err if an error occurred
+--- @param ignore_response boolean|nil false if we expect a response, else true. Default is false.
+--- @return table|nil response_data received response or nil if ignore_response was true or an error occurred
+--- @return table|string|nil err if an error occurred or nil if the operation was successful
 function ExasolWebsocket:_send_json(payload, ignore_response)
     local raw_payload = cjson.encode(payload)
     if self.closed then
