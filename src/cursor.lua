@@ -11,7 +11,11 @@ local M = {}
 
 local function col_index_provider(col_index) return col_index end
 
-local function create_col_name_provider(column_names) return function(col_index) return column_names[col_index] end end
+local function create_col_name_provider(column_names) --
+    return function(col_index) --
+        return column_names[col_index]
+    end
+end
 
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
