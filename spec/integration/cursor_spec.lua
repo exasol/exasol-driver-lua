@@ -61,7 +61,7 @@ describe("Cursor", function()
             assert.is_nil(cursor:fetch())
         end)
 
-        it("returns multiple columns for multiple row", function()
+        it("returns multiple columns in multiple rows", function()
             local cursor = assert(connection:execute(
                                           "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
             assert.is_same({1, "a"}, cursor:fetch())
@@ -71,7 +71,7 @@ describe("Cursor", function()
         end)
 
         -- [itest -> dsn~luasql-cursor-close~0]
-        it("fails when curser is already closed", function()
+        it("fails when cursor is already closed", function()
             local cursor = assert(connection:execute("select 1"))
             cursor:close()
             assert.has_error(function() cursor:fetch() end,
