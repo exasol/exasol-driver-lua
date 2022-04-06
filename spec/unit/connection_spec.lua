@@ -33,9 +33,11 @@ end
 
 describe("Connection", function()
     local conn = nil
+    local websocket_mock = nil
 
     before_each(function()
-        conn = connection:create(websocket_stub, SESSION_ID)
+        websocket_mock = mock(websocket_stub, false)
+        conn = connection:create(websocket_mock, SESSION_ID)
         execute_result = {}
     end)
 
@@ -76,7 +78,7 @@ Mitigations:
         end)
 
         it("returns a cursor with results", function()
-            simulate_result_set({numRows = 1, numColumns = 1, data = {{1}}})
+            simulate_result_set({numRows = 1, numColumns = 1, columns = {{}}, data = {{1}}})
             local cursor = assert(conn:execute("statement"))
             assert.is_same({1}, cursor:fetch())
             assert.is_nil(cursor:fetch())
@@ -90,7 +92,7 @@ Mitigations:
         end)
 
         it("returns a cursor with multiple rows", function()
-            simulate_result_set({numRows = 3, numColumns = 1, data = {{1, 2, 3}}})
+            simulate_result_set({numRows = 3, numColumns = 1, columns = {{}}, data = {{1, 2, 3}}})
             local cursor = assert(conn:execute("statement"))
             assert.is_same({1}, cursor:fetch())
             assert.is_same({2}, cursor:fetch())
@@ -99,7 +101,7 @@ Mitigations:
         end)
 
         it("returns a cursor with multiple columns", function()
-            simulate_result_set({numRows = 1, numColumns = 3, data = {{1}, {2}, {3}}})
+            simulate_result_set({numRows = 1, numColumns = 3, columns = {{}, {}, {}}, data = {{1}, {2}, {3}}})
             local cursor = assert(conn:execute("statement"))
             assert.is_same({1, 2, 3}, cursor:fetch())
             assert.is_nil(cursor:fetch())
@@ -133,6 +135,21 @@ Mitigations:
             conn:close()
             assert.has_error(function() conn:setautocommit(true) end,
                              "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+        end)
+    end)
+
+    describe("close()", function()
+        it("closes the websocket", function()
+            websocket_mock.close:clear()
+            conn:close()
+            assert.stub(websocket_mock.close).was.called()
+        end)
+
+        it("closes the websocket only once", function()
+            conn:close()
+            websocket_mock.close:clear()
+            conn:close()
+            assert.stub(websocket_mock.close).was.not_called()
         end)
     end)
 end)

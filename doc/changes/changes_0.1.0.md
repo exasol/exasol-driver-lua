@@ -7,6 +7,7 @@ Code name: Initial Release
 ## Features
 
 * #1: Setup initial project
+* #5: Added support for mode "a" for cursor:fetch()
 
 ## Bugfixes
 

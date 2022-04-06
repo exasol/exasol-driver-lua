@@ -26,10 +26,12 @@ local exaerror = require("exaerror")
 
 describe("Environment", function()
     local env = nil
+    local websocket_mock = nil
 
     before_each(function()
         reset_websocket_stub(websocket_stub)
-        env = environment:new({exasol_websocket = websocket_stub})
+        websocket_mock = mock(websocket_stub, false)
+        env = environment:new({exasol_websocket = websocket_mock})
     end)
 
     after_each(function()
@@ -84,6 +86,19 @@ Mitigations:
             env:close()
             assert.has_error(function() env:connect("host:1234", "user", "password") end,
                              "E-EDL-21: Attempt to connect using an environment that is already closed")
+        end)
+    end)
+
+    describe("close()", function()
+        it("closees the websocket when a connection exists", function()
+            local _ = assert(env:connect("host:1234", "user", "password"))
+            env:close()
+            assert.stub(websocket_mock.close).was.called()
+        end)
+
+        it("does not close the websocket when no connection exists", function()
+            env:close()
+            assert.stub(websocket_mock.close).was.not_called()
         end)
     end)
 end)
