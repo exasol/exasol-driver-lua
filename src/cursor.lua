@@ -28,12 +28,18 @@ local function col_index_provider(col_index) return col_index end
 --- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
 --- @param column_names table a list of column names
 --- @return function result result table index provider that maps the column index to column names
-local function create_col_name_provider(column_names) return function(col_index) return column_names[col_index] end end
+local function create_col_name_provider(column_names) --
+    return function(col_index) --
+        return column_names[col_index]
+    end
+end
 
 --- This function extracts the column names from a result set.
 --- @param result_set table the result set
 --- @return table result a list of column names
 --- @raise an error if the number of columns is not equal to the number reported by the result set
+
+
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
@@ -92,9 +98,9 @@ end
 ---                   "a" for alphanumeric indices, "n" for numeric indices (default)
 function Cursor:_fill_row(table, modestring)
     log.trace("Fetching row %d of %d with mode %s", self.current_row, self.num_rows, modestring)
-    local result_table_index_provider = self:_get_result_table_index_provider(modestring)
+    local col_name_provider = self:_get_result_table_index_provider(modestring)
     for col = 1, self.num_columns do
-        local col_name = result_table_index_provider(col)
+        local col_name = col_name_provider(col)
         if not col_name then
             local args = {index = col}
             exaerror.create("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
