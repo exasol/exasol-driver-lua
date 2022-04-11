@@ -173,10 +173,17 @@ function Cursor:close()
         self.closed = true
         return true
     end
-    error("Closing cursor with result set handle not yet supported, " ..
-                  "see https://github.com/exasol/exasol-driver-lua/issues/4")
-    self.closed = true
-    return true
+
+    local err = self.websocket:send_close_result_set(self.result_set_handle)
+    if err then
+        log.warn(tostring(exaerror.create("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
+                                          {result_set_handle = self.result_set_handle, error = err})))
+        return false
+    else
+        log.trace("Successfully closed result set %d", self.result_set_handle)
+        self.closed = true
+        return true
+    end
 end
 
 return Cursor

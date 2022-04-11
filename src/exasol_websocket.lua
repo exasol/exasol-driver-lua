@@ -82,6 +82,15 @@ function ExasolWebsocket:send_fetch(result_set_handle, start_position, num_bytes
     return self:_send_json(payload)
 end
 
+--- Sends the closeResultSet command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/closeResultSetV1.md
+--- @param result_set_handle number the result set handle to close
+--- @return string|table|nil err if an error occurred or nil if the operation was successful
+function ExasolWebsocket:send_close_result_set(result_set_handle)
+    local payload = {command = "closeResultSet", resultSetHandles = {result_set_handle}, attributes = {}}
+    local _, err = self:_send_json(payload)
+    return err
+end
+
 --- Extract the error from the given database response
 --- @param response table the response from the database
 --- @return nil|table err an error if the response contains an exception or nil if there is no exception
