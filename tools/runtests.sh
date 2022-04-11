@@ -26,5 +26,5 @@ mkdir -p "$reports_dir"
 mkdir -p "$luacov_dir"
 
 cd "$base_dir"
-busted "$@"
+luarocks test --  "$@"
 print_coverage_summary

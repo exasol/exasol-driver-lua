@@ -53,7 +53,7 @@ jobs:
       - name: Run smoketests
         run: |
           eval $(luarocks path)
-          EXASOL_HOST=dummy LOG_LEVEL=TRACE busted --run=smoketest
+          EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test -- --run=smoketest
 
       - name: Spawn Exasol environment
         run: |
@@ -97,7 +97,7 @@ jobs:
             EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
-            busted --run=ci_repeated
+            luarocks test -- --run=ci_repeated
 
 
 ## Deactivated until requirements and coverage are added

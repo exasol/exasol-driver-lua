@@ -1,10 +1,13 @@
 rockspec_format = "3.0"
+
+local tag = "0.1.0"
+
 package = "exasol-driver-lua"
-version = "0.1.0-1"
+version = tag .. "-1"
 
 source = {
     url = 'git://github.com/exasol/exasol-driver-lua',
-    tag = "0.1.0"
+    tag = tag
 }
 
 description = {
@@ -28,13 +31,13 @@ dependencies = {
     "luasocket >= 3.0rc1-2",
     "luasec >= 1.0.2-1",
     "luaossl >= 20200709-0",
-    "lua-cjson == 2.1.0", -- pinned to prevent "undefined symbol: lua_objlen" in 2.1.0.6
+    "lua-cjson == 2.1.0", -- pinned to prevent "undefined symbol: lua_objlen" in 2.1.0.6 (https://github.com/mpx/lua-cjson/issues/56)
     "base64 >= 1.5-3",
     "exaerror >= 1.2.2-1",
     "remotelog >= 1.1.1-1"
 }
 
-build_dependencies = {
+test_dependencies = {
     "busted >= 2.0.0-1",
     "mockagne >= 1.0-2",
     "luacov >= 0.15.0-1",
@@ -42,10 +45,14 @@ build_dependencies = {
     "luacheck >= 0.25.0-1"
 }
 
+test = {
+    type = "busted"
+}
+
 build = {
     type = "builtin",
     modules = {
         luasqlexasol = "src/luasqlexasol.lua"
     },
-    copy_directories = { "doc", "spec" }
+    copy_directories = { "doc" }
 }

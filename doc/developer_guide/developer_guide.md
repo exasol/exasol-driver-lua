@@ -86,6 +86,8 @@ To run a single test:
 
 ```sh
 export EXASOL_HOST=<host>
+luarocks test -- spec/integration/connection_spec.lua
+# or
 busted spec/integration/connection_spec.lua
 # or
 lua spec/integration/connection_spec.lua
