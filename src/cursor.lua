@@ -101,7 +101,7 @@ function Cursor:_fill_row(table, modestring)
             exaerror.create("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
                     :raise()
         end
-        table[col_name] = self.data:get_column(col)
+        table[col_name] = self.data:get_column_value(col)
     end
 end
 

@@ -8,7 +8,10 @@ local exaerror = require("exaerror")
 --- @class CursorData
 --- @field private data table
 --- @field private current_row number
+--- @field private current_row_in_batch number
 --- @field private num_rows_total number
+--- @field private num_rows_in_message number
+--- @field private num_rows_fetched_total number
 --- @field private result_set_handle string|nil
 --- @field private websocket ExasolWebsocket
 local CursorData = {}
@@ -28,21 +31,30 @@ function CursorData:create(websocket, result_set_handle, data, num_rows_total, n
         data = data,
         num_rows_total = assert(num_rows_total, "numRows missing in result set"),
         num_rows_in_message = assert(num_rows_in_message, "numRowsInMessage missing in result set"),
-        current_row = 1
+        num_rows_fetched_total = num_rows_in_message,
+        current_row = 1,
+        current_row_in_batch = 1
     }
+    log.trace("Creating cursor data with %d rows in total and %d rows in message", object.num_rows_total,
+              object.num_rows_in_message)
     self.__index = self
     setmetatable(object, self)
     return object
 end
 
-function CursorData:next_row() self.current_row = self.current_row + 1 end
+function CursorData:next_row()
+    self.current_row = self.current_row + 1
+    self.current_row_in_batch = self.current_row_in_batch + 1
+end
 
 function CursorData:get_current_row() return self.current_row end
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
-function CursorData:get_column(column_index)
-    log.trace("Fetching row %d of %d", self.current_row, self.num_rows_total)
-    return self.data[column_index][self.current_row]
+function CursorData:get_column_value(column_index)
+    self:_fetch_data()
+    log.trace("Fetching row %d of %d (%d of %d in current batch)", self.current_row, self.num_rows_total,
+              self.current_row_in_batch, self.num_rows_in_message)
+    return self.data[column_index][self.current_row_in_batch]
 end
 
 function CursorData:_fetch_data()
@@ -53,21 +65,14 @@ function CursorData:_fetch_data()
         -- Small result set, data already available
         return
     end
-    if not self.data then
-        self:_fetch_next_data_batch()
-        return
-    end
-    local current_batch_size = #self.data[1]
-    if self.current_row > current_batch_size then
-        self:_fetch_next_data_batch()
-        return
-    end
+
+    if self.current_row_in_batch > self.num_rows_in_message then self:_fetch_next_data_batch() end
 end
 
 function CursorData:_fetch_next_data_batch()
-    local start_position = 0
+    local start_position = self.current_row - 1
     local num_bytes = 5000
-    local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, 1000)
+    local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, num_bytes)
     if err then
         exaerror.create("E-EDL-25",
                         "Error fetching result data for handle {{result_set_handle}} with start position {{start_position}} and fetch size {{num_bytes}} bytes",
@@ -78,6 +83,11 @@ function CursorData:_fetch_next_data_batch()
         }):add_ticket_mitigation():raise()
     end
     self.data = response.data
+    self.num_rows_in_message = assert(response.numRows, "missing numRows")
+    self.num_rows_fetched_total = self.num_rows_fetched_total + self.num_rows_in_message
+    self.current_row_in_batch = 1
+    log.debug("Received batch with %d rows (#%d..%d of %d) with start pos %d and fetch size %d bytes", self.num_rows_in_message, self.current_row,
+              self.num_rows_fetched_total, self.num_rows_total, start_position, num_bytes)
 end
 
 return CursorData
