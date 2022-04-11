@@ -84,7 +84,6 @@ describe("Cursor", function()
             assert.has_error(function() cursor:fetch() end,
                              "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
-
     end)
 
     describe("close()", function()

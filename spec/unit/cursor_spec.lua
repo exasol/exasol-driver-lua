@@ -19,7 +19,7 @@ local function create_resultset(column_names, rows)
             table.insert(data[column_index], value)
         end
     end
-    return {numRows = #rows, numColumns = #columns, columns = columns, data = data}
+    return {numRows = #rows, numRowsInMessage = #rows, numColumns = #columns, columns = columns, data = data}
 end
 
 describe("Cursor", function()
@@ -135,9 +135,7 @@ Mitigations:
         end)
 
         it("closes the cursor if there are no more rows left", function()
-            local cur = create_cursor(create_resultset({"id"}, {
-                {id = 1}, {id = 2}
-            }))
+            local cur = create_cursor(create_resultset({"id"}, {{id = 1}, {id = 2}}))
             assert.is_not_nil(cur:fetch())
             assert.is_not_nil(cur:fetch())
             assert.is_nil(cur:fetch())

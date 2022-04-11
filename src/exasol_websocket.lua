@@ -65,6 +65,23 @@ function ExasolWebsocket:send_execute(statement)
     return self:_send_json(payload)
 end
 
+--- Sends the fetch command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/fetchV1.md
+--- @param result_set_handle number the result set handle
+--- @param start_position number row offset (0-based) from which to begin data retrieval
+--- @param num_bytes number number of bytes to retrieve (max: 64MB)
+--- @return table|nil response_data from the database or nil if an error occurred
+--- @return string|table|nil err if an error occurred or nil if the operation was successful
+function ExasolWebsocket:send_fetch(result_set_handle, start_position, num_bytes)
+    local payload = {
+        command = "fetch",
+        resultSetHandle = result_set_handle,
+        startPosition = start_position,
+        numBytes = num_bytes,
+        attributes = {}
+    }
+    return self:_send_json(payload)
+end
+
 --- Extract the error from the given database response
 --- @param response table the response from the database
 --- @return nil|table err an error if the response contains an exception or nil if there is no exception
