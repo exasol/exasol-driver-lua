@@ -35,8 +35,12 @@ function CursorData:create(connection_properties, websocket, result_set)
         current_row = 1,
         current_row_in_batch = 1
     }
-    log.trace("Creating cursor data with %d rows in total and %d rows in message", object.num_rows_total,
-              object.num_rows_in_message)
+    if object.result_set_handle then
+        log.debug("Creating cursor data for result set %d with %d rows in total and %d rows in message",
+                  object.result_set_handle, object.num_rows_total, object.num_rows_in_message)
+    else
+        log.debug("Creating cursor data without result set with %d rows", object.num_rows_total)
+    end
     self.__index = self
     setmetatable(object, self)
     return object
