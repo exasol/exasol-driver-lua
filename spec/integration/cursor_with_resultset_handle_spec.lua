@@ -12,14 +12,18 @@ describe("Cursor with resultset handle", function()
     local connection = nil
     local schema_name = nil
 
+    local function insert_data(num_rows)
+        assert(connection:execute(string.format("insert into %s.t (id) values between 1 and %d", schema_name, num_rows)))
+    end
+
     local function create_test_data()
         assert(connection:execute(string.format("drop schema if exists %s cascade", schema_name)))
         assert(connection:execute(string.format("create schema %s", schema_name)))
-        assert(connection:execute(string.format("create table t (id integer)", schema_name)))
-        assert(connection:execute(string.format("insert into t (id) values between 1 and 2000", schema_name)))
+        assert(connection:execute(string.format("create table t (id integer)")))
     end
 
     before_each(function()
+        schema_name = string.format("connection_test_%d", os.time())
         env = driver.exasol()
         local connection_params = config.get_connection_params()
         connection = assert(env:connect(connection_params.source_name, connection_params.user,
@@ -37,13 +41,17 @@ describe("Cursor with resultset handle", function()
         connection = nil
     end)
 
-    it("test data created", function()
-        local cursor = assert(connection:execute("select count(*) from t"))
-        assert.is_same({2000}, cursor:fetch())
+    it("supports fetching small result sets", function()
+        insert_data(1000)
+        local cursor = assert(connection:execute("select * from t"))
+        local data = {}
+        for expected_row = 1, 1000 do assert.is_same({expected_row}, cursor:fetch(data)) end
+        assert.is_nil(cursor:fetch(data))
         cursor:close()
     end)
 
     it("supports fetching large result sets", function()
+        insert_data(2000)
         local cursor = assert(connection:execute("select * from t"))
         local data = {}
         for expected_row = 1, 2000 do assert.is_same({expected_row}, cursor:fetch(data)) end

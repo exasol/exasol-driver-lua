@@ -3,6 +3,7 @@
 require("busted.runner")()
 local cursor = require("cursor")
 local config = require("config")
+local ConnectionProperties = require("connection_properties")
 config.configure_logging()
 
 local SESSION_ID<const> = 12345
@@ -31,7 +32,10 @@ describe("Cursor", function()
         websocket_mock = mock(websocket_stub, false)
     end)
 
-    local function create_cursor(result_set) return cursor:create(websocket_mock, SESSION_ID, result_set) end
+    local function create_cursor(result_set)
+        local connection_properties = ConnectionProperties:create()
+        return cursor:create(connection_properties, websocket_mock, SESSION_ID, result_set)
+    end
 
     describe("create()", function()
         it("throws error for inconsistent column count", function()

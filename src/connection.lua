@@ -8,15 +8,23 @@ local cursor = require("cursor")
 --- @class Connection
 --- @field private websocket ExasolWebsocket the websocket
 --- @field private session_id string the session id for this connection
+--- @field private connection_properties ConnectionProperties the connection properties
 local Connection = {}
 
 --- Create a new instance of the Connection class.
+--- @param connection_properties ConnectionProperties the connection properties
 --- @param websocket ExasolWebsocket websocket connection to the database
 --- @param session_id string session ID of the current database connection
 --- @return Connection connection the new instance
-function Connection:create(websocket, session_id)
+function Connection:create(connection_properties, websocket, session_id)
     log.trace("Created new connection with session ID %d", session_id)
-    local object = {websocket = websocket, session_id = session_id, closed = false, cursors = {}}
+    local object = {
+        connection_properties = assert(connection_properties, "connection_properties missing"),
+        websocket = assert(websocket, "websocket missing"),
+        session_id = assert(session_id, "session_id missing"),
+        closed = false,
+        cursors = {}
+    }
     self.__index = self
     setmetatable(object, self)
     return object
@@ -66,7 +74,7 @@ function Connection:execute(statement)
         local args = {result_type = result_type or "nil"}
         exaerror.create("E-EDL-9", "Got unexpected result type {{result_type}}", args):add_ticket_mitigation():raise()
     end
-    local cur = cursor:create(self.websocket, self.session_id, first_result.resultSet)
+    local cur = cursor:create(self.connection_properties, self.websocket, self.session_id, first_result.resultSet)
     table.insert(self.cursors, cur)
     return cur
 end

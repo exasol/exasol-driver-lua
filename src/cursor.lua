@@ -53,12 +53,13 @@ local function get_column_names(result_set)
 end
 
 --- Create a new instance of the Cursor class.
+--- @param connection_properties ConnectionProperties connection properties
 --- @param websocket ExasolWebsocket the websocket connection to the database
 --- @param session_id string the session ID of the current database connection
 --- @param result_set table the result set returned by the database
 --- @return Cursor result a new instance
 --- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
-function Cursor:create(websocket, session_id, result_set)
+function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
     local object = {
         websocket = websocket,
@@ -67,8 +68,7 @@ function Cursor:create(websocket, session_id, result_set)
         num_columns = result_set.numColumns,
         num_rows = result_set.numRows,
         col_name_provider = create_col_name_provider(column_names),
-        data = CursorData:create(websocket, result_set.resultSetHandle, result_set.data, result_set.numRows,
-                                 result_set.numRowsInMessage),
+        data = CursorData:create(connection_properties, websocket, result_set),
         closed = false
     }
     self.__index = self

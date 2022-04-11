@@ -2,6 +2,7 @@
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local connection = require("connection")
+local ConnectionProperties = require("connection_properties")
 local config = require("config")
 config.configure_logging()
 
@@ -37,7 +38,8 @@ describe("Connection", function()
 
     before_each(function()
         websocket_mock = mock(websocket_stub, false)
-        conn = connection:create(websocket_mock, SESSION_ID)
+        local connection_properties = ConnectionProperties:create()
+        conn = connection:create(connection_properties, websocket_mock, SESSION_ID)
         execute_result = {}
     end)
 

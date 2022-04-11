@@ -5,6 +5,7 @@ local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
+local ConnectionProperties = require("connection_properties")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -68,10 +69,11 @@ end
 --- @return Connection|nil connection a new Connection or nil if the connection failed
 --- @return nil|table|string err an error or nil if the connection was successful
 --- [impl -> dsn~luasql-environment-connect~0]
-function Environment:connect(sourcename, username, password)
+function Environment:connect(sourcename, username, password, properties)
     if self.closed then
         exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
     end
+    local connection_properties = ConnectionProperties:create(properties)
     local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
     if err then
@@ -89,7 +91,7 @@ function Environment:connect(sourcename, username, password)
     log.trace("Connected to Exasol %s, maximum message size: %d bytes", response.releaseVersion,
               response.maxDataMessageSize)
     local session_id = response.sessionId
-    local conn = connection:create(socket, session_id)
+    local conn = connection:create(connection_properties, socket, session_id)
     self.connections[session_id] = conn
     return conn, nil
 end
