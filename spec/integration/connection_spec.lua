@@ -11,24 +11,31 @@ describe("Connection", function()
     local connection = nil
     local schema_name = nil
 
+    local function create_schema()
+        schema_name = string.format("connection_test_%d", os.time())
+        assert(connection:execute(string.format("drop schema if exists %s cascade", schema_name)))
+        assert(connection:execute(string.format("create schema %s", schema_name)))
+    end
+
     before_each(function()
         env = driver.exasol()
-        schema_name = string.format("connection_test_%d", os.time())
         local connection_params = config.get_connection_params()
         connection = assert(env:connect(connection_params.source_name, connection_params.user,
                                         connection_params.password))
-        assert(connection:execute(string.format("drop schema if exists %s cascade", schema_name)))
-        assert(connection:execute(string.format("create schema %s", schema_name)))
     end)
 
     after_each(function()
-        if not connection.closed then
+        if schema_name then
             assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
+        end
+
+        if not connection.closed then
             connection:close()
         end
         env:close()
         env = nil
         connection = nil
+        schema_name = nil
     end)
 
     -- [itest -> dsn~luasql-connection-execute~0]
@@ -39,6 +46,7 @@ describe("Connection", function()
     end)
 
     it("allows creating and using tables", function()
+        create_schema()
         local result = assert(connection:execute("create table test_table (id integer, name varchar(10))"))
         assert.is_same(0, result)
 
@@ -56,6 +64,7 @@ describe("Connection", function()
     end)
 
     it("allows using update query", function()
+        create_schema()
         local result = assert(connection:execute("create table test_table (id integer, name varchar(10))"))
         assert.is_same(0, result)
 
