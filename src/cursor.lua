@@ -55,7 +55,7 @@ end
 --- @param websocket ExasolWebsocket the websocket connection to the database
 --- @param session_id string the session ID of the current database connection
 --- @param result_set table the result set returned by the database
---- @return Cursor result a new instance
+--- @return Cursor result a new Cursor instance
 --- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(websocket, session_id, result_set)
     local column_names = get_column_names(result_set)

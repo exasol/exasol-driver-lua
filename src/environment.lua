@@ -48,11 +48,11 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
 end
 
 ---Login to the database, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
----@param socket ExasolWebsocket the connection to the database
----@param username string the username
----@param password string the password
----@return table|nil response_data connection metadata in case login was successful
----@return nil|table|string err an error if login failed
+--- @param socket ExasolWebsocket the connection to the database
+--- @param username string the username
+--- @param password string the user's password
+--- @return table|nil response_data connection metadata in case login was successful
+--- @return nil|table|string err an error if login failed
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
