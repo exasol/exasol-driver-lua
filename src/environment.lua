@@ -96,7 +96,7 @@ function Environment:connect(sourcename, username, password)
 end
 
 --- Closes the environment and all connections created using it.
---- @return boolean true if all connections where closed successfully
+--- @return boolean <code>true</code> if all connections where closed successfully
 --- [impl -> dsn~luasql-environment-close~0]
 function Environment:close()
     if self.closed then

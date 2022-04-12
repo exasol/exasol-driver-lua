@@ -166,7 +166,7 @@ function Cursor:getcoltypes()
 end
 
 --- Closes this cursor.
---- @return boolean true in case of success and false when the cursor is already closed
+--- @return boolean <code>true</code> in case of success and <code>false</code> when the cursor is already closed
 --- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()
     if self.closed then

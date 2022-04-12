@@ -20,7 +20,7 @@ end
 
 --- Checks if the given websocket opcode represents an error or not.
 --- @param opcode boolean|number the received websocket opcode
---- @return boolean true if the opcode represents an error (that should be logged) or else otherwise
+--- @return boolean <code>true</code> if the opcode represents an error that should be logged
 local function is_websocket_error(opcode)
     -- LuWS uses false to indicate an error
     return type(opcode) == "boolean" and opcode == false
@@ -77,7 +77,7 @@ function WebsocketDatahandler:get_data()
 end
 
 --- Check if this handler has received any data.
---- @return boolean true if at least one message was received, else false
+--- @return boolean <code>true</code> if at least one message was received
 function WebsocketDatahandler:has_received_data() return #self.data > 0 end
 
 return WebsocketDatahandler

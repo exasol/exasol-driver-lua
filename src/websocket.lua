@@ -27,7 +27,7 @@ end
 
 --- Check if the given error received during connection is recoverable, i.e. we can try to connect again later.
 --- @param err string the received error
---- @return boolean true if we can retry the connection, false if this is a permanent error
+--- @return boolean <code>true</code> if we can retry the connection, <code>false</code> if this is a permanent error
 ---   that does not disappear
 local function recoverable_connection_error(err) return string.match(err, ".*failed: connection refused$") end
 
@@ -105,8 +105,8 @@ end
 
 --- Send the given payload and optionally wait for the response and return the response.
 --- @param payload string the payload to send
---- @param ignore_response boolean false if we expect a response, else true.
---- @return string the received response or nil if ignore_response was true or an error occurred.
+--- @param ignore_response boolean <code>false</code> if we expect a response.
+--- @return string the received response or nil if ignore_response was <code>true</code> or an error occurred.
 --- @return table|string an error if an error occured
 function Websocket:send_raw(payload, ignore_response)
     if not ignore_response then self.data_handler:expect_data() end
