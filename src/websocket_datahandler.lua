@@ -10,7 +10,7 @@ local exaerror = require("exaerror")
 local WebsocketDatahandler = {}
 
 --- Create a new instance of the WebsocketDatahandler class.
---- @return WebsocketDatahandler data_handler new instance
+--- @return WebsocketDatahandler a new instance
 function WebsocketDatahandler:create()
     local object = {expecting_data = false, data = {}}
     self.__index = self
@@ -20,7 +20,7 @@ end
 
 --- Checks if the given websocket opcode represents an error or not.
 --- @param opcode boolean|number the received websocket opcode
---- @return boolean is_error true if the opcode represents an error (that should be logged) or else otherwise
+--- @return boolean true if the opcode represents an error (that should be logged) or else otherwise
 local function is_websocket_error(opcode)
     -- LuWS uses false to indicate an error
     return type(opcode) == "boolean" and opcode == false
@@ -66,7 +66,7 @@ function WebsocketDatahandler:expected_data_received()
 end
 
 --- Get all message data collected by this handler.
---- @return string|nil messages the concatenated received messages or nil if no message was received
+--- @return string|nil the concatenated received messages or nil if no message was received
 function WebsocketDatahandler:get_data()
     if #self.data == 0 then
         log.debug("No messages received since collection started")
@@ -77,7 +77,7 @@ function WebsocketDatahandler:get_data()
 end
 
 --- Check if this handler has received any data.
---- @return boolean data_available true if at least one message was received, else false
+--- @return boolean true if at least one message was received, else false
 function WebsocketDatahandler:has_received_data() return #self.data > 0 end
 
 return WebsocketDatahandler

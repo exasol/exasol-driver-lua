@@ -20,14 +20,14 @@ local Cursor = {}
 --- This is used for fetch mode "n" (numeric indices in the result table).
 --- To avoid creating a new function for each row we create this only once and re-use it.
 --- @param col_index number the column index
---- @return number col_index the column index
+--- @return number the column index
 local function col_index_provider(col_index) return col_index end
 
 --- This function creates a result table index provider that returns the column name.
 --- This is used for fetch mode "a" (alphanumeric indices in the result table).
 --- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
 --- @param column_names table a list of column names
---- @return function result result table index provider that maps the column index to column names
+--- @return function result table index provider that maps the column index to column names
 local function create_col_name_provider(column_names) --
     return function(col_index) --
         return column_names[col_index]
@@ -36,7 +36,7 @@ end
 
 --- This function extracts the column names from a result set.
 --- @param result_set table the result set
---- @return table result a list of column names
+--- @return table a list of column names
 --- @raise an error if the number of columns is not equal to the number reported by the result set
 
 
@@ -55,7 +55,7 @@ end
 --- @param websocket ExasolWebsocket the websocket connection to the database
 --- @param session_id string the session ID of the current database connection
 --- @param result_set table the result set returned by the database
---- @return Cursor result a new Cursor instance
+--- @return Cursor a new Cursor instance
 --- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
@@ -82,7 +82,7 @@ end
 
 --- Gets a result table index provider for the given fetch mode.
 --- @param modestring "a"|"n" the fetch mode: "a" for alphanumeric indices, "n" for numeric indices (default)
---- @return function result_table_index_provider a function that maps column indices to a table index
+--- @return function a function that maps column indices to a table index
 ---   in the result table
 function Cursor:_get_result_table_index_provider(modestring)
     if modestring ~= FETCH_MODE_NUMERIC_INDICES then
@@ -133,7 +133,7 @@ end
 ---
 --- @param table table|nil the table to which the result will be copied or nil to return a new table
 --- @param modestring nil|"a"|"n" the mode as described above
---- @return table|nil row_data row data as described above or nil if there are no more rows
+--- @return table|nil row data as described above or nil if there are no more rows
 --- [impl -> dsn~luasql-cursor-fetch~0]
 function Cursor:fetch(table, modestring)
     if self.closed then
@@ -152,21 +152,21 @@ function Cursor:fetch(table, modestring)
 end
 
 --- Gets the list of column names.
---- @return table column_names the list of column names
+--- @return table the list of column names
 --- [impl -> dsn~luasql-cursor-getcolnames~0]
 function Cursor:getcolnames()
     error("getcolnames will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
 --- Gets the list of column types.
---- @return table column_types the list of column types
+--- @return table the list of column types
 --- [impl -> dsn~luasql-cursor-getcoltypes~0]
 function Cursor:getcoltypes()
     error("getcoltypes will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
 --- Closes this cursor.
---- @return boolean success true in case of success and false when the cursor is already closed
+--- @return boolean true in case of success and false when the cursor is already closed
 --- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()
     if self.closed then

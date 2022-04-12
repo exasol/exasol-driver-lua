@@ -7,7 +7,7 @@ local Environment = require("environment")
 local log = require("remotelog")
 
 --- Create a new environment that allows connecting to an Exasol database.
---- @return Environment environment new environment
+--- @return Environment new environment
 --- [impl -> dsn~luasql-entry-point~0]
 function M.exasol()
     log.trace("Created new luasql.exasol environment")

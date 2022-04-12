@@ -25,7 +25,7 @@ local Environment = {}
 --- Create a new instance of the Environment class
 --- @param args table|nil allows injecting a websocket module. This is only useful in unit tests and
 ---   should be nil in production code.
---- @return Environment environment a new instance
+--- @return Environment a new instance
 function Environment:new(args)
     local object = {closed = false, connections = {}}
     object.exasol_websocket = load_exasol_websocket(args)
@@ -38,7 +38,7 @@ end
 --- @param publicKeyModulus string the hex encoded modulus of the public key
 --- @param publicKeyExponent string the hex encoded exponent of the public key
 --- @param password string the password to encrypt
---- @return string encrypted_password the encrypted password
+--- @return string the encrypted password
 local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     local rsa = pkey.new({type = "RSA", bits = 1024})
     local modulus = bignum.new("0x" .. publicKeyModulus)
@@ -52,8 +52,8 @@ end
 ---@param socket ExasolWebsocket the connection to the database
 ---@param username string the username
 ---@param password string the password
----@return table|nil response_data connection metadata in case login was successful
----@return nil|table|string err an error if login failed
+---@return table|nil connection metadata in case login was successful
+---@return nil|table|string an error if login failed
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -66,8 +66,8 @@ end
 --- <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
---- @return Connection|nil connection a new Connection or nil if the connection failed
---- @return nil|table|string err an error or nil if the connection was successful
+--- @return Connection|nil a new Connection or nil if the connection failed
+--- @return nil|table|string an error or nil if the connection was successful
 --- [impl -> dsn~luasql-environment-connect~0]
 function Environment:connect(sourcename, username, password)
     if self.closed then
@@ -96,7 +96,7 @@ function Environment:connect(sourcename, username, password)
 end
 
 --- Closes the environment and all connections created using it.
---- @return boolean success true if all connections where closed successfully
+--- @return boolean true if all connections where closed successfully
 --- [impl -> dsn~luasql-environment-close~0]
 function Environment:close()
     if self.closed then
