@@ -3,11 +3,11 @@ local log = require("remotelog")
 local exaerror = require("exaerror")
 local cursor = require("cursor")
 
---- This class represents a database connection and provides methods for interacting with the database,
+--- This class represents a database connection that provides methods for interacting with the database,
 --- e.g. executing queries.
 --- @class Connection
 --- @field private websocket ExasolWebsocket the websocket
---- @field private session_id string the session id for this connection
+--- @field private session_id string the session ID for this connection
 local Connection = {}
 
 --- Create a new instance of the Connection class.
@@ -23,7 +23,7 @@ function Connection:create(websocket, session_id)
 end
 
 --- Verify that this connection is open before executing an operation
---- @param operation string the operation to be executed. This will be used in the error message.
+--- @param operation string the operation to be executed (used in the potential error message)
 --- @raise an error if this connection is closed
 function Connection:_verify_connection_open(operation)
     if self.closed then
@@ -71,8 +71,8 @@ function Connection:execute(statement)
     return cur
 end
 
---- Commits the current transaction. This feature might not work on database systems that do not implement transactions.
---- @return boolean success true in case of success and false when the operation could not be performed
+--- Commits the current transaction.
+--- @return boolean success <code>true</code> in case of success and false when the operation could not be performed
 --- [impl -> dsn~luasql-connection-commit~0]
 function Connection:commit()
     self:_verify_connection_open("commit")

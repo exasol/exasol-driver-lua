@@ -7,7 +7,7 @@ local exaerror = require("exaerror")
 --- @class WebsocketDatahandler
 local WebsocketDatahandler = {}
 
---- Create a new instance of the WebsocketDatahandler class
+--- Create a new instance of the WebsocketDatahandler class.
 --- @return WebsocketDatahandler data_handler new instance
 function WebsocketDatahandler:create()
     local object = {expecting_data = false, data = {}}
@@ -47,7 +47,7 @@ function WebsocketDatahandler:handle_data(conn, opcode, message)
     log.trace("Received message #%d with opcode %s and %d bytes of data: '%s'.", #self.data, opcode, #message, message)
 end
 
---- Indicate to this handler that we are expecting incoming data,
+--- Tell this handler that we are expecting incoming data,
 --- e.g. if we are waiting for a response after sending a request.
 --- This also resets the collected data to start a fresh collection.
 function WebsocketDatahandler:expect_data()
@@ -56,7 +56,7 @@ function WebsocketDatahandler:expect_data()
     self.data = {}
 end
 
---- Indicate to this handler hat we have received the expected data,
+--- Tell this handler hat we have received the expected data,
 --- e.g. when the response for a request has been received.
 function WebsocketDatahandler:expected_data_received()
     log.trace("Stop expecting data, received %d messages", #self.data)
