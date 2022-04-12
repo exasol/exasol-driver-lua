@@ -34,7 +34,7 @@ function Environment:new(args)
     return object
 end
 
---- Encrypts a password using the given public key modulus and exponent
+--- Encrypts a password using the given public key modulus and exponent.
 --- @param publicKeyModulus string the hex encoded modulus of the public key
 --- @param publicKeyExponent string the hex encoded exponent of the public key
 --- @param password string the password to encrypt
@@ -47,12 +47,13 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     return base64.encode(rsa:encrypt(password))
 end
 
----Login to the database, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
---- @param socket ExasolWebsocket the connection to the database
---- @param username string the username
---- @param password string the user's password
---- @return table|nil response_data connection metadata in case login was successful
---- @return nil|table|string err an error if login failed
+--- Login to the database.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
+---@param socket ExasolWebsocket the connection to the database
+---@param username string the username
+---@param password string the password
+---@return table|nil response_data connection metadata in case login was successful
+---@return nil|table|string err an error if login failed
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -62,7 +63,7 @@ end
 
 --- Connect to an Exasol database.
 --- @param sourcename string hostname and port of the Exasol database, separated with a colon, e.g.:
----   "exasoldb.example.com:8563". Note that the port is mandatory.
+--- <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
 --- @return Connection|nil connection a new Connection or nil if the connection failed

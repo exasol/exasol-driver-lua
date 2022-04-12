@@ -21,14 +21,15 @@ function ExasolWebsocket._create(websocket)
 end
 
 --- Creates a new Exasol websocket.
---- @param url string the websocket URL, e.g."wss://exasoldb.example.com:8563"
+--- @param url string the websocket URL, e.g.<code>wss://exasoldb.example.com:8563</code>
 --- @return ExasolWebsocket exasolWebsocket the new websocket
 function ExasolWebsocket.connect(url)
     local websocket<const> = raw_websocket.connect(url)
     return ExasolWebsocket._create(websocket)
 end
 
---- Sends the login command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
+--- Sends the login command.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 --- This returns a public RSA key used for encrypting the password before sending it with the
 --- send_login_credentials() method.
 --- @return table|nil response_data from the database or nil if an error occurred
@@ -38,7 +39,8 @@ function ExasolWebsocket:send_login_command()
     return self:_send_json({command = "login", protocolVersion = 3})
 end
 
---- Sends the login credentials, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
+--- Sends the login credentials.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 --- @param username string the username
 --- @param encrypted_password string the password encrypted with the public key returned by send_login_command()
 --- @return table|nil response_data from the database or nil if an error occurred
@@ -48,7 +50,8 @@ function ExasolWebsocket:send_login_credentials(username, encrypted_password)
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
 end
 
---- Sends the disconnect command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md
+--- Sends the disconnect command.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md
 --- @return string|table|nil err if an error occurred or nil if the operation was successful
 function ExasolWebsocket:send_disconnect()
     log.debug("Sending disconnect command")
@@ -56,7 +59,8 @@ function ExasolWebsocket:send_disconnect()
     return err
 end
 
---- Sends the execute command, see https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md
+--- Sends the execute command.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md
 --- @param statement string the SQL statement to execute
 --- @return table|nil response_data from the database or nil if an error occurred
 --- @return string|table|nil err if an error occurred or nil if the operation was successful
@@ -65,7 +69,7 @@ function ExasolWebsocket:send_execute(statement)
     return self:_send_json(payload)
 end
 
---- Extract the error from the given database response
+--- Extract the error from the given database response.
 --- @param response table the response from the database
 --- @return nil|table err an error if the response contains an exception or nil if there is no exception
 local function get_response_error(response)
@@ -115,7 +119,7 @@ function ExasolWebsocket:_send_json(payload, ignore_response)
     end
 end
 
---- Closes the websocket
+--- Closes the websocket.
 --- @return boolean result true if the operation was successful
 function ExasolWebsocket:close()
     if self.closed then

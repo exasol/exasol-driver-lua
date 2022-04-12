@@ -117,14 +117,14 @@ end
 --- should be constructed. The mode string can contain:
 --- - "n": the resulting table will have numerical indices (default)
 --- - "a": the resulting table will have alphanumerical indices
---- The numerical indices are the positions of the fields in the SELECT statement; the alphanumerical indices are the
+--- The numerical indices are the positions of the result columns in the SELECT statement; the alphanumerical indices are the
 --- names of the fields.
 ---
 --- The optional table parameter is a table that should be used to store the next row. This allows
 --- the use of a single table for many fetches, which can improve the overall performance.
 ---
---- A call to fetch after the last row has already being returned will close the corresponding cursor.
---- The result values are converted to Lua types, ie. nil, number and string.
+--- A call to fetch after the last row has already being returned, will close the corresponding cursor.
+--- The result values are converted to Lua types, i.e. <code>nil</code>, number and string.
 ---
 --- Null values from the database are converted by csjon to the userdata value 0x0.
 --- You can test for it with <code>value == cjson.null</code>,
