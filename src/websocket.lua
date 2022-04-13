@@ -16,7 +16,7 @@ local RECEIVE_TIMEOUT_SECONDS<const> = 5
 local Websocket = {}
 
 --- Creates a new instance of this class that is not yet opened/connected.
---- @return Websocket websocket the new websocket.
+--- @return Websocket the new websocket.
 local function create()
     local object = {data_handler = websocket_datahandler:create()}
     object.closed = false
@@ -27,7 +27,7 @@ end
 
 --- Check if the given error received during connection is recoverable, i.e. we can try to connect again later.
 --- @param err string the received error
---- @return boolean result true if we can retry the connection, false if this is a permanent error
+--- @return boolean <code>true</code> if we can retry the connection, <code>false</code> if this is a permanent error
 ---   that does not disappear
 local function recoverable_connection_error(err) return string.match(err, ".*failed: connection refused$") end
 
@@ -36,7 +36,7 @@ local function recoverable_connection_error(err) return string.match(err, ".*fai
 --- @param websocket_options table the options passed to LuWS when opening a socket,
 ---                          see https://github.com/toggledbits/LuWS#options for details.
 --- @param remaining_retries number the remaining number of retries. If this is 0, there will be no retry.
---- @return Websocket websocket the open websocket connection
+--- @return Websocket the open websocket connection
 --- @raise an error if connection does not succeed after the given number of retries
 local function connect_with_retry(url, websocket_options, remaining_retries)
     log.trace("Connecting to websocket url %s with %d remaining retries", url, remaining_retries)
@@ -63,7 +63,7 @@ end
 
 --- Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
 --- @param url string the websocket url to connect to, e.g. "wss://host:1234"
---- @return Websocket websocket the open websocket connection
+--- @return Websocket the open websocket connection
 --- @raise an error if connection does not succeed after the given number of retries
 function Websocket.connect(url)
     local websocket_options = {receive_timeout = RECEIVE_TIMEOUT_SECONDS}
@@ -74,7 +74,7 @@ end
 --- Wait until we receive a response.
 --- This is implemented with busy waiting until wsreceive indicates that data was received.
 --- @param timeout_seconds number the number of seconds to wait for a response
---- @return nil|table result nil if a response was received within the timeout or an error if the response
+--- @return nil|table nil if a response was received within the timeout or an error if the response
 ---   did not arrive within the timeout or an error occured while waiting
 function Websocket:_wait_for_response(timeout_seconds)
     log.trace("Waiting %ds for response", timeout_seconds)
@@ -105,9 +105,9 @@ end
 
 --- Send the given payload and optionally wait for the response and return the response.
 --- @param payload string the payload to send
---- @param ignore_response boolean false if we expect a response, else true.
---- @return string response received response or nil if ignore_response was true or an error occurred.
---- @return table|string err if an error occured
+--- @param ignore_response boolean <code>false</code> if we expect a response.
+--- @return string the received response or nil if ignore_response was <code>true</code> or an error occurred.
+--- @return table|string an error if an error occured
 function Websocket:send_raw(payload, ignore_response)
     if not ignore_response then self.data_handler:expect_data() end
     local _, err = wssend(self.websocket, 1, payload)

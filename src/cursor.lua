@@ -14,22 +14,22 @@ local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused var
 --- @field private num_columns number
 --- @field private num_rows number
 --- @field private data CursorData
---- @field private result_set_handle string|nil
 --- @field private websocket ExasolWebsocket
+--- @field private result_set_handle string|nil
 local Cursor = {}
 
 --- This result table index provider returns the column index.
 --- This is used for fetch mode "n" (numeric indices in the result table).
 --- To avoid creating a new function for each row we create this only once and re-use it.
 --- @param col_index number the column index
---- @return number col_index the column index
+--- @return number the column index
 local function col_index_provider(col_index) return col_index end
 
 --- This function creates a result table index provider that returns the column name.
 --- This is used for fetch mode "a" (alphanumeric indices in the result table).
 --- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
 --- @param column_names table a list of column names
---- @return function result result table index provider that maps the column index to column names
+--- @return function result table index provider that maps the column index to column names
 local function create_col_name_provider(column_names) --
     return function(col_index) --
         return column_names[col_index]
@@ -38,9 +38,8 @@ end
 
 --- This function extracts the column names from a result set.
 --- @param result_set table the result set
---- @return table result a list of column names
+--- @return table a list of column names
 --- @raise an error if the number of columns is not equal to the number reported by the result set
-
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
@@ -57,7 +56,7 @@ end
 --- @param websocket ExasolWebsocket the websocket connection to the database
 --- @param session_id string the session ID of the current database connection
 --- @param result_set table the result set returned by the database
---- @return Cursor result a new instance
+--- @return Cursor a new instance
 --- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
@@ -78,7 +77,7 @@ end
 
 --- Gets a result table index provider for the given fetch mode.
 --- @param modestring "a"|"n" the fetch mode: "a" for alphanumeric indices, "n" for numeric indices (default)
---- @return function result_table_index_provider a function that maps column indices to a table index
+--- @return function a function that maps column indices to a table index
 ---   in the result table
 function Cursor:_get_result_table_index_provider(modestring)
     if modestring ~= FETCH_MODE_NUMERIC_INDICES then
@@ -112,14 +111,14 @@ end
 --- should be constructed. The mode string can contain:
 --- - "n": the resulting table will have numerical indices (default)
 --- - "a": the resulting table will have alphanumerical indices
---- The numerical indices are the positions of the fields in the SELECT statement; the alphanumerical indices are the
---- names of the fields.
+--- The numerical indices are the positions of the result columns in the SELECT statement;
+--- the alphanumerical indices are the names of the fields.
 ---
 --- The optional table parameter is a table that should be used to store the next row. This allows
 --- the use of a single table for many fetches, which can improve the overall performance.
 ---
---- A call to fetch after the last row has already being returned will close the corresponding cursor.
---- The result values are converted to Lua types, ie. nil, number and string.
+--- A call to fetch after the last row has already being returned, will close the corresponding cursor.
+--- The result values are converted to Lua types, i.e. <code>nil</code>, number and string.
 ---
 --- Null values from the database are converted by csjon to the userdata value 0x0.
 --- You can test for it with <code>value == cjson.null</code>,
@@ -128,7 +127,7 @@ end
 ---
 --- @param table table|nil the table to which the result will be copied or nil to return a new table
 --- @param modestring nil|"a"|"n" the mode as described above
---- @return table|nil row_data row data as described above or nil if there are no more rows
+--- @return table|nil row data as described above or nil if there are no more rows
 --- [impl -> dsn~luasql-cursor-fetch~0]
 function Cursor:fetch(table, modestring)
     if self.closed then
@@ -147,21 +146,21 @@ function Cursor:fetch(table, modestring)
 end
 
 --- Gets the list of column names.
---- @return table column_names the list of column names
+--- @return table the list of column names
 --- [impl -> dsn~luasql-cursor-getcolnames~0]
 function Cursor:getcolnames()
     error("getcolnames will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
 --- Gets the list of column types.
---- @return table column_types the list of column types
+--- @return table the list of column types
 --- [impl -> dsn~luasql-cursor-getcoltypes~0]
 function Cursor:getcoltypes()
     error("getcoltypes will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
 --- Closes this cursor.
---- @return boolean success true in case of success and false when the cursor is already closed
+--- @return boolean <code>true</code> in case of success and <code>false</code> when the cursor is already closed
 --- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()
     if self.closed then

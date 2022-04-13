@@ -26,7 +26,7 @@ local Environment = {}
 --- Create a new instance of the Environment class
 --- @param args table|nil allows injecting a websocket module. This is only useful in unit tests and
 ---   should be nil in production code.
---- @return Environment environment a new instance
+--- @return Environment a new instance
 function Environment:new(args)
     local object = {closed = false, connections = {}}
     object.exasol_websocket = load_exasol_websocket(args)
@@ -35,11 +35,11 @@ function Environment:new(args)
     return object
 end
 
---- Encrypts a password using the given public key modulus and exponent
+--- Encrypts a password using the given public key modulus and exponent.
 --- @param publicKeyModulus string the hex encoded modulus of the public key
 --- @param publicKeyExponent string the hex encoded exponent of the public key
 --- @param password string the password to encrypt
---- @return string encrypted_password the encrypted password
+--- @return string the encrypted password
 local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     local rsa = pkey.new({type = "RSA", bits = 1024})
     local modulus = bignum.new("0x" .. publicKeyModulus)
@@ -48,12 +48,13 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     return base64.encode(rsa:encrypt(password))
 end
 
----Login to the database, see https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
+--- Login to the database.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 ---@param socket ExasolWebsocket the connection to the database
 ---@param username string the username
 ---@param password string the password
----@return table|nil response_data connection metadata in case login was successful
----@return nil|table|string err an error if login failed
+---@return table|nil connection metadata in case login was successful
+---@return nil|table|string an error if login failed
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -66,8 +67,8 @@ end
 ---   "exasoldb.example.com:8563". Note that the port is mandatory.
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
---- @return Connection|nil connection a new Connection or nil if the connection failed
---- @return nil|table|string err an error or nil if the connection was successful
+--- @return Connection|nil a new Connection or nil if the connection failed
+--- @return nil|table|string an error or <code>nil</code> if the connection was successful
 --- [impl -> dsn~luasql-environment-connect~0]
 function Environment:connect(sourcename, username, password, properties)
     if self.closed then
@@ -97,7 +98,7 @@ function Environment:connect(sourcename, username, password, properties)
 end
 
 --- Closes the environment and all connections created using it.
---- @return boolean success true if all connections where closed successfully
+--- @return boolean <code>true</code> if all connections where closed successfully
 --- [impl -> dsn~luasql-environment-close~0]
 function Environment:close()
     if self.closed then
