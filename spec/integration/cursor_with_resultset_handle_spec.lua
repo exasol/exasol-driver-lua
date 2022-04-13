@@ -1,7 +1,6 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local cjson = require("cjson")
 local driver = require("luasqlexasol")
 local config = require("config")
 local log = require("remotelog")
@@ -35,7 +34,8 @@ describe("Cursor with resultset handle", function()
     end)
 
     local function insert_data(num_rows)
-        assert(connection:execute(string.format("insert into %s.t (id) values between 1 and %d", schema_name, num_rows)))
+        local insert_statement = string.format("insert into %s.t (id) values between 1 and %d", schema_name, num_rows)
+        assert(connection:execute(insert_statement))
     end
 
     local function create_connection(properties)

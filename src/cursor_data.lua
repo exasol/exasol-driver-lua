@@ -79,8 +79,8 @@ function CursorData:_fetch_next_data_batch()
     local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, fetch_size)
     if err then
         exaerror.create("E-EDL-26",
-                        "Error fetching result data for handle {{result_set_handle}} with start position {{start_position}} and fetch size {{num_bytes}} bytes: {{error}}",
-                        {
+                        "Error fetching result data for handle {{result_set_handle}} with start position " ..
+                                "{{start_position}} and fetch size {{num_bytes}} bytes: {{error}}", {
             result_set_handle = self.result_set_handle,
             start_position = start_position,
             fetch_size_bytes = fetch_size,

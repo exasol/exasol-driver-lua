@@ -10,7 +10,7 @@ local DEFAULT_FETCHSIZE_KB<const> = 128
 local ConnectionProperties = {}
 
 --- Create a new instance of the Connection class.
---- @param properties table|nil 
+--- @param properties table|nil a properties object or <code>nil</code> to use default settings
 --- @return Connection connection the new instance
 function ConnectionProperties:create(properties)
     log.trace("Created new connection properties")
@@ -29,6 +29,8 @@ function ConnectionProperties:_validate()
     end
 end
 
-function ConnectionProperties:get_fetchsize_bytes() return (self.properties.fetchsize_kb or DEFAULT_FETCHSIZE_KB) * 1024 end
+function ConnectionProperties:get_fetchsize_bytes() --
+    return (self.properties.fetchsize_kb or DEFAULT_FETCHSIZE_KB) * 1024
+end
 
 return ConnectionProperties

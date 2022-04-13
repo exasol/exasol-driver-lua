@@ -25,13 +25,9 @@ describe("Connection", function()
     end)
 
     after_each(function()
-        if schema_name then
-            assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
-        end
+        if schema_name then assert(connection:execute(string.format("drop schema %s cascade", schema_name))) end
 
-        if not connection.closed then
-            connection:close()
-        end
+        if not connection.closed then connection:close() end
         env:close()
         env = nil
         connection = nil
