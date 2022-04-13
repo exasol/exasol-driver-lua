@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
+local cjson = require("cjson")
 local driver = require("luasqlexasol")
 local config = require("config")
 
@@ -29,6 +30,12 @@ describe("Cursor", function()
         it("returns simple result", function()
             local cursor = assert(connection:execute("select 1"))
             assert.is_same({1}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns NULL as nil", function()
+            local cursor = assert(connection:execute("select 1, null"))
+            assert.is_same({1, cjson.null}, cursor:fetch())
             assert.is_nil(cursor:fetch())
         end)
 
