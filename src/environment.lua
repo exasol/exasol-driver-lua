@@ -64,7 +64,7 @@ end
 
 --- Connect to an Exasol database.
 --- @param sourcename string hostname and port of the Exasol database, separated with a colon, e.g.:
----   "exasoldb.example.com:8563". Note that the port is mandatory.
+---   <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
 --- @return Connection|nil a new Connection or nil if the connection failed

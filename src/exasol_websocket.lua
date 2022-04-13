@@ -99,7 +99,7 @@ end
 
 --- Extract the error from the given database response
 --- @param response table the response from the database
---- @return nil|table err an error if the response contains an exception or nil if there is no exception
+--- @return nil|table an error if the response contains an exception or nil if there is no exception
 local function get_response_error(response)
     if response.status == "ok" then return nil end
     if response.exception then
