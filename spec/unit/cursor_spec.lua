@@ -135,9 +135,7 @@ Mitigations:
         end)
 
         it("closes the cursor if there are no more rows left", function()
-            local cur = create_cursor(create_resultset({"id"}, {
-                {id = 1}, {id = 2}
-            }))
+            local cur = create_cursor(create_resultset({"id"}, {{id = 1}, {id = 2}}))
             assert.is_not_nil(cur:fetch())
             assert.is_not_nil(cur:fetch())
             assert.is_nil(cur:fetch())

@@ -88,7 +88,8 @@ end
 --- Send the given payload serialized to JSON to the database and optionally wait for the response
 --- and deserialize it from JSON.
 --- @param payload table the payload to send
---- @param ignore_response boolean|nil <code>false</code> if we expect a response, else <code>true</code>. Default is <code>false</code>.
+--- @param ignore_response boolean|nil <code>false</code> if we expect a response, else <code>true</code>.
+---   Default is <code>false</code>.
 --- @return table|nil the received response or nil if ignore_response was <code>true</code> or an error occurred
 --- @return table|string|nil an error if an error occurred or nil if the operation was successful
 function ExasolWebsocket:_send_json(payload, ignore_response)

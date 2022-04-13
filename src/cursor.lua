@@ -38,8 +38,6 @@ end
 --- @param result_set table the result set
 --- @return table a list of column names
 --- @raise an error if the number of columns is not equal to the number reported by the result set
-
-
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
@@ -117,8 +115,8 @@ end
 --- should be constructed. The mode string can contain:
 --- - "n": the resulting table will have numerical indices (default)
 --- - "a": the resulting table will have alphanumerical indices
---- The numerical indices are the positions of the result columns in the SELECT statement; the alphanumerical indices are the
---- names of the fields.
+--- The numerical indices are the positions of the result columns in the SELECT statement;
+--- the alphanumerical indices are the names of the fields.
 ---
 --- The optional table parameter is a table that should be used to store the next row. This allows
 --- the use of a single table for many fetches, which can improve the overall performance.
