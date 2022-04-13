@@ -11,11 +11,12 @@ local cursor = require("cursor")
 --- @field private closed boolean specifies if this connection is closed
 local Connection = {}
 
---- Create a new instance of the Connection class.--[[  ]]
+--- Create a new instance of the Connection class.
+--- @param connection_properties ConnectionProperties the connection properties
 --- @param websocket ExasolWebsocket websocket connection to the database
 --- @param session_id string session ID of the current database connection
 --- @return Connection the new instance
-function Connection:create(websocket, session_id)
+function Connection:create(connection_properties, websocket, session_id)
     log.trace("Created new connection with session ID %d", session_id)
     local object = {
         connection_properties = assert(connection_properties, "connection_properties missing"),
