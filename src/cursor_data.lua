@@ -5,23 +5,24 @@ local exaerror = require("exaerror")
 -- luacheck: no unused args
 
 --- This class represents the result data of a cursor that allows retreiving rows from a result set.
+--- It handles large result sets by fetching new batches automatically.
 --- @class CursorData
---- @field private data table
---- @field private current_row number
---- @field private current_row_in_batch number
---- @field private num_rows_total number
---- @field private num_rows_in_message number
---- @field private num_rows_fetched_total number
---- @field private result_set_handle string|nil
---- @field private websocket ExasolWebsocket
---- @field private connection_properties ConnectionProperties
+--- @field private data table|nil the data received from the server. May be <code>nil</code> in case of a large result set that requires fetching batches.
+--- @field private current_row number the current row number (starting with 1) of the complete result set
+--- @field private current_row_in_batch number the current row number (starting with 1) in the current batch
+--- @field private num_rows_total number the total row count in the result set
+--- @field private num_rows_in_message number the number of rows in the current batch
+--- @field private num_rows_fetched_total number the number of rows in all batches fetched until now
+--- @field private result_set_handle number|nil the result set handle or <code>nil</code> in case of a small result set
+--- @field private websocket ExasolWebsocket the websocket connection to the database
+--- @field private connection_properties ConnectionProperties the user defined connection settings, containing e.g. fetch size
 local CursorData = {}
 
 --- Create a new instance of the CursorData class.
---- @param connection_properties ConnectionProperties
+--- @param connection_properties ConnectionProperties the user defined connection settings, containing e.g. fetch size
 --- @param websocket ExasolWebsocket the websocket connection to the database
---- @param result_set table
---- @return CursorData result a new instance
+--- @param result_set table the result set received when executing a query
+--- @return CursorData a new CursorData instance
 --- @raise an error in case the result set is invalid
 function CursorData:create(connection_properties, websocket, result_set)
     local object = {
@@ -39,28 +40,50 @@ function CursorData:create(connection_properties, websocket, result_set)
         log.debug("Creating cursor data for result set %d with %d rows in total and %d rows in message",
                   object.result_set_handle, object.num_rows_total, object.num_rows_in_message)
     else
-        log.debug("Creating cursor data without result set with %d rows", object.num_rows_total)
+        log.debug("Creating cursor data without result set handle with %d rows", object.num_rows_total)
     end
     self.__index = self
     setmetatable(object, self)
     return object
 end
 
+--- Advances the cursor data to the next row.
 function CursorData:next_row()
     self.current_row = self.current_row + 1
     self.current_row_in_batch = self.current_row_in_batch + 1
 end
 
+--- Get the current row number.
+--- @return number the current row number (starting with 1) of the complete result set
 function CursorData:get_current_row() return self.current_row end
+
+--- Check if there are more rows available in the result set.
+--- @return boolean <code>true</code> if there are more rows available
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
+--- Get a column value from the current row.
+--- Fetches the next batch in case not enough data is available.
+--- @param column_index number the column index starting with 1
+--- @return any the value of the given column
 function CursorData:get_column_value(column_index)
     self:_fetch_data()
     log.trace("Fetching row %d of %d (%d of %d in current batch)", self.current_row, self.num_rows_total,
               self.current_row_in_batch, self.num_rows_in_message)
+    if column_index <= 0 or #self.data < column_index then
+        exaerror.create("E-EDL-29",
+                        "Column index {{column_index}} out of bound, only {{column_count}} columns are available",
+                        {column_index = column_index, column_count = #self.data}):add_ticket_mitigation():raise()
+    end
+    if #self.data[column_index] < self.current_row_in_batch then
+        exaerror.create("E-EDL-30",
+        "Row {{row_index}} out of bound, only {{row_count}} rows are available in current batch",
+        {row_index = self.current_row_in_batch, row_count = #self.data[column_index]}):add_ticket_mitigation():raise()
+    end
     return self.data[column_index][self.current_row_in_batch]
 end
 
+--- Fetch the next batch of data if no more rows are available locally.
+-- [impl -> dsn~luasql-cursor-fetch-resultsethandle~0]
 function CursorData:_fetch_data()
     if not self.result_set_handle and not self.data then
         exaerror.create("F-EDL-25", "Neither data nor result set handle available"):add_ticket_mitigation():raise()
@@ -70,10 +93,13 @@ function CursorData:_fetch_data()
         return
     end
 
-    if self.current_row_in_batch > self.num_rows_in_message then self:_fetch_next_data_batch() end
+    if not self:_more_data_available() then self:_fetch_next_data_batch() end
 end
 
+function CursorData:_more_data_available() return self.current_row_in_batch <= self.num_rows_in_message end
+
 function CursorData:_fetch_next_data_batch()
+    log.trace("Fetching next data batch. Current row in batch: %d, rows in message: %d",self.current_row_in_batch,self.num_rows_in_message)
     local start_position = self.current_row - 1
     local fetch_size = self.connection_properties:get_fetchsize_bytes()
     local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, fetch_size)
@@ -85,9 +111,9 @@ function CursorData:_fetch_next_data_batch()
             start_position = start_position,
             fetch_size_bytes = fetch_size,
             error = err
-        }):add_ticket_mitigation():raise()
+        }):raise()
     end
-    self.data = response.data
+    self.data = assert(response.data, "missing data")
     self.num_rows_in_message = assert(response.numRows, "missing numRows")
     self.num_rows_fetched_total = self.num_rows_fetched_total + self.num_rows_in_message
     self.current_row_in_batch = 1

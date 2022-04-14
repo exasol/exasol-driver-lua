@@ -56,36 +56,13 @@ describe("Cursor with resultset handle", function()
         cursor:close()
     end
 
-    local function get_memory_usage(fun)
-        collectgarbage()
-        local memory_before = collectgarbage("count")
-        fun()
-        collectgarbage()
-        local memory_after = collectgarbage("count")
-        local memory_used = math.max(0, memory_after - memory_before)
-        log.info("Memory usage before: %.1f kB, afterwards: %.1f kB, used: %.1f kB", memory_before, memory_after,
-                 memory_used)
-        return memory_used
-    end
+    it("fetches small result sets with default fetchsize", function() test_result_with(999) end)
 
-    it("supports fetching small result sets with default fetchsize", function() test_result_with(999) end)
+    it("fetches large result sets with default fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
+       function() test_result_with(2000) end)
 
-    it("supports fetching large result sets with default fetchsize", function() test_result_with(2000) end)
-
-    it("supports fetching large result sets with small fetchsize", function()
+    it("fetches large result sets with small fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
         create_connection({fetchsize_kb = 5})
         test_result_with(2000)
-    end)
-
-    it("memory usage with small fetch size", function()
-        create_connection({fetchsize_kb = 1})
-        local memory_used = get_memory_usage(function() test_result_with(2000) end)
-        assert.is_true(memory_used < 30)
-    end)
-
-    it("memory usage with large fetch size", function()
-        create_connection({fetchsize_kb = 100})
-        local memory_used = get_memory_usage(function() test_result_with(2000) end)
-        assert.is_true(memory_used < 30)
     end)
 end)

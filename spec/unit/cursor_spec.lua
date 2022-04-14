@@ -4,24 +4,11 @@ require("busted.runner")()
 local cursor = require("cursor")
 local config = require("config")
 local ConnectionProperties = require("connection_properties")
+local util = require("test_util")
 config.configure_logging()
 
+local create_resultset<const> = util.create_resultset
 local SESSION_ID<const> = 12345
-
-local function create_resultset(column_names, rows)
-    local columns = {}
-    local data = {}
-    for column_index, column_name in ipairs(column_names) do
-        table.insert(columns, {name = column_name})
-        data[column_index] = {}
-        for row_index, row in ipairs(rows) do
-            local value = row[column_name]
-            if value == nil then error("No value for row " .. row_index .. " column " .. column_name) end
-            table.insert(data[column_index], value)
-        end
-    end
-    return {numRows = #rows, numRowsInMessage = #rows, numColumns = #columns, columns = columns, data = data}
-end
 
 describe("Cursor", function()
     local websocket_stub = nil
