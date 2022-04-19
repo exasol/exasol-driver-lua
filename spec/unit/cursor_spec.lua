@@ -48,7 +48,7 @@ Mitigations:
             assert.is_nil(cur:fetch())
         end)
 
-        it("returns first row when result set is not empty", function()
+        it("returns first row when result set is not empty [utest -> dsn~luasql-cursor-fetch~0]", function()
             local cur = create_cursor(create_resultset({"col1"}, {{col1 = "val"}}))
             assert.is_same({"val"}, cur:fetch())
             assert.is_nil(cur:fetch())

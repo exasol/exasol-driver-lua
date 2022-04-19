@@ -68,13 +68,16 @@ describe("CursorData", function()
         it("fails for missing connection properties", function()
             assert.has_error(function() CursorData:create(nil, {}, {}) end, "connection_properties missing")
         end)
+
         it("fails for missing numRows", function()
             assert.has_error(function() CursorData:create({}, {}, {}) end, "numRows missing in result set")
         end)
+
         it("fails for missing numRowsInMessage", function()
             assert.has_error(function() CursorData:create({}, {}, {numRows = 5}) end,
                              "numRowsInMessage missing in result set")
         end)
+
         it("returns non-nil value",
            function() assert.is_not_nil(CursorData:create({}, {}, {numRows = 5, numRowsInMessage = 2})) end)
     end)
@@ -85,6 +88,7 @@ describe("CursorData", function()
             data:next_row()
             assert.is_same(2, data:get_current_row())
         end)
+
         it("advances to next next row", function()
             data = create_cursor_data(create_resultset())
             data:next_row()
@@ -98,6 +102,7 @@ describe("CursorData", function()
             data = create_cursor_data(create_resultset())
             assert.is_same(1, data:get_current_row())
         end)
+
         it("increments with next_row()", function()
             data = create_cursor_data(create_resultset())
             data:next_row()
@@ -110,10 +115,12 @@ describe("CursorData", function()
             data = create_cursor_data(create_resultset())
             assert.is_false(data:has_more_rows())
         end)
+
         it("returns true for non-empty result set", function()
             data = create_cursor_data(create_resultset({"c1"}, {{c1 = 1}}))
             assert.is_true(data:has_more_rows())
         end)
+
         it("returns false after fetching all data", function()
             data = create_cursor_data(create_resultset({"c1"}, {{c1 = 1}}))
             data:next_row()
@@ -173,34 +180,40 @@ describe("CursorData", function()
                 assert.error_matches(function() data:get_column_value(1) end,
                                      "F%-EDL%-25: Neither data nor result set handle available.*")
             end)
+
             it("raises error for numRows in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {data = {}, numRows = nil})
                 assert.error(function() data:get_column_value(1) end, "missing numRows")
             end)
+
             it("raises error for data in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = nil})
                 assert.error(function() data:get_column_value(1) end, "missing data")
             end)
+
             it("raises error for empty data in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = {}})
                 assert.error_matches(function() data:get_column_value(1) end,
                                      "E%-EDL%-29: Column index 1 out of bound, only 0 columns are available")
             end)
+
             it("raises error when fetching data from empty result set", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = {}})
                 assert.error_matches(function() data:get_column_value(1) end,
                                      "E%-EDL%-31: No more rows available in result set")
             end)
+
             it("raises error for missing rows in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {}))
                 assert.error_matches(function() data:get_column_value(1) end,
                                      "E%-EDL%-30: Row 1 out of bound, only 0 rows are available in current batch.*")
             end)
+
             it("raises error when fetch returns errror", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch_error("mock error")
@@ -209,11 +222,12 @@ describe("CursorData", function()
                                      "fetch size 1024 bytes: 'mock error'")
             end)
 
-            it("returns data for single row", function()
+            it("returns data for single row [utest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 1, c2 = "a", c3 = true}}))
                 assert_row({1, "a", true})
             end)
+
             it("skips unnecessary rows when fetching", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 2, RESULT_SET_HANDLE))
                 expect_no_fetch()
@@ -222,6 +236,7 @@ describe("CursorData", function()
                                                       {{c1 = 1, c2 = "a", c3 = true}, {c1 = 2, c2 = "b", c3 = false}}))
                 assert_row({1, "a", true})
             end)
+
             it("first batch has two rows, fetch second batch", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 3, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"},
@@ -233,6 +248,7 @@ describe("CursorData", function()
                 simulate_fetch(2, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 3, c2 = "c", c3 = 3.14}}))
                 assert_row({3, "c", 3.14})
             end)
+
             it("raises error when fetching unavailable row", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 1, c2 = "a", c3 = true}}))

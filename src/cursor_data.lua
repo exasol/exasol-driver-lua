@@ -95,12 +95,13 @@ function CursorData:_fetch_data()
         -- Small result set, data already available
         return
     end
-
-    if self.current_row > self.num_rows_total then
+    if self:_end_of_result_set_reached() then
         exaerror.create("E-EDL-31", "No more rows available in result set"):add_ticket_mitigation():raise()
     end
     if not self:_more_data_available() then self:_fetch_next_data_batch() end
 end
+
+function CursorData:_end_of_result_set_reached() return self.current_row > self.num_rows_total end
 
 function CursorData:_more_data_available() return self.current_row_in_batch <= self.num_rows_in_message end
 

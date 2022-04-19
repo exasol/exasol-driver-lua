@@ -179,6 +179,15 @@ Covers:
 * `feat~luasql-api~1`
 Needs: dsn
 
+#### Cursor:fetch() with large result sets
+`req~luasql-cursor-fetch-resultsethandle~1`
+```lua
+cursor:fetch([table[,modestring]])
+```
+Covers:
+* `feat~luasql-api~1`
+Needs: dsn
+
 #### Cursor:getcolnames()
 `req~luasql-cursor-getcolnames~1`
 ```lua
