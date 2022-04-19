@@ -3,7 +3,6 @@
 require("busted.runner")()
 local driver = require("luasqlexasol")
 local config = require("config")
-local log = require("remotelog")
 
 config.configure_logging()
 
@@ -52,7 +51,9 @@ describe("Cursor with resultset handle", function()
         local cursor = assert(connection:execute("select * from t"))
         local data = {}
         for expected_row = 1, row_count do assert.is_same({expected_row}, cursor:fetch(data)) end
+        assert.is_false(cursor.closed)
         assert.is_nil(cursor:fetch(data))
+        assert.is_true(cursor.closed)
         cursor:close()
     end
 
@@ -63,6 +64,10 @@ describe("Cursor with resultset handle", function()
 
     it("fetches large result sets with small fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
         create_connection({fetchsize_kb = 5})
+        test_result_with(2000)
+    end)
+    it("fetches large result sets with large fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
+        create_connection({fetchsize_kb = 50000})
         test_result_with(2000)
     end)
 end)

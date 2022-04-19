@@ -21,8 +21,7 @@ end
 function util.create_batched_resultset(column_names, total_row_count, result_set_handle)
     column_names = column_names or {}
     local columns = {}
-    local data = {}
-    for column_index, column_name in ipairs(column_names) do table.insert(columns, {name = column_name}) end
+    for _, column_name in ipairs(column_names) do table.insert(columns, {name = column_name}) end
     return {
         resultSetHandle = result_set_handle,
         numRows = total_row_count,

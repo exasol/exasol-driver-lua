@@ -7,15 +7,18 @@ local exaerror = require("exaerror")
 --- This class represents the result data of a cursor that allows retreiving rows from a result set.
 --- It handles large result sets by fetching new batches automatically.
 --- @class CursorData
---- @field private data table|nil the data received from the server. May be <code>nil</code> in case of a large result set that requires fetching batches.
+--- @field private data table|nil the data received from the server. May be <code>nil</code> in case of
+---   a large result set that requires fetching batches.
 --- @field private current_row number the current row number (starting with 1) of the complete result set
 --- @field private current_row_in_batch number the current row number (starting with 1) in the current batch
 --- @field private num_rows_total number the total row count in the result set
 --- @field private num_rows_in_message number the number of rows in the current batch
 --- @field private num_rows_fetched_total number the number of rows in all batches fetched until now
---- @field private result_set_handle number|nil the result set handle or <code>nil</code> in case of a small result set
+--- @field private result_set_handle number|nil the result set handle or <code>nil</code> in case of
+---   a small result set
 --- @field private websocket ExasolWebsocket the websocket connection to the database
---- @field private connection_properties ConnectionProperties the user defined connection settings, containing e.g. fetch size
+--- @field private connection_properties ConnectionProperties the user defined connection settings,
+---   containing e.g. fetch size
 local CursorData = {}
 
 --- Create a new instance of the CursorData class.
@@ -75,9 +78,9 @@ function CursorData:get_column_value(column_index)
                         {column_index = column_index, column_count = #self.data}):add_ticket_mitigation():raise()
     end
     if #self.data[column_index] < self.current_row_in_batch then
-        exaerror.create("E-EDL-30",
-        "Row {{row_index}} out of bound, only {{row_count}} rows are available in current batch",
-        {row_index = self.current_row_in_batch, row_count = #self.data[column_index]}):add_ticket_mitigation():raise()
+        local message = "Row {{row_index}} out of bound, only {{row_count}} rows are available in current batch"
+        local args = {row_index = self.current_row_in_batch, row_count = #self.data[column_index]}
+        exaerror.create("E-EDL-30", message, args):add_ticket_mitigation():raise()
     end
     return self.data[column_index][self.current_row_in_batch]
 end
@@ -93,20 +96,24 @@ function CursorData:_fetch_data()
         return
     end
 
+    if self.current_row > self.num_rows_total then
+        exaerror.create("E-EDL-31", "No more rows available in result set"):add_ticket_mitigation():raise()
+    end
     if not self:_more_data_available() then self:_fetch_next_data_batch() end
 end
 
 function CursorData:_more_data_available() return self.current_row_in_batch <= self.num_rows_in_message end
 
 function CursorData:_fetch_next_data_batch()
-    log.trace("Fetching next data batch. Current row in batch: %d, rows in message: %d",self.current_row_in_batch,self.num_rows_in_message)
+    log.trace("Fetching next data batch. Current row in batch: %d, rows in message: %d", self.current_row_in_batch,
+              self.num_rows_in_message)
     local start_position = self.current_row - 1
     local fetch_size = self.connection_properties:get_fetchsize_bytes()
     local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, fetch_size)
     if err then
         exaerror.create("E-EDL-26",
                         "Error fetching result data for handle {{result_set_handle}} with start position " ..
-                                "{{start_position}} and fetch size {{num_bytes}} bytes: {{error}}", {
+                                "{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}", {
             result_set_handle = self.result_set_handle,
             start_position = start_position,
             fetch_size_bytes = fetch_size,

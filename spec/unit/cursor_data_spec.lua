@@ -37,6 +37,15 @@ describe("CursorData", function()
             return result, nil
         end
     end
+
+    local function expect_no_fetch()
+        websocket_stub.send_fetch = function(_self, actual_result_set_handle, actual_start_position, actual_num_bytes)
+            error("Expected websocket:send_fetch() not be called but was called with result set handle " ..
+                          actual_result_set_handle .. ", start pos " .. actual_start_position .. " and num bytes " ..
+                          actual_num_bytes)
+        end
+    end
+
     local function simulate_fetch_error(err)
         websocket_stub.send_fetch = function(_self, actual_result_set_handle, actual_start_position, actual_num_bytes)
             return nil, err
@@ -45,6 +54,7 @@ describe("CursorData", function()
 
     before_each(function()
         websocket_stub = {close = function() end}
+        expect_no_fetch()
         connection_properties_stub = {get_fetchsize_bytes = function() return FETCH_SIZE_BYTES end}
     end)
 
@@ -164,52 +174,53 @@ describe("CursorData", function()
                                      "F%-EDL%-25: Neither data nor result set handle available.*")
             end)
             it("raises error for numRows in fetch result", function()
-                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {data = {}, numRows = nil})
                 assert.error(function() data:get_column_value(1) end, "missing numRows")
             end)
             it("raises error for data in fetch result", function()
-                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = nil})
                 assert.error(function() data:get_column_value(1) end, "missing data")
             end)
             it("raises error for empty data in fetch result", function()
-                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = {}})
                 assert.error_matches(function() data:get_column_value(1) end,
                                      "E%-EDL%-29: Column index 1 out of bound, only 0 columns are available")
             end)
-            it("raises error for missing rows in fetch result", function()
+            it("raises error when fetching data from empty result set", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
+                simulate_fetch(0, {numRows = 1, data = {}})
+                assert.error_matches(function() data:get_column_value(1) end,
+                                     "E%-EDL%-31: No more rows available in result set")
+            end)
+            it("raises error for missing rows in fetch result", function()
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {}))
                 assert.error_matches(function() data:get_column_value(1) end,
                                      "E%-EDL%-30: Row 1 out of bound, only 0 rows are available in current batch.*")
             end)
             it("raises error when fetch returns errror", function()
-                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch_error("mock error")
                 assert.error(function() data:get_column_value(1) end,
-                             "E-EDL-26: Error fetching result data for handle 321 with start position 0 and fetch size 'missing value' bytes: 'mock error'")
+                             "E-EDL-26: Error fetching result data for handle 321 with start position 0 and " ..
+                                     "fetch size 1024 bytes: 'mock error'")
             end)
 
             it("returns data for single row", function()
-                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 1, c2 = "a", c3 = true}}))
                 assert_row({1, "a", true})
             end)
-            it("returns data from second row #only", function()
+            it("skips unnecessary rows when fetching", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 2, RESULT_SET_HANDLE))
-                simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"},
+                expect_no_fetch()
+                data:next_row()
+                simulate_fetch(1, create_fetch_result({"c1", "c2", "c3"},
                                                       {{c1 = 1, c2 = "a", c3 = true}, {c1 = 2, c2 = "b", c3 = false}}))
-                data:next_row()
-                assert_row({2, "b", false})
-            end)
-            it("fetches second batch", function()
-                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 2, RESULT_SET_HANDLE))
-                simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 1, c2 = "a", c3 = true}}))
-                data:next_row()
-                simulate_fetch(1, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 2, c2 = "b", c3 = false}}))
-                assert.is_same(2, data:get_column_value(1))
+                assert_row({1, "a", true})
             end)
             it("first batch has two rows, fetch second batch", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 3, RESULT_SET_HANDLE))
@@ -219,8 +230,17 @@ describe("CursorData", function()
                 data:next_row()
                 assert_row({2, "b", false})
                 data:next_row()
-                simulate_fetch(1, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 3, c2 = "c", c3 = 3.14}}))
+                simulate_fetch(2, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 3, c2 = "c", c3 = 3.14}}))
                 assert_row({3, "c", 3.14})
+            end)
+            it("raises error when fetching unavailable row", function()
+                data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
+                simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {{c1 = 1, c2 = "a", c3 = true}}))
+                assert_row({1, "a", true})
+                expect_no_fetch()
+                data:next_row()
+                assert.error_matches(function() data:get_column_value(1) end,
+                                     "E%-EDL%-31: No more rows available in result set")
             end)
         end)
     end)
