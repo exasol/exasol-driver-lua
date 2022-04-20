@@ -32,10 +32,9 @@ describe("ExasolWebsocket", function()
     end
 
     before_each(function()
-        local socket_stub = {
-            close = function() end,
-            send_raw = function(self, raw_payload, ignore_response) return send_raw_response, send_raw_error end
-        }
+        local socket_stub = {close = function() end, send_raw = function()
+            return send_raw_response, send_raw_error
+        end}
         socket_mock = mock(socket_stub, false)
         exa_socket = exasol_websocket._create(socket_mock)
     end)
@@ -122,7 +121,7 @@ describe("ExasolWebsocket", function()
         end)
     end)
 
-    describe("send_login_credentials()", function()
+    describe("send_execute()", function()
         it("sends execute command", function()
             local response_data = {data = 1}
             simulate_ok_response(response_data)
@@ -135,6 +134,25 @@ describe("ExasolWebsocket", function()
         it("returns error when execution fails", function()
             simulate_response({status = "error status", exception = {sqlCode = "code", text = "text"}})
             local result, err = exa_socket:send_execute("statement")
+            assert.is_same("E-EDL-10: Received DB status 'error status' with code code: 'text'", tostring(err))
+            assert.is_nil(result)
+        end)
+    end)
+
+    describe("send_fetch()", function()
+        it("sends fetch command", function()
+            local response_data = {data = 1}
+            simulate_ok_response(response_data)
+            local result, err = exa_socket:send_fetch(1234, 5, 1024)
+            assert.is_same(response_data, result)
+            assert.is_nil(err)
+            assert_raw_send(
+                    '{"command":"fetch","resultSetHandle":1234,"startPosition":5,"numBytes":1024,"attributes":{}}')
+        end)
+
+        it("returns error when fetch fails", function()
+            simulate_response({status = "error status", exception = {sqlCode = "code", text = "text"}})
+            local result, err = exa_socket:send_fetch(1234, 5, 1024)
             assert.is_same("E-EDL-10: Received DB status 'error status' with code code: 'text'", tostring(err))
             assert.is_nil(result)
         end)

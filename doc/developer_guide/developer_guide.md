@@ -86,18 +86,14 @@ To run a single test:
 
 ```sh
 export EXASOL_HOST=<host>
+luarocks test -- spec/integration/connection_spec.lua
+# or
 busted spec/integration/connection_spec.lua
 # or
 lua spec/integration/connection_spec.lua
 ```
 
 ## Source Formatter
-
-Use the following plugins in your IDE:
-
-* Visual Studio Code: [vscode-lua-format](https://marketplace.visualstudio.com/items?itemName=Koihik.vscode-lua-format)
-
-### Command Line Usage
 
 First install prerequisites:
 

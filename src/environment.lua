@@ -5,6 +5,7 @@ local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
+local ConnectionProperties = require("connection_properties")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -63,16 +64,17 @@ end
 
 --- Connect to an Exasol database.
 --- @param sourcename string hostname and port of the Exasol database, separated with a colon, e.g.:
---- <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
+---   <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
 --- @return Connection|nil a new Connection or nil if the connection failed
---- @return nil|table|string an error or nil if the connection was successful
+--- @return nil|table|string an error or <code>nil</code> if the connection was successful
 --- [impl -> dsn~luasql-environment-connect~0]
-function Environment:connect(sourcename, username, password)
+function Environment:connect(sourcename, username, password, properties)
     if self.closed then
         exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
     end
+    local connection_properties = ConnectionProperties:create(properties)
     local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
     local response, err = login(socket, username, password)
     if err then
@@ -90,7 +92,7 @@ function Environment:connect(sourcename, username, password)
     log.trace("Connected to Exasol %s, maximum message size: %d bytes", response.releaseVersion,
               response.maxDataMessageSize)
     local session_id = response.sessionId
-    local conn = connection:create(socket, session_id)
+    local conn = connection:create(connection_properties, socket, session_id)
     self.connections[session_id] = conn
     return conn, nil
 end

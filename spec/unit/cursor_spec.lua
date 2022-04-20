@@ -3,24 +3,12 @@
 require("busted.runner")()
 local cursor = require("cursor")
 local config = require("config")
+local ConnectionProperties = require("connection_properties")
+local resultstub = require("resultstub")
 config.configure_logging()
 
+local create_resultset<const> = resultstub.create_resultset
 local SESSION_ID<const> = 12345
-
-local function create_resultset(column_names, rows)
-    local columns = {}
-    local data = {}
-    for column_index, column_name in ipairs(column_names) do
-        table.insert(columns, {name = column_name})
-        data[column_index] = {}
-        for row_index, row in ipairs(rows) do
-            local value = row[column_name]
-            if value == nil then error("No value for row " .. row_index .. " column " .. column_name) end
-            table.insert(data[column_index], value)
-        end
-    end
-    return {numRows = #rows, numColumns = #columns, columns = columns, data = data}
-end
 
 describe("Cursor", function()
     local websocket_stub = nil
@@ -31,7 +19,10 @@ describe("Cursor", function()
         websocket_mock = mock(websocket_stub, false)
     end)
 
-    local function create_cursor(result_set) return cursor:create(websocket_mock, SESSION_ID, result_set) end
+    local function create_cursor(result_set)
+        local connection_properties = ConnectionProperties:create()
+        return cursor:create(connection_properties, websocket_mock, SESSION_ID, result_set)
+    end
 
     describe("create()", function()
         it("throws error for inconsistent column count", function()
@@ -57,7 +48,7 @@ Mitigations:
             assert.is_nil(cur:fetch())
         end)
 
-        it("returns first row when result set is not empty", function()
+        it("returns first row when result set is not empty [utest -> dsn~luasql-cursor-fetch~0]", function()
             local cur = create_cursor(create_resultset({"col1"}, {{col1 = "val"}}))
             assert.is_same({"val"}, cur:fetch())
             assert.is_nil(cur:fetch())

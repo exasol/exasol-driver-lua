@@ -1,6 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
+local CursorData = require("cursor_data")
 
 -- luacheck: no unused args
 
@@ -12,7 +13,8 @@ local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused var
 --- @field private col_name_provider function
 --- @field private num_columns number
 --- @field private num_rows number
---- @field private data table
+--- @field private data CursorData
+--- @field private websocket ExasolWebsocket
 --- @field private result_set_handle string|nil
 local Cursor = {}
 
@@ -50,12 +52,13 @@ local function get_column_names(result_set)
 end
 
 --- Create a new instance of the Cursor class.
+--- @param connection_properties ConnectionProperties connection properties
 --- @param websocket ExasolWebsocket the websocket connection to the database
 --- @param session_id string the session ID of the current database connection
 --- @param result_set table the result set returned by the database
 --- @return Cursor a new Cursor instance
 --- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
-function Cursor:create(websocket, session_id, result_set)
+function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
     local object = {
         websocket = websocket,
@@ -63,18 +66,12 @@ function Cursor:create(websocket, session_id, result_set)
         result_set_handle = result_set.resultSetHandle,
         num_columns = result_set.numColumns,
         num_rows = result_set.numRows,
-        num_rows_in_message = result_set.numRowsInMessage,
         col_name_provider = create_col_name_provider(column_names),
-        data = result_set.data,
-        current_row = 1,
+        data = CursorData:create(connection_properties, websocket, result_set),
         closed = false
     }
     self.__index = self
     setmetatable(object, self)
-    if object.result_set_handle then
-        error("Result sets with 1000 or more rows are not yet supported, " ..
-                      "see https://github.com/exasol/exasol-driver-lua/issues/4")
-    end
     return object
 end
 
@@ -95,7 +92,6 @@ end
 --- @param modestring "a"|"n" determines which indices are used when filling the table:
 ---                   "a" for alphanumeric indices, "n" for numeric indices (default)
 function Cursor:_fill_row(table, modestring)
-    log.trace("Fetching row %d of %d with mode %s", self.current_row, self.num_rows, modestring)
     local col_name_provider = self:_get_result_table_index_provider(modestring)
     for col = 1, self.num_columns do
         local col_name = col_name_provider(col)
@@ -104,7 +100,7 @@ function Cursor:_fill_row(table, modestring)
             exaerror.create("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
                     :raise()
         end
-        table[col_name] = self.data[col][self.current_row]
+        table[col_name] = self.data:get_column_value(col)
     end
 end
 
@@ -137,7 +133,7 @@ function Cursor:fetch(table, modestring)
     if self.closed then
         exaerror.create("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
     end
-    if self.current_row > self.num_rows then
+    if not self.data:has_more_rows() then
         log.trace("End of result set reached, no more rows after %d", self.num_rows)
         if not self.closed then self:close() end
         return nil
@@ -145,7 +141,7 @@ function Cursor:fetch(table, modestring)
     table = table or {}
     modestring = modestring or FETCH_MODE_NUMERIC_INDICES
     self:_fill_row(table, modestring)
-    self.current_row = self.current_row + 1
+    self.data:next_row()
     return table
 end
 
@@ -176,10 +172,17 @@ function Cursor:close()
         self.closed = true
         return true
     end
-    error("Closing cursor with result set handle not yet supported, " ..
-                  "see https://github.com/exasol/exasol-driver-lua/issues/4")
-    self.closed = true
-    return true
+
+    local err = self.websocket:send_close_result_set(self.result_set_handle)
+    if err then
+        log.warn(tostring(exaerror.create("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
+                                          {result_set_handle = self.result_set_handle, error = err})))
+        return false
+    else
+        log.trace("Successfully closed result set %d", self.result_set_handle)
+        self.closed = true
+        return true
+    end
 end
 
 return Cursor

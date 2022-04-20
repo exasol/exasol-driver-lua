@@ -15,6 +15,7 @@ loop Fetch results until fetch() returns nil
     ' [dsn -> req~luasql-cursor-fetch~1 >> impl,utest,itest]
     client -> cur: fetch()
     activate cur
+    ' [dsn -> req~luasql-cursor-fetch-resultsethandle~1 >> impl,utest,itest]
     alt If DB has returned a resultset handle\nand no more rows available in local list
         cur -> ws : send_fetch(resultset_handle)
         activate ws

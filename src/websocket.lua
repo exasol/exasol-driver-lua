@@ -92,7 +92,7 @@ function Websocket:_wait_for_response(timeout_seconds)
         end
         local total_wait_time_seconds = os.clock() - start
         if self.data_handler:has_received_data() then
-            log.debug("Received result %s after %fs and %d tries", result, total_wait_time_seconds, try_count)
+            log.trace("Received result %s after %fs and %d tries", result, total_wait_time_seconds, try_count)
             return nil
         end
         if total_wait_time_seconds >= timeout_seconds then
