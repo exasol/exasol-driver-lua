@@ -44,7 +44,7 @@ end
 --- @param statement string the SQL statement to execute
 --- @return Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
 ---   or nil in case there was an error executing the statement
---- @return nil|string|table in case there was an error executing the statement or nil if the statement
+--- @return nil|table in case there was an error executing the statement or nil if the statement
 ---   was executed successfully
 --- [impl -> dsn~luasql-connection-execute~0]
 function Connection:execute(statement)
@@ -76,7 +76,7 @@ function Connection:execute(statement)
     end
     local cur = cursor:create(self.connection_properties, self.websocket, self.session_id, first_result.resultSet)
     table.insert(self.cursors, cur)
-    return cur
+    return cur, nil
 end
 
 --- Commits the current transaction.
@@ -107,6 +107,7 @@ end
 
 --- Closes this connection and all cursors created using this connection.
 --- @return boolean <code>true</code> in case of success
+--- @raise an error in case disconnecting fails
 -- [impl -> dsn~luasql-connection-close~0]
 function Connection:close()
     if self.closed then
