@@ -18,6 +18,7 @@ Code name: Initial Release
 * #25: Migrated tests to busted
 * #18: Replaced lunajson with cjson
 * #17: Added unit tests
+* #33: Replaced `cjson.null` in returned row data with `luasqlexasol.NULL`
 
 ## Documentation
 
