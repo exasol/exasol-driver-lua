@@ -32,10 +32,9 @@ describe("ExasolWebsocket", function()
     end
 
     before_each(function()
-        local socket_stub = {
-            close = function() end,
-            send_raw = function(self, raw_payload, ignore_response) return send_raw_response, send_raw_error end
-        }
+        local socket_stub = {close = function() end, send_raw = function()
+            return send_raw_response, send_raw_error
+        end}
         socket_mock = mock(socket_stub, false)
         exa_socket = exasol_websocket._create(socket_mock)
     end)

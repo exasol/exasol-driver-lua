@@ -104,11 +104,6 @@ describe("CursorData", function()
             assert.is_same(1, data:get_current_row())
         end)
 
-        it("increments with next_row()", function()
-            data = create_cursor_data(create_resultset())
-            data:next_row()
-            assert.is_same(2, data:get_current_row())
-        end)
     end)
 
     describe("has_more_rows()", function()
