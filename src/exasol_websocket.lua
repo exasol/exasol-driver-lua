@@ -71,11 +71,11 @@ end
 
 --- Sends the fetch command.
 --- See https://github.com/exasol/websocket-api/blob/master/docs/commands/fetchV1.md
---- @param result_set_handle number the result set handle
+--- @param result_set_handle number result set handle
 --- @param start_position number row offset (0-based) from which to begin data retrieval
---- @param num_bytes number number of bytes to retrieve (max: 64MB)
+--- @param num_bytes number number of bytes to retrieve (max: 64MiB)
 --- @return table|nil from the database or nil if an error occurred
---- @return string|table|nil an error if an error occurred or nil if the operation was successful
+--- @return string|table|nil nil if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_fetch(result_set_handle, start_position, num_bytes)
     local payload = {
         command = "fetch",
@@ -89,7 +89,7 @@ end
 
 --- Sends the closeResultSet command.
 --- See https://github.com/exasol/websocket-api/blob/master/docs/commands/closeResultSetV1.md
---- @param result_set_handle number the result set handle to close
+--- @param result_set_handle number result set handle to close
 --- @return string|table|nil an error if an error occurred or nil if the operation was successful
 function ExasolWebsocket:send_close_result_set(result_set_handle)
     local payload = {command = "closeResultSet", resultSetHandles = {result_set_handle}, attributes = {}}

@@ -78,8 +78,9 @@ describe("CursorData", function()
                              "numRowsInMessage missing in result set")
         end)
 
-        it("returns non-nil value",
-           function() assert.is_not_nil(CursorData:create({}, {}, {numRows = 5, numRowsInMessage = 2})) end)
+        it("returns non-nil value", function()
+           assert.is_not_nil(CursorData:create({}, {}, {numRows = 5, numRowsInMessage = 2}))
+        end)
     end)
 
     describe("next_row()", function()
@@ -187,7 +188,7 @@ describe("CursorData", function()
                 assert.error(function() data:get_column_value(1) end, "missing numRows")
             end)
 
-            it("raises error for data in fetch result", function()
+            it("raises error on missing data in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = nil})
                 assert.error(function() data:get_column_value(1) end, "missing data")
@@ -237,7 +238,7 @@ describe("CursorData", function()
                 assert_row({1, "a", true})
             end)
 
-            it("first batch has two rows, fetch second batch", function()
+            it("fetches second batch after first batch with two rows", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 3, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"},
                                                       {{c1 = 1, c2 = "a", c3 = true}, {c1 = 2, c2 = "b", c3 = false}}))

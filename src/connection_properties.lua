@@ -2,7 +2,7 @@
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
-local DEFAULT_FETCHSIZE_KB<const> = 128
+local DEFAULT_FETCHSIZE_KIB<const> = 128
 
 --- This class represents configuration properties for a database connection.
 --- @class ConnectionProperties
