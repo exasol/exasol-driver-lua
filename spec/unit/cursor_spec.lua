@@ -4,10 +4,10 @@ require("busted.runner")()
 local cursor = require("cursor")
 local config = require("config")
 local ConnectionProperties = require("connection_properties")
-local util = require("test_util")
+local resultstub = require("resultstub")
 config.configure_logging()
 
-local create_resultset<const> = util.create_resultset
+local create_resultset<const> = resultstub.create_resultset
 local SESSION_ID<const> = 12345
 
 describe("Cursor", function()

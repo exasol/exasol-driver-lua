@@ -6,7 +6,7 @@ local DEFAULT_FETCHSIZE_KIB<const> = 128
 
 --- This class represents configuration properties for a database connection.
 --- @class ConnectionProperties
---- @field private properties table the websocket
+--- @field private properties table the properties
 local ConnectionProperties = {}
 
 --- Create a new instance of the Connection class.
@@ -23,14 +23,14 @@ function ConnectionProperties:create(properties)
 end
 
 function ConnectionProperties:_validate()
-    if self.properties.fetchsize_kb and self.properties.fetchsize_kb <= 0 then
-        exaerror.create("E-EDL-27", "Parameter 'fetchsize_kb' must be greater than 0"):add_mitigations(
-                "Use a value greater than 0")
+    if self.properties.fetchsize_kib and self.properties.fetchsize_kib <= 0 then
+        exaerror.create("E-EDL-27", "Parameter 'fetchsize_kib' must be greater than 0"):add_mitigations(
+                "Use a value greater than 0"):raise()
     end
 end
 
 function ConnectionProperties:get_fetchsize_bytes() --
-    return (self.properties.fetchsize_kb or DEFAULT_FETCHSIZE_KB) * 1024
+    return (self.properties.fetchsize_kib or DEFAULT_FETCHSIZE_KIB) * 1024
 end
 
 return ConnectionProperties

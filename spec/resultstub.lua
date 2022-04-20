@@ -1,7 +1,7 @@
---- Utility functions used in unit tests
-local util = {}
+--- Utility functions for creating query result stubs used in unit tests
+local resultstub = {}
 
-function util.create_resultset(column_names, rows)
+function resultstub.create_resultset(column_names, rows)
     column_names = column_names or {}
     rows = rows or {}
     local columns = {}
@@ -18,7 +18,10 @@ function util.create_resultset(column_names, rows)
     return {numRows = #rows, numRowsInMessage = #rows, numColumns = #columns, columns = columns, data = data}
 end
 
-function util.create_batched_resultset(column_names, total_row_count, result_set_handle)
+--- Creates a result set with a result set handle and without row data.
+--- The database returns this kind of result for large result sets
+--- where we need to fetch the row data in a separate request.
+function resultstub.create_batched_resultset(column_names, total_row_count, result_set_handle)
     column_names = column_names or {}
     local columns = {}
     for _, column_name in ipairs(column_names) do table.insert(columns, {name = column_name}) end
@@ -32,7 +35,7 @@ function util.create_batched_resultset(column_names, total_row_count, result_set
     }
 end
 
-function util.create_fetch_result(column_names, rows)
+function resultstub.create_fetch_result(column_names, rows)
     column_names = column_names or {}
     rows = rows or {}
     local columns = {}
@@ -49,4 +52,4 @@ function util.create_fetch_result(column_names, rows)
     return {numRows = #rows, data = data}
 end
 
-return util
+return resultstub

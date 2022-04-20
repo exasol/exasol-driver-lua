@@ -74,11 +74,11 @@ function CursorData:get_column_value(column_index)
               self.current_row_in_batch, self.num_rows_in_message)
     if column_index <= 0 or #self.data < column_index then
         exaerror.create("E-EDL-29",
-                        "Column index {{column_index}} out of bound, only {{column_count}} columns are available",
+                        "Column index {{column_index}} out of bound, must be between 1 and {{column_count}}",
                         {column_index = column_index, column_count = #self.data}):add_ticket_mitigation():raise()
     end
     if #self.data[column_index] < self.current_row_in_batch then
-        local message = "Row {{row_index}} out of bound, only {{row_count}} rows are available in current batch"
+        local message = "Row {{row_index}} out of bound, must be between 1 and {{row_count}}"
         local args = {row_index = self.current_row_in_batch, row_count = #self.data[column_index]}
         exaerror.create("E-EDL-30", message, args):add_ticket_mitigation():raise()
     end

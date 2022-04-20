@@ -34,73 +34,95 @@ describe("Connection", function()
         schema_name = nil
     end)
 
-    -- [itest -> dsn~luasql-connection-execute~0]
-    it("executes a select query", function()
-        local cursor = assert(connection:execute("select 1"))
-        assert.is_same({1}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
+    describe("execute()", function()
+
+        -- [itest -> dsn~luasql-connection-execute~0]
+        it("executes a select query", function()
+            local cursor = assert(connection:execute("select 1"))
+            assert.is_same({1}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("allows creating a table", function()
+            create_schema()
+            local result = assert(connection:execute("create table test_table (id integer, name varchar(10))"))
+            assert.is_same(0, result)
+
+            local cursor = assert(connection:execute("select count(*) from test_table"))
+            assert.is_same({0}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("allows inserting into a table", function()
+            create_schema()
+            assert(connection:execute("create table test_table (id integer, name varchar(10))"))
+
+            local result = assert(connection:execute("insert into test_table values (1, 'a')"))
+            assert.is_same(1, result)
+
+            result = assert(connection:execute("insert into test_table values (2, 'b'), (3, 'c')"))
+            assert.is_same(2, result)
+
+            local cursor = assert(connection:execute("select count(*) from test_table"))
+            assert.is_same({3}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("allows selecting from a table", function()
+            create_schema()
+            assert(connection:execute("create table test_table (id integer, name varchar(10))"))
+            assert(connection:execute("insert into test_table values (1, 'a'), (2, 'b'), (3, 'c')"))
+
+            local cursor = assert(connection:execute("select * from test_table order by id"))
+            assert.is_same({1, "a"}, cursor:fetch())
+            assert.is_same({2, "b"}, cursor:fetch())
+            assert.is_same({3, "c"}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("allows using update query", function()
+            create_schema()
+            assert(connection:execute("create table test_table (id integer, name varchar(10))"))
+            assert(connection:execute("insert into test_table values (1, 'a'), (2, 'b'), (3, 'c')"))
+
+            local result = assert(connection:execute("update test_table set name = name || name where id >= 2"))
+            assert.is_same(2, result)
+
+            local cursor = assert(connection:execute("select * from test_table order by id"))
+            assert.is_same({1, "a"}, cursor:fetch())
+            assert.is_same({2, "bb"}, cursor:fetch())
+            assert.is_same({3, "cc"}, cursor:fetch())
+            assert.is_nil(cursor:fetch())
+        end)
+
+        it("returns error when executing an invalid query", function()
+            local cursor, err = connection:execute("select")
+            assert.is_nil(cursor)
+            assert.matches("E%-EDL%-6: Error executing statement 'select': E%-EDL%-10: Received DB status 'error' " ..
+                                   "with code 42000: 'syntax error, unexpected ';'", tostring(err))
+        end)
+
+        it("fails executing a query when already closed", function()
+            connection:close()
+            assert.has_error(function() connection:execute("select 1") end,
+                             "E-EDL-12: Connection already closed when trying to call 'execute'")
+        end)
+
     end)
 
-    it("allows creating and using tables", function()
-        create_schema()
-        local result = assert(connection:execute("create table test_table (id integer, name varchar(10))"))
-        assert.is_same(0, result)
+    describe("close()", function()
+        it("doesn't fail when closing a closed connection", function()
+            connection:close()
+            connection:close()
+        end)
 
-        result = assert(connection:execute("insert into test_table values (1, 'a')"))
-        assert.is_same(1, result)
-
-        result = assert(connection:execute("insert into test_table values (2, 'b'), (3, 'c')"))
-        assert.is_same(2, result)
-
-        local cursor = assert(connection:execute("select * from test_table order by id"))
-        assert.is_same({1, "a"}, cursor:fetch())
-        assert.is_same({2, "b"}, cursor:fetch())
-        assert.is_same({3, "c"}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
-    end)
-
-    it("allows using update query", function()
-        create_schema()
-        local result = assert(connection:execute("create table test_table (id integer, name varchar(10))"))
-        assert.is_same(0, result)
-
-        result = assert(connection:execute("insert into test_table values (1, 'a'), (2, 'b'), (3, 'c')"))
-        assert.is_same(3, result)
-
-        result = assert(connection:execute("update test_table set name = name || name where id >= 2"))
-        assert.is_same(2, result)
-
-        local cursor = assert(connection:execute("select * from test_table order by id"))
-        assert.is_same({1, "a"}, cursor:fetch())
-        assert.is_same({2, "bb"}, cursor:fetch())
-        assert.is_same({3, "cc"}, cursor:fetch())
-        assert.is_nil(cursor:fetch())
-    end)
-
-    it("returns error when executing an invalid query", function()
-        local cursor, err = connection:execute("select")
-        assert.is_nil(cursor)
-        assert.matches("E%-EDL%-6: Error executing statement 'select': E%-EDL%-10: Received DB status 'error' " ..
-                               "with code 42000: 'syntax error, unexpected ';'", tostring(err))
-    end)
-
-    it("fails executing a query when already closed", function()
-        connection:close()
-        assert.has_error(function() connection:execute("select 1") end,
-                         "E-EDL-12: Connection already closed when trying to call 'execute'")
-    end)
-
-    it("doesn't fail when closing a closed connection", function()
-        connection:close()
-        connection:close()
-    end)
-
-    -- [itest -> dsn~luasql-connection-close~0]
-    it("closes cursors", function()
-        local cursor = assert(connection:execute("select 1"))
-        connection:close()
-        assert.has_error(function() cursor:fetch() end,
-                         "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+        -- [itest -> dsn~luasql-connection-close~0]
+        it("closes cursors", function()
+            local cursor = assert(connection:execute("select 1"))
+            connection:close()
+            assert.has_error(function() cursor:fetch() end,
+                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+        end)
     end)
 end)
 
