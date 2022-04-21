@@ -22,25 +22,6 @@ describe("Connection", function()
         return schema_name
     end
 
-    local function create_table(schema_name)
-        local table_name = string.format('"%s"."tab"', schema_name)
-        assert(connection:execute(string.format("create table %s (id integer, name varchar(10))", table_name)))
-        return table_name
-    end
-
-    local function insert_row(table_name, id, name)
-        assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name, id, name)))
-    end
-
-    local function assert_row_count_in_new_connection(table_name, expected_row_count)
-        local other_connection = create_connection()
-        finally(function() other_connection:close() end)
-        local cursor = assert(other_connection:execute(string.format("select count(*) from %s", table_name)))
-        finally(function() cursor:close() end)
-        local actual_row_count = cursor:fetch()[1]
-        assert.same(expected_row_count, actual_row_count, "row count")
-    end
-
     before_each(function()
         env = driver.exasol()
         connection = create_connection()
@@ -129,6 +110,25 @@ describe("Connection", function()
     end)
 
     describe("setautocommit()", function()
+        local function create_table(schema_name)
+            local table_name = string.format('"%s"."tab"', schema_name)
+            assert(connection:execute(string.format("create table %s (id integer, name varchar(10))", table_name)))
+            return table_name
+        end
+
+        local function insert_row(table_name, id, name)
+            assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name, id, name)))
+        end
+
+        local function assert_row_count_in_new_connection(table_name, expected_row_count)
+            local other_connection = create_connection()
+            finally(function() other_connection:close() end)
+            local cursor = assert(other_connection:execute(string.format("select count(*) from %s", table_name)))
+            finally(function() cursor:close() end)
+            local actual_row_count = cursor:fetch()[1]
+            assert.same(expected_row_count, actual_row_count, "row count")
+        end
+
         local function set_autocommit(autocommit)
             assert.is_true(connection:setautocommit(autocommit), "setautocommit result")
         end
