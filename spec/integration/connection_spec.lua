@@ -9,12 +9,15 @@ config.configure_logging()
 describe("Connection", function()
     local env = nil
     local connection = nil
-    local schema_name = nil
 
     local function create_schema()
-        schema_name = string.format("connection_test_%d", os.time())
+        local schema_name = string.format("CONNECTION_TEST_%d", os.time())
         assert(connection:execute(string.format("drop schema if exists %s cascade", schema_name)))
         assert(connection:execute(string.format("create schema %s", schema_name)))
+        finally(function ()
+            assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
+        end)
+        return schema_name
     end
 
     before_each(function()
@@ -25,13 +28,10 @@ describe("Connection", function()
     end)
 
     after_each(function()
-        if schema_name then assert(connection:execute(string.format("drop schema %s cascade", schema_name))) end
-
         if not connection.closed then connection:close() end
         env:close()
         env = nil
         connection = nil
-        schema_name = nil
     end)
 
     describe("execute()", function()
