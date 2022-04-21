@@ -74,6 +74,6 @@ describe("Cursor with resultset handle", function()
     it("fetches large result sets with large fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
        function() test_result_with(2000, {fetchsize_kib = 50000}) end)
 
-    it("fetches large result sets with very small fetch size #only",
+    it("fetches large result sets with very small fetch size",
        function() test_result_with(1000, {fetchsize_kib = 1 / 1024}) end)
 end)
