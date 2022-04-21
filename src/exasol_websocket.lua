@@ -69,6 +69,11 @@ function ExasolWebsocket:send_execute(statement)
     return self:_send_json(payload)
 end
 
+function ExasolWebsocket:send_set_attribute(attribute_name, attribute_value)
+    local _, err = self:_send_json({command = "setAttributes", attributes = {[attribute_name] = attribute_value}})
+    return err
+end
+
 --- Sends the fetch command.
 --- See https://github.com/exasol/websocket-api/blob/master/docs/commands/fetchV1.md
 --- @param result_set_handle number result set handle

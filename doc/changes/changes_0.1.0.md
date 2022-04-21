@@ -1,4 +1,4 @@
-# exasol-driver-lua 0.1.0, released 2022-03-??
+# exasol-driver-lua 0.1.0, released 2022-04-??
 
 Code name: Initial Release
 
@@ -7,7 +7,8 @@ Code name: Initial Release
 ## Features
 
 * #1: Setup initial project
-* #5: Added support for mode "a" for cursor:fetch()
+* #5: Added support for mode `"a"` for `cursor:fetch()`
+* #24: Implemented `connection:setautocommit(true|false)`
 
 ## Bugfixes
 

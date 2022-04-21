@@ -3,28 +3,47 @@
 require("busted.runner")()
 local driver = require("luasqlexasol")
 local config = require("config")
-
 config.configure_logging()
 
 describe("Connection", function()
     local env = nil
     local connection = nil
 
+    local function create_connection()
+        local connection_params = config.get_connection_params()
+        return assert(env:connect(connection_params.source_name, connection_params.user, connection_params.password))
+    end
+
     local function create_schema()
         local schema_name = string.format("CONNECTION_TEST_%d", os.time())
         assert(connection:execute(string.format("drop schema if exists %s cascade", schema_name)))
         assert(connection:execute(string.format("create schema %s", schema_name)))
-        finally(function ()
-            assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
-        end)
+        finally(function() assert(connection:execute(string.format("drop schema %s cascade", schema_name))) end)
         return schema_name
+    end
+
+    local function create_table(schema_name)
+        local table_name = string.format('"%s"."tab"', schema_name)
+        assert(connection:execute(string.format("create table %s (id integer, name varchar(10))", table_name)))
+        return table_name
+    end
+
+    local function insert_row(table_name, id, name)
+        assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name, id, name)))
+    end
+
+    local function assert_row_count_in_new_connection(table_name, expected_row_count)
+        local other_connection = create_connection()
+        finally(function() other_connection:close() end)
+        local cursor = assert(other_connection:execute(string.format("select count(*) from %s", table_name)))
+        finally(function() cursor:close() end)
+        local actual_row_count = cursor:fetch()[1]
+        assert.same(expected_row_count, actual_row_count, "row count")
     end
 
     before_each(function()
         env = driver.exasol()
-        local connection_params = config.get_connection_params()
-        connection = assert(env:connect(connection_params.source_name, connection_params.user,
-                                        connection_params.password))
+        connection = create_connection()
     end)
 
     after_each(function()
@@ -107,7 +126,44 @@ describe("Connection", function()
             assert.has_error(function() connection:execute("select 1") end,
                              "E-EDL-12: Connection already closed when trying to call 'execute'")
         end)
+    end)
 
+    describe("setautocommit()", function()
+        local function set_autocommit(autocommit)
+            assert.is_true(connection:setautocommit(autocommit), "setautocommit result")
+        end
+
+        it("enables autocommit by default", function()
+            local schema_name = create_schema()
+            local table_name = create_table(schema_name)
+            insert_row(table_name, 1, "a")
+            assert_row_count_in_new_connection(table_name, 1)
+        end)
+
+        it("enables autocommit", function()
+            local schema_name = create_schema()
+            local table_name = create_table(schema_name)
+            set_autocommit(true)
+            insert_row(table_name, 1, "a")
+            assert_row_count_in_new_connection(table_name, 1)
+        end)
+
+        it("disables autocommit", function()
+            local schema_name = create_schema()
+            local table_name = create_table(schema_name)
+            set_autocommit(false)
+            insert_row(table_name, 1, "a")
+            assert_row_count_in_new_connection(table_name, 0)
+        end)
+
+        it("requires explicit commit when disabled", function()
+            local schema_name = create_schema()
+            local table_name = create_table(schema_name)
+            set_autocommit(false)
+            insert_row(table_name, 1, "a")
+            assert(connection:execute("commit"))
+            assert_row_count_in_new_connection(table_name, 1)
+        end)
     end)
 
     describe("close()", function()

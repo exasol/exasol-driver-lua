@@ -102,7 +102,13 @@ end
 -- luacheck: ignore 212 # unused argument autocommit
 function Connection:setautocommit(autocommit)
     self:_verify_connection_open("setautocommit")
-    error("Setautocommit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/24")
+    local err = self.websocket:send_set_attribute("autocommit", autocommit)
+    if err then
+        log.error(tostring(exaerror.create("E-EDL-32", "Failed to set autocommit to %b: %v", autocommit, err)))
+        return false
+    else
+        return true
+    end
 end
 
 --- Closes this connection and all cursors created using this connection.
