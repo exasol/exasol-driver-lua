@@ -49,7 +49,7 @@ describe("Connection", function()
     end)
 
     describe("execute()", function()
-        it("throws error when no results available", function()
+        it("raises error when no results available", function()
             simulate_result(0, {})
             assert.has_error(function() conn:execute("statement") end,
                              [[E-EDL-7: Got no results for statement 'statement'
@@ -70,7 +70,7 @@ Mitigations:
 * Use only statements that return a single result]], tostring(err))
         end)
 
-        it("throws error for unknown result type", function()
+        it("raises error for unknown result type", function()
             simulate_result(1, {{resultType = "unknown"}})
             assert.has_error(function() conn:execute("statement") end, [[E-EDL-9: Got unexpected result type 'unknown'
 
@@ -115,7 +115,7 @@ Mitigations:
             assert.is_nil(cursor:fetch())
         end)
 
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:execute("statement") end,
                              "E-EDL-12: Connection already closed when trying to call 'execute'")
@@ -123,7 +123,7 @@ Mitigations:
     end)
 
     describe("commit()", function()
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:commit() end,
                              "E-EDL-12: Connection already closed when trying to call 'commit'")
@@ -131,7 +131,7 @@ Mitigations:
     end)
 
     describe("rollback()", function()
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:rollback() end,
                              "E-EDL-12: Connection already closed when trying to call 'rollback'")
@@ -139,7 +139,7 @@ Mitigations:
     end)
 
     describe("setautocommit()", function()
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:setautocommit(true) end,
                              "E-EDL-12: Connection already closed when trying to call 'setautocommit'")

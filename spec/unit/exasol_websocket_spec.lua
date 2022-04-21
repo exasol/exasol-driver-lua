@@ -49,7 +49,7 @@ describe("ExasolWebsocket", function()
                                                           ignore_response)
     end
 
-    it("throws error when trying to send command with closed socket", function()
+    it("raises error when trying to send command with closed socket", function()
         exa_socket:close()
         assert.has_error(function() exa_socket:send_disconnect() end,
                          [[E-EDL-22: Websocket already closed when trying to send payload '{"command":"disconnect"}']])
@@ -57,7 +57,7 @@ describe("ExasolWebsocket", function()
 
     describe("send_login_command()", function()
 
-        it("throws error response is nil", function()
+        it("raises error response is nil", function()
             simulate_response_string(nil)
             assert.error_matches(function() exa_socket:send_login_command() end,
                                  "E%-EDL%-2: Did not receive response for request payload.*")
