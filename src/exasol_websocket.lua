@@ -3,6 +3,7 @@ local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local raw_websocket = require("websocket")
+local constants = require("constants")
 
 --- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
 --- @class ExasolWebsocket
@@ -70,11 +71,14 @@ function ExasolWebsocket:send_execute(statement)
 end
 
 --- Sends the setAttribute command with a given attribute name and value.
+--- To set the null value for an attribute, use <code>constants.NULL</code> or <code>nil</code>.
+--- Both will be translated to <code>null</code> in the JSON command.
 --- See https://github.com/exasol/websocket-api/blob/master/docs/commands/setAttributesV1.md
 --- @param attribute_name string the name of the attribute to set, e.g. <code>"autocommit"</code>
 --- @param attribute_value any the value of the attribute to set, e.g. <code>false</code>
 --- @return table|nil <code>nil</code> if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_set_attribute(attribute_name, attribute_value)
+    if attribute_value == nil or attribute_value == constants.NULL then attribute_value = cjson.null end
     local _, err = self:_send_json({command = "setAttributes", attributes = {[attribute_name] = attribute_value}})
     return err
 end

@@ -159,19 +159,15 @@ Mitigations:
             assert.is_false(conn:setautocommit(true))
         end)
 
-        describe("sends setAttribute command with", function ()
+        describe("sends setAttribute command with", function()
             local function assert_autocommit_attribute_set(value)
                 conn:setautocommit(value)
                 assert.stub(websocket_mock.send_set_attribute).was.called_with(match.is_table(), "autocommit", value)
             end
 
-            it("value true",function ()
-                assert_autocommit_attribute_set(true)
-            end)
+            it("value true", function() assert_autocommit_attribute_set(true) end)
 
-            it("value false",function ()
-                assert_autocommit_attribute_set(false)
-            end)
+            it("value false", function() assert_autocommit_attribute_set(false) end)
         end)
     end)
 
