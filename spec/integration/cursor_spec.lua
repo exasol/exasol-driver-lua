@@ -1,7 +1,6 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local cjson = require("cjson")
 local driver = require("luasqlexasol")
 local config = require("config")
 
@@ -49,9 +48,11 @@ describe("Cursor", function()
                          "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
 
-        it("returns NULL as cjson.null", function()
+        it("returns NULL as luasqlexasol.NULL", function()
             local cursor = assert(connection:execute("select 1, null"))
-            assert.is_same({1, cjson.null}, cursor:fetch())
+            local first_row = cursor:fetch()
+            assert.is_same({1, driver.NULL}, first_row)
+            assert.is_equal(driver.NULL, first_row[2])
             assert.is_nil(cursor:fetch())
         end)
 

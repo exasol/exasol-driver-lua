@@ -2,6 +2,8 @@
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local CursorData = require("cursor_data")
+local driver = require("luasqlexasol")
+local cjson = require("cjson")
 local config = require("config")
 local log = require("remotelog")
 local resultstub = require("resultstub")
@@ -103,7 +105,6 @@ describe("CursorData", function()
             data = create_cursor_data(create_resultset())
             assert.is_same(1, data:get_current_row())
         end)
-
     end)
 
     describe("has_more_rows()", function()
@@ -156,16 +157,23 @@ describe("CursorData", function()
                 data = create_cursor_data(create_resultset({"c1", "c2", "c3"}, {
                     {c1 = 1, c2 = "a", c3 = true}, {c1 = 2, c2 = "b", c3 = false}
                 }))
-                assert.is_same(1, data:get_column_value(1))
-                assert.is_same("a", data:get_column_value(2))
-                assert.is_same(true, data:get_column_value(3))
+                assert_row({1, "a", true})
             end)
+
             it("returns first column of second row", function()
                 data = create_cursor_data(create_resultset({"c1", "c2", "c3"}, {
                     {c1 = 1, c2 = "a", c3 = true}, {c1 = 2, c2 = "b", c3 = false}
                 }))
                 data:next_row()
                 assert.is_same(2, data:get_column_value(1))
+            end)
+
+            it("converts cjson.null to luasqlexasol.NULL", function()
+                data = create_cursor_data(create_resultset({"c1", "c2"}, {{c1 = 1, c2 = cjson.null}}))
+                -- assert_row({1, driver.NULL, true})
+                local actual = data:get_column_value(2)
+                assert.is_same(driver.NULL, actual)
+                assert.is_equal(driver.NULL, actual)
             end)
         end)
 
