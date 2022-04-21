@@ -3,6 +3,8 @@
 require("busted.runner")()
 
 local environment = require("environment")
+local config = require("config")
+config.configure_logging()
 
 local websocket_stub = {}
 

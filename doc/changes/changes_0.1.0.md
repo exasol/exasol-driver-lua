@@ -20,6 +20,7 @@ Code name: Initial Release
 * #18: Replaced lunajson with cjson
 * #17: Added unit tests
 * #35: Added integration test for fetching large results with fetch size smaller than the row size
+* #33: Replaced `cjson.null` in returned row data with `luasqlexasol.NULL`
 
 ## Documentation
 
