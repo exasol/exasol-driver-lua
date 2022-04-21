@@ -69,6 +69,11 @@ function ExasolWebsocket:send_execute(statement)
     return self:_send_json(payload)
 end
 
+--- Sends the setAttribute command with a given attribute name and value.
+--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/setAttributesV1.md
+--- @param attribute_name string the name of the attribute to set, e.g. <code>"autocommit"</code>
+--- @param attribute_value any the value of the attribute to set, e.g. <code>false</code>
+--- @return table|nil <code>nil</code> if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_set_attribute(attribute_name, attribute_value)
     local _, err = self:_send_json({command = "setAttributes", attributes = {[attribute_name] = attribute_value}})
     return err

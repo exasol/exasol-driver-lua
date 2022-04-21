@@ -10,9 +10,11 @@ local SESSION_ID = 12345
 
 local execute_result = {}
 local execute_error = nil
+local set_attribute_error = nil
 
 local websocket_stub = {
     send_execute = function() return execute_result, execute_error end,
+    send_set_attribute = function() return set_attribute_error end,
     send_disconnect = function() end,
     close = function() end
 }
@@ -41,6 +43,8 @@ describe("Connection", function()
         local connection_properties = ConnectionProperties:create()
         conn = connection:create(connection_properties, websocket_mock, SESSION_ID)
         execute_result = {}
+        execute_error = nil
+        set_attribute_error = nil
     end)
 
     after_each(function()
@@ -143,6 +147,31 @@ Mitigations:
             conn:close()
             assert.has_error(function() conn:setautocommit(true) end,
                              "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+        end)
+
+        it("returns true when operation was successful", function()
+            set_attribute_error = nil
+            assert.is_true(conn:setautocommit(true))
+        end)
+
+        it("returns falses when operation failed", function()
+            set_attribute_error = "simulated error"
+            assert.is_false(conn:setautocommit(true))
+        end)
+
+        describe("sends setAttribute command with", function ()
+            local function assert_autocommit_attribute_set(value)
+                conn:setautocommit(value)
+                assert.stub(websocket_mock.send_set_attribute).was.called_with(match.is_table(), "autocommit", value)
+            end
+
+            it("value true",function ()
+                assert_autocommit_attribute_set(true)
+            end)
+
+            it("value false",function ()
+                assert_autocommit_attribute_set(false)
+            end)
         end)
     end)
 

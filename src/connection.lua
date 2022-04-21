@@ -96,6 +96,8 @@ function Connection:rollback()
 end
 
 --- Turns on or off the "auto commit" mode.
+--- Auto commit is on by default. If auto commit is off, you must explicitly execute the <code>COMMIT</code> command
+--- to commit the transaction.
 --- @param autocommit boolean <code>true</code> to enable auto commit, <code>false</code> to disable auto commit
 --- @return boolean <code>true</code> in case of success
 --- [impl -> dsn~luasql-connection-setautocommit~0]
@@ -104,7 +106,8 @@ function Connection:setautocommit(autocommit)
     self:_verify_connection_open("setautocommit")
     local err = self.websocket:send_set_attribute("autocommit", autocommit)
     if err then
-        log.error(tostring(exaerror.create("E-EDL-32", "Failed to set autocommit to %b: %v", autocommit, err)))
+        log.error(tostring(exaerror.create("E-EDL-32", "Failed to set autocommit to {{autocommit}}: {{error}}",
+                                           {autocommit = tostring(autocommit), error = err})))
         return false
     else
         return true
