@@ -154,7 +154,7 @@ Mitigations:
             assert.is_true(conn:setautocommit(true))
         end)
 
-        it("returns falses when operation failed", function()
+        it("returns false when operation failed", function()
             set_attribute_error = "simulated error"
             assert.is_false(conn:setautocommit(true))
         end)
