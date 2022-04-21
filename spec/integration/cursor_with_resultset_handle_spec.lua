@@ -52,8 +52,8 @@ describe("Cursor with resultset handle", function()
         cursor:close()
     end
 
-    local function test_result_with(row_count)
-        local connection = create_connection()
+    local function test_result_with(row_count, connection_properties)
+        local connection = create_connection(connection_properties)
         local schema_name = create_schema(connection)
         local table_name = string.format('"%s"."t"', schema_name)
         insert_data(connection, table_name, row_count)
@@ -68,12 +68,12 @@ describe("Cursor with resultset handle", function()
     it("fetches large result sets with default fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
        function() test_result_with(2000) end)
 
-    it("fetches large result sets with small fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
-        create_connection({fetchsize_kib = 5})
-        test_result_with(2000)
-    end)
-    it("fetches large result sets with large fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
-        create_connection({fetchsize_kib = 50000})
-        test_result_with(2000)
-    end)
+    it("fetches large result sets with small fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
+       function() test_result_with(2000, {fetchsize_kib = 5}) end)
+
+    it("fetches large result sets with large fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
+       function() test_result_with(2000, {fetchsize_kib = 50000}) end)
+
+    it("fetches large result sets with very small fetch size #only",
+       function() test_result_with(1000, {fetchsize_kib = 1 / 1024}) end)
 end)

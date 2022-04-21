@@ -18,6 +18,7 @@ Code name: Initial Release
 * #25: Migrated tests to busted
 * #18: Replaced lunajson with cjson
 * #17: Added unit tests
+* #35: Added integration test for fetching large results with fetch size smaller than the row size
 
 ## Documentation
 
