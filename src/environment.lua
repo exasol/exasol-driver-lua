@@ -50,11 +50,11 @@ end
 
 --- Login to the database.
 --- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
----@param socket ExasolWebsocket the connection to the database
----@param username string the username
----@param password string the password
----@return table|nil connection metadata in case login was successful
----@return nil|table|string an error if login failed
+--- @param socket ExasolWebsocket the connection to the database
+--- @param username string the username
+--- @param password string the password
+--- @return table|nil connection metadata in case login was successful
+--- @return nil|table <code>nil</code> if the operation was successful, otherwise the error that occured
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -68,7 +68,7 @@ end
 --- @param username string the username for logging in to the Exasol database
 --- @param password string the password for logging in to the Exasol database
 --- @return Connection|nil a new Connection or nil if the connection failed
---- @return nil|table|string an error or <code>nil</code> if the connection was successful
+--- @return nil|table <code>nil</code> if the operation was successful, otherwise the error that occured
 --- [impl -> dsn~luasql-environment-connect~0]
 function Environment:connect(sourcename, username, password, properties)
     if self.closed then
