@@ -170,10 +170,7 @@ describe("CursorData", function()
 
             it("converts cjson.null to luasqlexasol.NULL", function()
                 data = create_cursor_data(create_resultset({"c1", "c2"}, {{c1 = 1, c2 = cjson.null}}))
-                -- assert_row({1, driver.NULL, true})
-                local actual = data:get_column_value(2)
-                assert.is_same(driver.NULL, actual)
-                assert.is_equal(driver.NULL, actual)
+                assert_row({1, driver.NULL})
             end)
         end)
 
