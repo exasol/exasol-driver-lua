@@ -6,6 +6,7 @@ local match = require("luassert.match")
 require("assertions")
 
 local exasol_websocket = require("exasol_websocket")
+local constants = require("constants")
 local config = require("config")
 config.configure_logging()
 
@@ -49,15 +50,14 @@ describe("ExasolWebsocket", function()
                                                           ignore_response)
     end
 
-    it("throws error when trying to send command with closed socket", function()
+    it("raises error when trying to send command with closed socket", function()
         exa_socket:close()
         assert.has_error(function() exa_socket:send_disconnect() end,
                          [[E-EDL-22: Websocket already closed when trying to send payload '{"command":"disconnect"}']])
     end)
 
     describe("send_login_command()", function()
-
-        it("throws error response is nil", function()
+        it("raises error response is nil", function()
             simulate_response_string(nil)
             assert.error_matches(function() exa_socket:send_login_command() end,
                                  "E%-EDL%-2: Did not receive response for request payload.*")
@@ -99,11 +99,9 @@ describe("ExasolWebsocket", function()
             assert.is_nil(result)
             assert.is_same("E-EDL-10: Received DB status 'error status' with code code: 'text'", tostring(err))
         end)
-
     end)
 
     describe("send_login_credentials", function()
-
         it("sends login credentials command", function()
             local response_data = {data = 1}
             simulate_ok_response(response_data)
@@ -155,6 +153,56 @@ describe("ExasolWebsocket", function()
             local result, err = exa_socket:send_fetch(1234, 5, 1024)
             assert.is_same("E-EDL-10: Received DB status 'error status' with code code: 'text'", tostring(err))
             assert.is_nil(result)
+        end)
+    end)
+
+    describe("send_set_attribute()", function()
+        it("sends setAttribute command with string value", function()
+            simulate_ok_response()
+            local err = exa_socket:send_set_attribute("attrName", "value")
+            assert.is_nil(err)
+            assert_raw_send('{"command":"setAttributes", "attributes":{"attrName":"value"}}')
+        end)
+
+        it("sends setAttribute command with integer value", function()
+            simulate_ok_response()
+            local err = exa_socket:send_set_attribute("attrName", 1234)
+            assert.is_nil(err)
+            assert_raw_send('{"command":"setAttributes", "attributes":{"attrName":1234}}')
+        end)
+
+        it("sends setAttribute command with float value", function()
+            simulate_ok_response()
+            local err = exa_socket:send_set_attribute("attrName", 3.14)
+            assert.is_nil(err)
+            assert_raw_send('{"command":"setAttributes", "attributes":{"attrName":3.14}}')
+        end)
+
+        it("sends setAttribute command with boolean value", function()
+            simulate_ok_response()
+            local err = exa_socket:send_set_attribute("attrName", false)
+            assert.is_nil(err)
+            assert_raw_send('{"command":"setAttributes", "attributes":{"attrName":false}}')
+        end)
+
+        it("sends setAttribute command with constants.NULL value", function()
+            simulate_ok_response()
+            local err = exa_socket:send_set_attribute("attrName", constants.NULL)
+            assert.is_nil(err)
+            assert_raw_send('{"command":"setAttributes", "attributes":{"attrName":null}}')
+        end)
+
+        it("sends setAttribute command with nil value", function()
+            simulate_ok_response()
+            local err = exa_socket:send_set_attribute("attrName", nil)
+            assert.is_nil(err)
+            assert_raw_send('{"command":"setAttributes", "attributes":{"attrName":null}}')
+        end)
+
+        it("returns error when command fails", function()
+            simulate_response({status = "error status", exception = {sqlCode = "code", text = "text"}})
+            local err = exa_socket:send_set_attribute("attrName", "value")
+            assert.is_same("E-EDL-10: Received DB status 'error status' with code code: 'text'", tostring(err))
         end)
     end)
 

@@ -84,7 +84,7 @@ Mitigations:
 * Check the credentials you provided.]], tostring(err))
         end)
 
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             env:close()
             assert.has_error(function() env:connect("host:1234", "user", "password") end,
                              "E-EDL-21: Attempt to connect using an environment that is already closed")

@@ -10,9 +10,11 @@ local SESSION_ID = 12345
 
 local execute_result = {}
 local execute_error = nil
+local set_attribute_error = nil
 
 local websocket_stub = {
     send_execute = function() return execute_result, execute_error end,
+    send_set_attribute = function() return set_attribute_error end,
     send_disconnect = function() end,
     close = function() end
 }
@@ -41,6 +43,8 @@ describe("Connection", function()
         local connection_properties = ConnectionProperties:create()
         conn = connection:create(connection_properties, websocket_mock, SESSION_ID)
         execute_result = {}
+        execute_error = nil
+        set_attribute_error = nil
     end)
 
     after_each(function()
@@ -49,7 +53,7 @@ describe("Connection", function()
     end)
 
     describe("execute()", function()
-        it("throws error when no results available", function()
+        it("raises error when no results available", function()
             simulate_result(0, {})
             assert.has_error(function() conn:execute("statement") end,
                              [[E-EDL-7: Got no results for statement 'statement'
@@ -70,7 +74,7 @@ Mitigations:
 * Use only statements that return a single result]], tostring(err))
         end)
 
-        it("throws error for unknown result type", function()
+        it("raises error for unknown result type", function()
             simulate_result(1, {{resultType = "unknown"}})
             assert.has_error(function() conn:execute("statement") end, [[E-EDL-9: Got unexpected result type 'unknown'
 
@@ -115,7 +119,7 @@ Mitigations:
             assert.is_nil(cursor:fetch())
         end)
 
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:execute("statement") end,
                              "E-EDL-12: Connection already closed when trying to call 'execute'")
@@ -123,7 +127,7 @@ Mitigations:
     end)
 
     describe("commit()", function()
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:commit() end,
                              "E-EDL-12: Connection already closed when trying to call 'commit'")
@@ -131,7 +135,7 @@ Mitigations:
     end)
 
     describe("rollback()", function()
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:rollback() end,
                              "E-EDL-12: Connection already closed when trying to call 'rollback'")
@@ -139,10 +143,31 @@ Mitigations:
     end)
 
     describe("setautocommit()", function()
-        it("throws error when connection is closed", function()
+        it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:setautocommit(true) end,
                              "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+        end)
+
+        it("returns true when operation was successful", function()
+            set_attribute_error = nil
+            assert.is_true(conn:setautocommit(true))
+        end)
+
+        it("returns false when operation failed", function()
+            set_attribute_error = "simulated error"
+            assert.is_false(conn:setautocommit(true))
+        end)
+
+        describe("sends setAttribute command with", function()
+            local function assert_autocommit_attribute_set(value)
+                conn:setautocommit(value)
+                assert.stub(websocket_mock.send_set_attribute).was.called_with(match.is_table(), "autocommit", value)
+            end
+
+            it("value true", function() assert_autocommit_attribute_set(true) end)
+
+            it("value false", function() assert_autocommit_attribute_set(false) end)
         end)
     end)
 

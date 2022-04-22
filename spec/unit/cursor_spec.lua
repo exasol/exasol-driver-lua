@@ -25,7 +25,7 @@ describe("Cursor", function()
     end
 
     describe("create()", function()
-        it("throws error for inconsistent column count", function()
+        it("raises error for inconsistent column count", function()
             assert.has_error(function() create_cursor({numColumns = 2, columns = {}}) end,
                              [[E-EDL-24: Result set reports 2 but only 0 columns are available
 
@@ -36,7 +36,7 @@ Mitigations:
     end)
 
     describe("fetch()", function()
-        it("throws error when cursor is closed", function()
+        it("raises error when cursor is closed", function()
             local cur = create_cursor(create_resultset({}, {}))
             cur:close()
             assert.has_error(function() cur:fetch() end,
