@@ -67,7 +67,7 @@ jobs:
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
           eval $(luarocks path)
-          LOG_LEVEL=DEBUG \
+          LOG_LEVEL=INFO \
             EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
@@ -93,7 +93,7 @@ jobs:
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
           eval $(luarocks path)
-          LOG_LEVEL=DEBUG \
+          LOG_LEVEL=ERROR \
             EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \

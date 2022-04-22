@@ -120,10 +120,8 @@ end
 --- A call to fetch after the last row has already being returned, will close the corresponding cursor.
 --- The result values are converted to Lua types, i.e. <code>nil</code>, number and string.
 ---
---- Null values from the database are converted by csjon to the userdata value 0x0.
---- You can test for it with <code>value == cjson.null</code>,
---- see https://www.kyne.com.au/~mark/software/lua-cjson-manual.html#_decode and
---- https://www.kyne.com.au/~mark/software/lua-cjson-manual.html#_null for details.
+--- Null values from the database are converted <code>luasqlexasol.NULL</code>.
+--- You can test for it with <code>value == luasqlexasol.NULL</code>.
 ---
 --- @param table table|nil the table to which the result will be copied or nil to return a new table
 --- @param modestring nil|"a"|"n" the mode as described above
