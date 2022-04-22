@@ -166,8 +166,8 @@ end
 --- @return boolean <code>true</code> if the operation was successful
 function ExasolWebsocket:close()
     if self.closed then
-        log.warn("Trying to close a Websocket that is already closed")
-        return true
+        log.warn(tostring(exaerror.create("W-EDL-37", "Trying to close a Websocket that is already closed")))
+        return false
     end
     self.closed = true
     self.websocket:close()

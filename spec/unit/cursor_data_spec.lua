@@ -12,7 +12,7 @@ config.configure_logging()
 local create_resultset<const> = resultstub.create_resultset
 local create_batched_resultset<const> = resultstub.create_batched_resultset
 local create_fetch_result<const> = resultstub.create_fetch_result
-local RESULT_SET_HANDLE<const> = 321
+local RESULT_SET_HANDLE<const> = 1730798808850104320
 local FETCH_SIZE_BYTES<const> = 1024
 
 describe("CursorData", function()
@@ -218,8 +218,8 @@ describe("CursorData", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 websocket_stub = simulate_fetch_error(websocket_stub, "mock error")
                 assert.error(function() data:get_column_value(1) end,
-                             "E-EDL-26: Error fetching result data for handle 321 with start position 0 and " ..
-                                     "fetch size 1024 bytes: 'mock error'")
+                             "E-EDL-26: Error fetching result data for handle 1730798808850104320 with " ..
+                                     "start position 0 and fetch size 1024 bytes: 'mock error'")
             end)
 
             it("returns data for single row [utest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()

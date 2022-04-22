@@ -13,7 +13,7 @@ describe("Environment", function()
     before_each(function() env = driver.exasol() end)
 
     after_each(function()
-        env:close()
+        if not env.closed then assert.is_true(env:close(), "Not all connections where closed") end
         env = nil
     end)
 
@@ -42,6 +42,7 @@ describe("Environment", function()
         local conn, err = env:connect(connection_params.source_name, connection_params.user, connection_params.password)
         assert.is_nil(err)
         assert.is_not_nil(conn)
+        conn:close()
     end)
 
     it("fails connecting when already closed", function()
@@ -51,11 +52,13 @@ describe("Environment", function()
     end)
 
     -- [itest -> dsn~luasql-environment-close~0]
-    it("closes connection when closing an environment", function()
+    it("does not close a connection when closing an environment", function()
         local conn = assert(env:connect(connection_params.source_name, connection_params.user,
                                         connection_params.password))
         env:close()
-        assert.has_error(function() conn:execute("select 1") end,
-                         "E-EDL-12: Connection already closed when trying to call 'execute'")
+        local cur = conn:execute("select 1")
+        assert.is_not_nil(cur)
+        cur:close()
+        conn:close()
     end)
 end)

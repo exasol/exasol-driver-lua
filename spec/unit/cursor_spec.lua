@@ -8,14 +8,15 @@ local resultstub = require("resultstub")
 config.configure_logging()
 
 local create_resultset<const> = resultstub.create_resultset
-local SESSION_ID<const> = 12345
+local SESSION_ID<const> = 1730798808850104320
+local RESULT_SET_HANDLE<const> = 1730798808850104321
 
 describe("Cursor", function()
     local websocket_stub = nil
     local websocket_mock = nil
 
     before_each(function()
-        websocket_stub = {close = function() end}
+        websocket_stub = {close = function() end, send_close_result_set = function() end}
         websocket_mock = mock(websocket_stub, false)
     end)
 
@@ -136,18 +137,12 @@ Mitigations:
     end)
 
     describe("close()", function()
-        it("can be called twice", function()
-            local cur = create_cursor(create_resultset({}, {}))
-            cur:close()
-            cur:close()
-        end)
-
         it("returns true when called once", function()
             local cur = create_cursor(create_resultset({}, {}))
             assert.is_true(cur:close())
         end)
 
-        it("returns fallse when called a second time", function()
+        it("returns false when called a second time", function()
             local cur = create_cursor(create_resultset({}, {}))
             cur:close()
             assert.is_false(cur:close())
@@ -157,6 +152,25 @@ Mitigations:
             local cur = create_cursor(create_resultset({}, {}))
             cur:close()
             assert.stub(websocket_mock.close).was.not_called()
+        end)
+
+        it("raises error when closing the result set handle fails", function()
+            local cur = create_cursor(resultstub.create_batched_resultset({}, 0, RESULT_SET_HANDLE))
+            websocket_stub.send_close_result_set = function() return "mock error" end
+            assert.error(function() cur:close() end,
+                         "E-EDL-28: Failed to close result set 1730798808850104321: 'mock error'")
+        end)
+
+        it("returns true when closing the result set handle succeeds", function()
+            local cur = create_cursor(resultstub.create_batched_resultset({}, 0, RESULT_SET_HANDLE))
+            websocket_stub.send_close_result_set = function() return nil end
+            assert.is_true(cur:close())
+        end)
+
+        it("closes the result set handle", function()
+            local cur = create_cursor(resultstub.create_batched_resultset({}, 0, RESULT_SET_HANDLE))
+            cur:close()
+            assert.stub(websocket_mock.send_close_result_set).was.called_with(match.is_table(), RESULT_SET_HANDLE)
         end)
     end)
 end)
