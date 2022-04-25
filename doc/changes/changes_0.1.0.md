@@ -9,6 +9,7 @@ Code name: Initial Release
 * #1: Setup initial project
 * #5: Added support for mode `"a"` for `cursor:fetch()`
 * #24: Implemented `connection:setautocommit(true|false)`
+* #45: Implemented `close()` methods as defined in the LuaSQL API
 
 ## Bugfixes
 

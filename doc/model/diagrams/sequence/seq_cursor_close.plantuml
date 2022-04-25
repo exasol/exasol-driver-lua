@@ -19,14 +19,14 @@ else Resultset handle available
     activate ws
     ws -> db
     activate db
-    db --> ws
+    db -->> ws
     deactivate db
-    ws --> cur
+    ws -->> cur
     deactivate ws
 end
-cur --> client: Success (boolean)
+cur -->> client: Success (boolean)
 deactivate cur
-destroy cur
+deactivate cur
 deactivate cur
 
 

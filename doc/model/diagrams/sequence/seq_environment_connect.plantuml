@@ -27,9 +27,9 @@ env -> ws: connect(url)
 activate ws
 ws -> db: Connect
 activate db
-db --> ws
+db -->> ws
 deactivate db
-ws --> env
+ws -->> env
 deactivate ws
 group Login command and send credentials
     env -> ws: send_login_command()
@@ -37,9 +37,9 @@ group Login command and send credentials
     ws -> db: Login command
     activate db
     db -> db : Generate public key
-    db --> ws: Login response\nincl. public key
+    db -->> ws: Login response\nincl. public key
     deactivate db
-    ws --> env: Public key
+    ws -->> env: Public key
     deactivate ws
     env -> env: Encrypt password\nwith public key
     env -> ws: send_login_credentials(username,\nencrypted_password)
@@ -47,9 +47,9 @@ group Login command and send credentials
     ws -> db: Credentials
     activate db
     db -> db: Validate credentials
-    db --> ws: Session ID
+    db -->> ws: Session ID
     deactivate db
-    ws --> env: Session ID
+    ws -->> env: Session ID
     deactivate ws
     create conn
     env -> conn: create(session_id)

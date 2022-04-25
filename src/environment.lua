@@ -102,12 +102,18 @@ end
 --- [impl -> dsn~luasql-environment-close~0]
 function Environment:close()
     if self.closed then
-        log.warn(tostring(exaerror.create("E-EDL-20", "Attempted to close an already closed environment")))
-        return true
+        log.warn(tostring(exaerror.create("W-EDL-20", "Attempted to close an already closed environment")))
+        return false
     end
 
-    log.trace("Closing environment: close all %d connections", #self.connections)
-    for _, conn in pairs(self.connections) do conn:close() end
+    log.trace("Closing environment: check if all %d connections are closed", #self.connections)
+    for _, conn in pairs(self.connections) do
+        if not conn.closed then
+            log.warn(tostring(exaerror.create("W-EDL-38",
+                                              "Cannot close environment because not all connections are closed")))
+            return false
+        end
+    end
     self.closed = true
     return true
 end

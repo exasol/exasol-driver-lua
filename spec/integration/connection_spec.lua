@@ -28,7 +28,9 @@ describe("Connection", function()
     end)
 
     after_each(function()
-        if not connection.closed then connection:close() end
+        if not connection.closed then
+            assert.is_true(connection:close(), "Not all cursors were closed in test cleanup")
+        end
         env:close()
         env = nil
         connection = nil
@@ -41,6 +43,7 @@ describe("Connection", function()
             local cursor = assert(connection:execute("select 1"))
             assert.is_same({1}, cursor:fetch())
             assert.is_nil(cursor:fetch())
+            cursor:close()
         end)
 
         it("allows creating a table", function()
@@ -117,7 +120,9 @@ describe("Connection", function()
         end
 
         local function insert_row(table_name, id, name)
-            assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name, id, name)))
+            local row_count = assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name,
+                                                                      id, name)))
+            assert.is_same(1, row_count)
         end
 
         local function assert_row_count_in_new_connection(table_name, expected_row_count)
@@ -173,11 +178,11 @@ describe("Connection", function()
         end)
 
         -- [itest -> dsn~luasql-connection-close~0]
-        it("closes cursors", function()
+        it("does not close cursors", function()
             local cursor = assert(connection:execute("select 1"))
             connection:close()
-            assert.has_error(function() cursor:fetch() end,
-                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+            assert.same({1}, cursor:fetch())
+            cursor:close()
         end)
     end)
 end)

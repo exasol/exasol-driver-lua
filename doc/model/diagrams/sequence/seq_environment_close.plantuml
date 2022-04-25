@@ -15,13 +15,16 @@ activate db
 client -> env : close()
 activate env
 loop for all connections
-    env -> conn : close()
+    env -> conn : closed
     activate conn
-    ref over conn, db: Close connection and its cursors
-    conn --> env
-    destroy conn
+    conn -->> env: is closed
+    deactivate conn
 end
-env --> client: Success (boolean)
-destroy env
+alt at least one connection is not closed
+    env -->> client: false
+else all connections are closed
+    env -->> client: true
+    deactivate env
+end
 
 @enduml

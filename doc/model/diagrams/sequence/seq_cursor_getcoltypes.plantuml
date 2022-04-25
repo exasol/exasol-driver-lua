@@ -15,7 +15,7 @@ ref over client, cur: Use connection to execute a statement and get a cursor
 client -> cur : getcoltypes()
 activate cur
 cur -> cur : Get column types\nfrom local result
-cur --> client : List of column types
+cur -->> client : List of column types
 deactivate cur
 
 

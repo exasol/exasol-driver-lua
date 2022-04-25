@@ -21,14 +21,14 @@ loop Fetch results until fetch() returns nil
         activate ws
         ws -> db
         activate db
-        db --> ws
+        db -->> ws
         deactivate db
-        ws --> cur
+        ws -->> cur
         deactivate ws
         cur -> cur : Store data in local list
     end
     cur -> cur : Get next row from local list
-    cur --> client : Row or nil if no more rows available
+    cur -->> client : Row or nil if no more rows available
     deactivate cur
 end
 

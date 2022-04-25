@@ -18,10 +18,10 @@ activate ws
 ws -> db: execute
 activate db
 db -> db: Commit
-db --> ws
+db -->> ws
 deactivate db
-ws --> conn
-conn --> client: Success (boolean)
+ws -->> conn
+conn -->> client: Success (boolean)
 deactivate conn
 
 @enduml

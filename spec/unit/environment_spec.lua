@@ -92,10 +92,32 @@ Mitigations:
     end)
 
     describe("close()", function()
-        it("closees the websocket when a connection exists", function()
-            local _ = assert(env:connect("host:1234", "user", "password"))
+        it("returns true if called once", function() assert.is_true(env:close()) end)
+
+        it("returns false if called twice", function()
             env:close()
-            assert.stub(websocket_mock.close).was.called()
+            assert.is_false(env:close())
+        end)
+        it("returns false if an open connection exists", function()
+            assert(env:connect("host:1234", "user", "password"))
+            assert.is_false(env:close())
+        end)
+
+        it("returns true if no connection exists", function() assert.is_true(env:close()) end)
+
+        it("returns true if two of two connections are closed", function()
+            local con1 = assert(env:connect("host1:1234", "user1", "password1"))
+            local con2 = assert(env:connect("host2:1234", "user2", "password2"))
+            con1:close()
+            con2:close()
+            assert.is_true(env:close())
+        end)
+
+        it("returns false if one of two connections is closed", function()
+            local con1 = assert(env:connect("host1:1234", "user1", "password1"))
+            assert(env:connect("host2:1234", "user2", "password2"))
+            con1:close()
+            assert.is_false(env:close())
         end)
 
         it("does not close the websocket when no connection exists", function()

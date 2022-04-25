@@ -18,41 +18,43 @@ activate db
 client -> conn : close()
 activate conn
 loop for all cursors
-    conn -> cur : close()
+    conn -> cur : closed
     activate cur
-    ref over cur, db: Close resultset and cursor
-    cur --> conn
-    destroy cur
+    cur -->> conn: is closed
+    deactivate cur
 end
-conn -> exaws : send_disconnect()
-activate exaws
-exaws -> ws : send_raw(payload)
-activate ws
-ws -> luws : wssend(socket,\npayload)
-activate luws
-luws -> db
-db --> luws
-luws --> ws
-deactivate luws
-ws --> exaws
-deactivate ws
-exaws --> conn
-deactivate exaws
-conn -> exaws : close()
-activate exaws
-exaws -> ws : close()
-activate ws
-ws -> luws : wsclose(socket)
-activate luws
-luws -> luws : Close socket
-destroy luws
-luws --> ws
-ws --> exaws
-destroy ws
-exaws --> conn
-destroy exaws
-conn --> client: Success (boolean)
-destroy conn
-
+alt at least one cursor is not closed
+    conn -->> client: false
+else all cursors are closed
+    conn -> exaws : send_disconnect()
+    activate exaws
+    exaws -> ws : send_raw(payload)
+    activate ws
+    ws -> luws : wssend(socket,\npayload)
+    activate luws
+    luws -> db
+    db -->> luws
+    luws -->> ws
+    deactivate luws
+    ws -->> exaws
+    deactivate ws
+    exaws -->> conn
+    deactivate exaws
+    conn -> exaws : close()
+    activate exaws
+    exaws -> ws : close()
+    activate ws
+    ws -> luws : wsclose(socket)
+    activate luws
+    luws -> luws : Close socket
+    luws -->> ws
+    deactivate luws
+    ws -->> exaws
+    deactivate ws
+    exaws -->> conn
+    deactivate exaws
+    conn -->> client: true
+    deactivate conn
+end
 
 @enduml

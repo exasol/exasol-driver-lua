@@ -120,20 +120,28 @@ end
 -- [impl -> dsn~luasql-connection-close~0]
 function Connection:close()
     if self.closed then
-        log.warn("Connection with session ID %d already closed", self.session_id)
-        return true
+        log.warn(tostring(exaerror.create("W-EDL-35", "Connection with session ID {{session_id}} already closed",
+                                          {session_id = self.session_id})))
+        return false
     end
     local cursors = self.cursors
-    log.debug("Closing Session session %d and its %d cursors", self.session_id, #cursors)
-    for _, cur in ipairs(cursors) do cur:close() end
+    log.debug("Closing Session session %d. Check if its %d cursors are closed", self.session_id, #cursors)
+    for _, cur in ipairs(cursors) do
+        if not cur.closed then
+            log.warn(tostring(exaerror.create("W-EDL-34",
+                                              "Cannot close session {{session_id}} because not all cursors are closed",
+                                              {session_id = string.format("%d", self.session_id)})))
+            return false
+        end
+    end
     local err = self.websocket:send_disconnect()
     if err then
         exaerror.create("E-EDL-11", "Error closing session {{session_id}}: {{error}}",
                         {session_id = self.session_id, error = err}):raise()
     end
-    self.websocket:close()
+    local success = self.websocket:close()
     self.closed = true
-    return true
+    return success
 end
 
 return Connection

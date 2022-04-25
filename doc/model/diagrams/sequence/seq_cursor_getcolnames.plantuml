@@ -15,7 +15,7 @@ ref over client, cur: Use connection to execute a statement and get a cursor
 client -> cur : getcolnames()
 activate cur
 cur -> cur : Get column names\nfrom local result
-cur --> client : List of column names
+cur -->> client : List of column names
 deactivate cur
 
 @enduml

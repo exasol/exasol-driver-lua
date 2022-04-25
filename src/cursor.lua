@@ -162,7 +162,7 @@ end
 --- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()
     if self.closed then
-        log.warn("Attempted to close an already closed cursor")
+        log.warn(tostring(exaerror.create("W-EDL-33", "Attempted to close an already closed cursor")))
         return false
     end
     if self.result_set_handle == nil then
@@ -173,8 +173,8 @@ function Cursor:close()
 
     local err = self.websocket:send_close_result_set(self.result_set_handle)
     if err then
-        log.warn(tostring(exaerror.create("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
-                                          {result_set_handle = self.result_set_handle, error = err})))
+        exaerror.create("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
+                        {result_set_handle = self.result_set_handle, error = err}):raise()
         return false
     else
         log.trace("Successfully closed result set %d", self.result_set_handle)

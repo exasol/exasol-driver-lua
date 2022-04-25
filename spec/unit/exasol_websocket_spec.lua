@@ -40,10 +40,7 @@ describe("ExasolWebsocket", function()
         exa_socket = exasol_websocket._create(socket_mock)
     end)
 
-    after_each(function()
-        exa_socket:close()
-        exa_socket = nil
-    end)
+    after_each(function() exa_socket = nil end)
 
     local function assert_raw_send(expected_json, ignore_response)
         assert.stub(socket_mock.send_raw).was.called_with(match.is_table(), match.is_json(expected_json),
@@ -225,6 +222,32 @@ describe("ExasolWebsocket", function()
             simulate_response({status = "error status", exception = {sqlCode = "code", text = "text"}})
             local err = exa_socket:send_disconnect()
             assert.is_nil(err)
+        end)
+    end)
+
+    describe("close()", function()
+        it("closes underlying websocket", function()
+            exa_socket:close()
+            assert.stub(socket_mock.close).was.called_with(match.is_table())
+        end)
+
+        it("closes underlying websocket only once when called twice", function()
+            exa_socket:close()
+            exa_socket:close()
+            assert.stub(socket_mock.close).was.called(1)
+        end)
+
+        it("deletes underlying websocket", function()
+            assert.is_not_nil(exa_socket.websocket)
+            exa_socket:close()
+            assert.is_nil(exa_socket.websocket)
+        end)
+
+        it("returns true when called once", function() assert.is_true(exa_socket:close()) end)
+
+        it("returns false when called twice", function()
+            exa_socket:close()
+            assert.is_false(exa_socket:close())
         end)
     end)
 end)
