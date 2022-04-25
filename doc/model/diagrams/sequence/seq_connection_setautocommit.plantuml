@@ -17,11 +17,11 @@ activate ws
 ws -> db
 activate db
 db -> db : Update autocommit\nstatus for session
-db --> ws
+db -->> ws
 deactivate db
 ws -> conn
 deactivate ws
-conn --> client: Success (boolean)
+conn -->> client: Success (boolean)
 deactivate conn
 
 @enduml

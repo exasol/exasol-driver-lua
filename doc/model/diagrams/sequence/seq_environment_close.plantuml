@@ -17,13 +17,13 @@ activate env
 loop for all connections
     env -> conn : closed
     activate conn
-    conn --> env: is closed
+    conn -->> env: is closed
     deactivate conn
 end
 alt at least one connection is not closed
-    env --> client: false
+    env -->> client: false
 else all connections are closed
-    env --> client: true
+    env -->> client: true
     destroy env
 end
 

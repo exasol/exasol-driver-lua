@@ -20,11 +20,11 @@ activate conn
 loop for all cursors
     conn -> cur : closed
     activate cur
-    cur --> conn: is closed
+    cur -->> conn: is closed
     deactivate cur
 end
 alt at least one cursor is not closed
-    conn --> client: false
+    conn -->> client: false
 else all cursors are closed
     conn -> exaws : send_disconnect()
     activate exaws
@@ -33,12 +33,12 @@ else all cursors are closed
     ws -> luws : wssend(socket,\npayload)
     activate luws
     luws -> db
-    db --> luws
-    luws --> ws
+    db -->> luws
+    luws -->> ws
     deactivate luws
-    ws --> exaws
+    ws -->> exaws
     deactivate ws
-    exaws --> conn
+    exaws -->> conn
     deactivate exaws
     conn -> exaws : close()
     activate exaws
@@ -48,12 +48,12 @@ else all cursors are closed
     activate luws
     luws -> luws : Close socket
     destroy luws
-    luws --> ws
-    ws --> exaws
+    luws -->> ws
+    ws -->> exaws
     destroy ws
-    exaws --> conn
+    exaws -->> conn
     destroy exaws
-    conn --> client: true
+    conn -->> client: true
     destroy conn
 end
 

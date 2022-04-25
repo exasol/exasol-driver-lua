@@ -20,7 +20,7 @@ group Initial Connection
     ws -> msghandler : create()
     ws -> luws : wsopen(url, message_handler)
     activate luws
-    luws --> ws : Socket
+    luws -->> ws : Socket
     deactivate luws
 end
 
@@ -36,7 +36,7 @@ activate luws
 luws -> luws : Encode\nWebsocket frame
 luws -> db : socket:send()
 activate db
-luws --> ws
+luws -->> ws
 deactivate luws
 group Wait for response
     db -> db : Process statement
@@ -44,7 +44,7 @@ group Wait for response
         'activate luws
         ws -> luws : wsreceive(socket)
         activate luws
-        luws --> ws : no data available
+        luws -->> ws : no data available
     end
     db -> luws: Response
     deactivate db
@@ -54,23 +54,23 @@ group Wait for response
     luws -> msghandler : Message received
     activate msghandler
     msghandler -> msghandler : Store message
-    msghandler --> luws
+    msghandler -->> luws
     deactivate msghandler
     deactivate luws
-    luws --> ws : data available
+    luws -->> ws : data available
     deactivate luws
 end
 
 ws -> msghandler : get_data()
 activate msghandler
-msghandler --> ws
+msghandler -->> ws
 deactivate msghandler
-ws --> exaws : Response payload
+ws -->> exaws : Response payload
 deactivate ws
 exaws -> exaws : Decode JSON payload,\ncheck for exception
-exaws --> conn : result set
+exaws -->> conn : result set
 deactivate exaws
-conn --> client : cursor
+conn -->> client : cursor
 deactivate conn
 
 @enduml

@@ -18,10 +18,10 @@ activate ws
 ws -> db: execute
 activate db
 db -> db: Execute query
-db --> ws: Resultset
+db -->> ws: Resultset
 deactivate db
 
-ws --> conn: Resultset
+ws -->> conn: Resultset
 deactivate ws
 alt Resultset handle available
     create cur
@@ -30,7 +30,7 @@ else No resultset handle available
     create cur
     conn -> cur: create(session_id,\nmetadata, nil)
 end
-conn --> client
+conn -->> client
 deactivate conn
 
 ref over client, cur: Use cursor to fetch rows and get metadata
