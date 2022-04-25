@@ -47,14 +47,14 @@ else all cursors are closed
     ws -> luws : wsclose(socket)
     activate luws
     luws -> luws : Close socket
-    destroy luws
     luws -->> ws
+    deactivate luws
     ws -->> exaws
-    destroy ws
+    deactivate ws
     exaws -->> conn
-    destroy exaws
+    deactivate exaws
     conn -->> client: true
-    destroy conn
+    deactivate conn
 end
 
 @enduml
