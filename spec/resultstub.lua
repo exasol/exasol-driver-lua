@@ -18,6 +18,10 @@ function resultstub.create_resultset(column_names, rows)
     return {numRows = #rows, numRowsInMessage = #rows, numColumns = #columns, columns = columns, data = data}
 end
 
+function resultstub.create_empty_resultset_with_columns(columns)
+    return {numRows = 0, numRowsInMessage = 0, numColumns = #columns, columns = columns, data = {}}
+end
+
 --- Creates a result set with a result set handle and without row data.
 --- The database returns this kind of result for large result sets
 --- where we need to fetch the row data in a separate request.

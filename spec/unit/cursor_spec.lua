@@ -136,6 +136,63 @@ Mitigations:
         end)
     end)
 
+    describe("getcoltypes()", function()
+        it("returns empty list when no columns available", function()
+            local cur = create_cursor(resultstub.create_empty_resultset_with_columns({}))
+            assert.is_same({}, cur:getcoltypes())
+        end)
+
+        it("returns type of single column", function()
+            local cur = create_cursor(resultstub.create_empty_resultset_with_columns({{dataType = {type = "type1"}}}))
+            assert.is_same({"type1"}, cur:getcoltypes())
+        end)
+
+        it("returns types of multiple columns", function()
+            local cur = create_cursor(resultstub.create_empty_resultset_with_columns({
+                {dataType = {type = "type1"}}, {dataType = {type = "Type_2"}}, {dataType = {type = "type 3"}}
+            }))
+            assert.is_same({"type1", "Type_2", "type 3"}, cur:getcoltypes())
+        end)
+
+        it("skips column with missing dataType field", function()
+            local cur = create_cursor(resultstub.create_empty_resultset_with_columns({
+                {dataType = {type = "type1"}}, {missing_dataType = {}}, {dataType = {type = "type 3"}}
+            }))
+            assert.is_same({"type1", "type 3"}, cur:getcoltypes())
+        end)
+
+        it("skips column with missing type field", function()
+            local cur = create_cursor(resultstub.create_empty_resultset_with_columns({
+                {dataType = {type = "type1"}}, {dataType = {}}, {dataType = {type = "type 3"}}
+            }))
+            assert.is_same({"type1", "type 3"}, cur:getcoltypes())
+        end)
+    end)
+
+    describe("getcolnames()", function()
+        it("returns empty list when no columns available", function()
+            local cur = create_cursor(create_resultset({}))
+            assert.is_same({}, cur:getcolnames())
+        end)
+
+        it("returns name of a single column", function()
+            local cur = create_cursor(create_resultset({"Col1"}))
+            assert.is_same({"Col1"}, cur:getcolnames())
+        end)
+
+        it("returns name of a multiple columns", function()
+            local cur = create_cursor(create_resultset({"Col1", "col_2", "col 3"}))
+            assert.is_same({"Col1", "col_2", "col 3"}, cur:getcolnames())
+        end)
+
+        it("skips missing column names", function()
+            local cur = create_cursor(resultstub.create_empty_resultset_with_columns({
+                {name = "Col1"}, {wrong_name = "wrong"}, {name = "col 3"}
+            }))
+            assert.is_same({"Col1", "col 3"}, cur:getcolnames())
+        end)
+    end)
+
     describe("close()", function()
         it("returns true when called once", function()
             local cur = create_cursor(create_resultset({}, {}))
