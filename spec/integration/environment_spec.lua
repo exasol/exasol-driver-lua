@@ -13,7 +13,9 @@ describe("Environment", function()
     before_each(function() env = driver.exasol() end)
 
     after_each(function()
-        if not env.closed then assert.is_true(env:close(), "Not all connections where closed during test cleanup") end
+        if not env.closed then
+            assert.is_true(env:close(), "Not all connections where closed during test cleanup")
+        end
         env = nil
     end)
 
