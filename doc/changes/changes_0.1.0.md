@@ -10,6 +10,8 @@ Code name: Initial Release
 * #5: Added support for mode `"a"` for `cursor:fetch()`
 * #24: Implemented `connection:setautocommit(true|false)`
 * #45: Implemented `close()` methods as defined in the LuaSQL API
+* #44: Implemented `cursor:getcoltypes()`
+* #43: Implemented `cursor:getcolnames()`
 
 ## Bugfixes
 

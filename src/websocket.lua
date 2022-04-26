@@ -96,8 +96,14 @@ function Websocket:_wait_for_response(timeout_seconds)
             return nil
         end
         if total_wait_time_seconds >= timeout_seconds then
-            return exaerror.create("E-EDL-18", "Timeout after {{waiting_time}}s and {{try_count}} waiting for data",
-                                   {waiting_time = total_wait_time_seconds, try_count = try_count})
+            return exaerror.create("E-EDL-18",
+                                   "Timeout after {{waiting_time}}s and {{try_count}} tries waiting for data, " ..
+                                           " last result: {{result}}, last error: {{error}}", {
+                waiting_time = total_wait_time_seconds,
+                try_count = try_count,
+                result = result,
+                error = err
+            })
         end
         try_count = try_count + 1
     end

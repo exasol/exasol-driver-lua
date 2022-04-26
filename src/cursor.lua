@@ -51,6 +51,18 @@ local function get_column_names(result_set)
     return names
 end
 
+--- Extracts the column types from a result set.
+--- @param result_set table the result set
+--- @return table a list of column types
+local function get_column_types(result_set)
+    local types = {}
+    local E<const> = {}
+    for _, column in ipairs(result_set.columns) do --
+        table.insert(types, (column.dataType or E).type)
+    end
+    return types
+end
+
 --- Create a new instance of the Cursor class.
 --- @param connection_properties ConnectionProperties connection properties
 --- @param websocket ExasolWebsocket the websocket connection to the database
@@ -60,12 +72,15 @@ end
 --- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
+    local column_types = get_column_types(result_set)
     local object = {
         websocket = websocket,
         session_id = session_id,
         result_set_handle = result_set.resultSetHandle,
         num_columns = result_set.numColumns,
         num_rows = result_set.numRows,
+        column_names = column_names,
+        column_types = column_types,
         col_name_provider = create_col_name_provider(column_names),
         data = CursorData:create(connection_properties, websocket, result_set),
         closed = false
@@ -146,16 +161,12 @@ end
 --- Gets the list of column names.
 --- @return table the list of column names
 --- [impl -> dsn~luasql-cursor-getcolnames~0]
-function Cursor:getcolnames()
-    error("getcolnames will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
-end
+function Cursor:getcolnames() return self.column_names end
 
 --- Gets the list of column types.
 --- @return table the list of column types
 --- [impl -> dsn~luasql-cursor-getcoltypes~0]
-function Cursor:getcoltypes()
-    error("getcoltypes will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
-end
+function Cursor:getcoltypes() return self.column_types end
 
 --- Closes this cursor.
 --- @return boolean <code>true</code> in case of success and <code>false</code> when the cursor is already closed
