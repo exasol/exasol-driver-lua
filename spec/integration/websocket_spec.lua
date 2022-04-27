@@ -85,7 +85,7 @@ describe("Websocket", function()
         end
     end)
 
-    it("log available ssl configuration options, useful for debugging", function()
+    it("log available SSL configuration options, useful for debugging", function()
         local ssl = require("ssl")
         for key, value in pairs(ssl.config.options) do --
             log.debug("ssl.config.options['%s'] = %s", key, value)
