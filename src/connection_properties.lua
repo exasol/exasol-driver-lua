@@ -30,9 +30,9 @@ function ConnectionProperties:_validate()
     end
 end
 
---- Get the configured fetchsize in bytes used when fetching query result data.
+--- Get the configured fetch size in bytes used when fetching query result data.
 --- Configuration property: <code>fetchsize_kib</code>.
---- Default value: <code>131072</code> = <code>128*1024</code>.
+--- Default value: <code>131072</code> = <code>128 * 1024</code>.
 --- @return number fetchsize in bytes
 function ConnectionProperties:get_fetchsize_bytes() --
     return (self.properties.fetchsize_kib or DEFAULT_FETCHSIZE_KIB) * 1024
