@@ -52,7 +52,18 @@ test = {
 build = {
     type = "builtin",
     modules = {
-        luasqlexasol = "src/luasqlexasol.lua"
+        luasqlexasol = "src/luasqlexasol.lua",
+        connection_properties = "src/connection_properties.lua",
+        connection = "src/connection.lua",
+        constants = "src/constants.lua",
+        cursor_data = "src/cursor_data.lua",
+        cursor = "src/cursor.lua",
+        environment = "src/environment.lua",
+        exasol_websocket = "src/exasol_websocket.lua",
+        luws = "src/luws.lua",
+        util = "src/util.lua",
+        websocket_datahandler = "src/websocket_datahandler.lua",
+        websocket = "src/websocket.lua",
     },
     copy_directories = { "doc" }
 }
