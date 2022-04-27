@@ -52,7 +52,7 @@ end
 --- Configuration property: <code>tls_protocol</code>.
 --- Default value: <code>tlsv1_2</code>
 --- Available values: <code>tlsv1</code>, <code>tlsv1_1</code>, <code>tlsv1_2</code>, <code>tlsv1_3</code>.
---- Note: Exasol does not yet support <code>tlsv1_3</code>.
+--- Note: Exasol 7.1.x only supports <code>tlsv1_2</code>.
 --- See https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams
 --- @return string TLS protocol
 function ConnectionProperties:get_tls_protocol() --
