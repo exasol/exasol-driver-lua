@@ -4,23 +4,28 @@ This document contains developer information on how to build, run, modify and pu
 
 ## Prerequisites
 
-This project has the following prerequisites:
+This project has the following build dependencies:
 
-* [Lua](https://www.lua.org/) &ge; 5.4
-* [Luarocks](https://luarocks.org/) &ge; 3.8: Package manager for Lua
-* [OpenSSL](https://www.openssl.org/) &ge; 1.1: Library used for TLS connections and RSA encryption
-* [PlantUML](https://plantuml.com/): Tool for generating images from UML diagrams
+* Install runtime dependencies as described in the [user guide](../user_guide/user_guide.md#install-runtime-dependencies).
+* [PlantUML](https://plantuml.com/): Tool for generating images from UML diagrams.
+* [LuaFormatter](https://github.com/Koihik/LuaFormatter): Tool for formatting the Lua source code. This requires `cmake` to install.
 
-Install the prerequisites like this:
+Install the build dependencies like this:
 
 * macOS:
     ```sh
-    brew install lua luarocks openssl@1.1 plantuml
+    brew install plantuml cmake
     ```
-* Fedora: Installing `luaossl` via luarocks fails on Fedora 35 with a compile error. That's why we install `lua-luaossl` via `yum`:
+* Fedora:
     ```sh
-    sudo yum install lua lua-devel luarocks openssl-devel lua-luaossl plantuml
+    sudo yum install plantuml cmake
     ```
+
+Install LuaFormatter like this:
+
+```sh
+luarocks install --local --server=https://luarocks.org/dev luaformatter
+```
 
 ### Install Runtime Dependencies
 
@@ -94,19 +99,6 @@ lua spec/integration/connection_spec.lua
 ```
 
 ## Source Formatter
-
-First install prerequisites:
-
-* macOS:
-    ```sh
-    brew install cmake
-    ```
-
-Then install [LuaFormatter](https://github.com/Koihik/LuaFormatter):
-
-```sh
-luarocks install --local --server=https://luarocks.org/dev luaformatter
-```
 
 Run the formatter like this:
 
