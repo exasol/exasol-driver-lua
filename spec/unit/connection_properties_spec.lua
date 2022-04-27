@@ -10,7 +10,7 @@ local function assert_validation_error(properties, expected_error)
 end
 
 describe("ConnectionProperties", function()
-    describe("fetchsize_bytes properties", function()
+    describe("fetchsize_kib properties", function()
         local EXPECTED_VALIDATION_ERROR<const> = [[E-EDL-27: Parameter 'fetchsize_kib' must be greater than 0
 
 Mitigations:
@@ -38,5 +38,41 @@ Mitigations:
 
         it("raises error for negative value",
            function() assert_validation_error({fetchsize_kib = -1}, EXPECTED_VALIDATION_ERROR) end)
+    end)
+
+    describe("tls_verify properties", function()
+        it("has default value", function()
+            local props = ConnectionProperties:create()
+            assert.is_same("none", props:get_tls_verify())
+        end)
+
+        it("uses custom value", function()
+            local props = ConnectionProperties:create({tls_verify = "myValue"})
+            assert.is_same("myValue", props:get_tls_verify())
+        end)
+    end)
+
+    describe("tls_protocol properties", function()
+        it("has default value", function()
+            local props = ConnectionProperties:create()
+            assert.is_same("tlsv1_2", props:get_tls_protocol())
+        end)
+
+        it("uses custom value", function()
+            local props = ConnectionProperties:create({tls_protocol = "myValue"})
+            assert.is_same("myValue", props:get_tls_protocol())
+        end)
+    end)
+
+    describe("tls_options properties", function()
+        it("has default value", function()
+            local props = ConnectionProperties:create()
+            assert.is_same("all", props:get_tls_options())
+        end)
+
+        it("uses custom value", function()
+            local props = ConnectionProperties:create({tls_options = "myValue"})
+            assert.is_same("myValue", props:get_tls_options())
+        end)
     end)
 end)

@@ -12,6 +12,7 @@ Code name: Initial Release
 * #45: Implemented `close()` methods as defined in the LuaSQL API
 * #44: Implemented `cursor:getcoltypes()`
 * #43: Implemented `cursor:getcolnames()`
+* #7: Allow specifying TLS options for connecting to Exasol
 
 ## Bugfixes
 
