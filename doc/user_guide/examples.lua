@@ -48,7 +48,8 @@ end
 --
 -- Execute a query and read a single row
 --
-local cursor, err = connection:execute("SELECT ROUND(RANDOM(1, 6)) AS DICE_ROLL")
+local cursor
+cursor, err = connection:execute("SELECT ROUND(RANDOM(1, 6)) AS DICE_ROLL")
 -- Handle query error
 if err == nil then
     log.info("Successfully executed query")
