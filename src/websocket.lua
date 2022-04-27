@@ -63,10 +63,16 @@ end
 
 --- Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
 --- @param url string the websocket url to connect to, e.g. "wss://host:1234"
+--- @param connection_properties ConnectionProperties the connection properties
 --- @return Websocket the open websocket connection
 --- @raise an error if connection does not succeed after the given number of retries
-function Websocket.connect(url)
-    local websocket_options = {receive_timeout = RECEIVE_TIMEOUT_SECONDS}
+function Websocket.connect(url, connection_properties)
+    local websocket_options = {
+        receive_timeout = RECEIVE_TIMEOUT_SECONDS,
+        ssl_protocol = connection_properties:get_tls_protocol(),
+        ssl_verify = connection_properties:get_tls_verify(),
+        ssl_options = connection_properties:get_tls_options()
+    }
     log.debug("Connecting to '%s' with %d retries", url, CONNECT_RETRY_COUNT)
     return connect_with_retry(url, websocket_options, CONNECT_RETRY_COUNT)
 end

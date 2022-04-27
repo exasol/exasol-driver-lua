@@ -23,9 +23,10 @@ end
 
 --- Creates a new Exasol websocket.
 --- @param url string the websocket URL, e.g. <code>wss://exasoldb.example.com:8563</code>
+--- @param connection_properties ConnectionProperties the connection properties
 --- @return ExasolWebsocket the new websocket
-function ExasolWebsocket.connect(url)
-    local websocket<const> = raw_websocket.connect(url)
+function ExasolWebsocket.connect(url, connection_properties)
+    local websocket<const> = raw_websocket.connect(url, connection_properties)
     return ExasolWebsocket._create(websocket)
 end
 

@@ -75,7 +75,7 @@ function Environment:connect(sourcename, username, password, properties)
         exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
     end
     local connection_properties = ConnectionProperties:create(properties)
-    local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename)
+    local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename, connection_properties)
     local response, err = login(socket, username, password)
     if err then
         socket:close()

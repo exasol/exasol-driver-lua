@@ -28,7 +28,7 @@ describe("Connection", function()
     end)
 
     after_each(function()
-        if not connection.closed then
+        if connection and not connection.closed then
             assert.is_true(connection:close(), "Not all cursors were closed in test cleanup")
         end
         env:close()
