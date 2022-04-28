@@ -1,11 +1,11 @@
 local exaerror = require("exaerror")
 
---- This module contains common utility functions.
+-- This module contains common utility functions.
 -- @module M
 local M = {}
 
---- Make a table read-only be wrapping it in a proxy that raises an error for modifications.
---- See https://www.lua.org/pil/13.4.5.html for details.
+-- Make a table read-only be wrapping it in a proxy that raises an error for modifications.
+-- See https://www.lua.org/pil/13.4.5.html for details.
 function M.read_only(table)
     local proxy = {}
     local metatable = {
