@@ -3,7 +3,7 @@ local log = require("remotelog")
 local exaerror = require("exaerror")
 local cursor = require("cursor")
 
--- This class represents a database connection that provides methods for interacting with the database,
+--- This class represents a database connection that provides methods for interacting with the database,
 -- e.g. executing queries.
 -- @class Connection
 -- @field private websocket ExasolWebsocket the websocket
@@ -11,7 +11,7 @@ local cursor = require("cursor")
 -- @field private closed boolean specifies if this connection is closed
 local Connection = {}
 
--- Create a new instance of the Connection class.
+--- Create a new instance of the Connection class.
 -- @param connection_properties ConnectionProperties the connection properties
 -- @param websocket ExasolWebsocket websocket connection to the database
 -- @param session_id string session ID of the current database connection
@@ -30,7 +30,7 @@ function Connection:create(connection_properties, websocket, session_id)
     return object
 end
 
--- Verify that this connection is open before executing an operation
+--- Verify that this connection is open before executing an operation
 -- @param operation string the operation to be executed (used in the potential error message)
 -- @raise an error if this connection is closed
 function Connection:_verify_connection_open(operation)
@@ -40,7 +40,7 @@ function Connection:_verify_connection_open(operation)
     end
 end
 
--- Executes the given SQL statement.
+--- Executes the given SQL statement.
 -- @param statement string the SQL statement to execute
 -- @return Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
 --   or nil in case there was an error executing the statement
@@ -79,7 +79,7 @@ function Connection:execute(statement)
     return cur, nil
 end
 
--- Commits the current transaction.
+--- Commits the current transaction.
 -- @return boolean <code>true</code> in case of success
 -- [impl -> dsn~luasql-connection-commit~0]
 function Connection:commit()
@@ -87,7 +87,7 @@ function Connection:commit()
     error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
--- Rolls back the current transaction.
+--- Rolls back the current transaction.
 -- @return boolean <code>true</code> in case of success
 -- [impl -> dsn~luasql-connection-rollback~0]
 function Connection:rollback()
@@ -95,7 +95,7 @@ function Connection:rollback()
     error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
--- Turns on or off the "auto commit" mode.
+--- Turns on or off the "auto commit" mode.
 -- Auto commit is on by default. If auto commit is off, you must explicitly execute the <code>COMMIT</code> command
 -- to commit the transaction.
 -- @param autocommit boolean <code>true</code> to enable auto commit, <code>false</code> to disable auto commit
@@ -114,7 +114,7 @@ function Connection:setautocommit(autocommit)
     end
 end
 
--- Closes this connection and all cursors created using this connection.
+--- Closes this connection and all cursors created using this connection.
 -- @return boolean <code>true</code> in case of success
 -- @raise an error in case disconnecting fails
 -- [impl -> dsn~luasql-connection-close~0]

@@ -6,7 +6,7 @@ local cjson = require("cjson")
 
 -- luacheck: no unused args
 
--- This class represents the result data of a cursor that allows retreiving rows from a result set.
+--- This class represents the result data of a cursor that allows retreiving rows from a result set.
 -- It handles large result sets by fetching new batches automatically.
 -- @class CursorData
 -- @field private data table|nil the data received from the server. May be <code>nil</code> in case of
@@ -23,7 +23,7 @@ local cjson = require("cjson")
 --   containing e.g. fetch size
 local CursorData = {}
 
--- Create a new instance of the CursorData class.
+--- Create a new instance of the CursorData class.
 -- @param connection_properties ConnectionProperties the user defined connection settings, containing e.g. fetch size
 -- @param websocket ExasolWebsocket the websocket connection to the database
 -- @param result_set table the result set received when executing a query
@@ -52,21 +52,21 @@ function CursorData:create(connection_properties, websocket, result_set)
     return object
 end
 
--- Advances the cursor data to the next row.
+--- Advances the cursor data to the next row.
 function CursorData:next_row()
     self.current_row = self.current_row + 1
     self.current_row_in_batch = self.current_row_in_batch + 1
 end
 
--- Get the current row number.
+--- Get the current row number.
 -- @return number the current row number (starting with 1) of the complete result set
 function CursorData:get_current_row() return self.current_row end
 
--- Check if there are more rows available in the result set.
+--- Check if there are more rows available in the result set.
 -- @return boolean <code>true</code> if there are more rows available
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
--- Convert a column value if necessary before returining it.
+--- Convert a column value if necessary before returining it.
 -- We need to replace <code>cjson.null</code> with <code>luasqlexasol.NULL</code> to hide the implementation
 -- detail that we are using cjson for JSON parsing.
 local function convert_col_value(col_value)
@@ -77,7 +77,7 @@ local function convert_col_value(col_value)
     end
 end
 
--- Get a column value from the current row.
+--- Get a column value from the current row.
 -- Fetches the next batch in case not enough data is available.
 -- @param column_index number the column index starting with 1
 -- @return any the value of the given column
@@ -99,7 +99,7 @@ function CursorData:get_column_value(column_index)
     return convert_col_value(value)
 end
 
--- Fetch the next batch of data if no more rows are available locally.
+--- Fetch the next batch of data if no more rows are available locally.
 -- [impl -> dsn~luasql-cursor-fetch-resultsethandle~0]
 function CursorData:_fetch_data()
     if not self.result_set_handle and not self.data then

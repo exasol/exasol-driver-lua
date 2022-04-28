@@ -17,13 +17,13 @@ local function load_exasol_websocket(args)
     end
 end
 
--- This class provides methods for connecting to an Exasol database and closing all connections.
+--- This class provides methods for connecting to an Exasol database and closing all connections.
 -- @class Environment
 -- @field private exasol_websocket ExasolWebsocket
 -- @field private connections table list of created connections
 local Environment = {}
 
--- Create a new instance of the Environment class
+--- Create a new instance of the Environment class
 -- @param args table|nil allows injecting a websocket module. This is only useful in unit tests and
 --   should be nil in production code.
 -- @return Environment a new instance
@@ -35,7 +35,7 @@ function Environment:new(args)
     return object
 end
 
--- Encrypts a password using the given public key modulus and exponent.
+--- Encrypts a password using the given public key modulus and exponent.
 -- @param publicKeyModulus string the hex encoded modulus of the public key
 -- @param publicKeyExponent string the hex encoded exponent of the public key
 -- @param password string the password to encrypt
@@ -48,7 +48,7 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     return base64.encode(rsa:encrypt(password))
 end
 
--- Login to the database.
+--- Login to the database.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 -- @param socket ExasolWebsocket the connection to the database
 -- @param username string the username
@@ -62,7 +62,7 @@ local function login(socket, username, password)
     return socket:send_login_credentials(username, encrypted_password)
 end
 
--- Connect to an Exasol database.
+--- Connect to an Exasol database.
 -- @param sourcename string hostname and port of the Exasol database, separated with a colon, e.g.:
 --   <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
 -- @param username string the username for logging in to the Exasol database
@@ -97,7 +97,7 @@ function Environment:connect(sourcename, username, password, properties)
     return conn, nil
 end
 
--- Closes the environment and all connections created using it.
+--- Closes the environment and all connections created using it.
 -- @return boolean <code>true</code> if all connections where closed successfully
 -- [impl -> dsn~luasql-environment-close~0]
 function Environment:close()

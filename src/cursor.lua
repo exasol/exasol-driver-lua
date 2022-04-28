@@ -8,7 +8,7 @@ local CursorData = require("cursor_data")
 local FETCH_MODE_NUMERIC_INDICES = "n"
 local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused variable
 
--- This class represents a cursor that allows retreiving rows from a result set.
+--- This class represents a cursor that allows retreiving rows from a result set.
 -- @class Cursor
 -- @field private col_name_provider function
 -- @field private num_columns number
@@ -18,14 +18,14 @@ local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused var
 -- @field private result_set_handle string|nil
 local Cursor = {}
 
--- This result table index provider returns the column index.
+--- This result table index provider returns the column index.
 -- This is used for fetch mode "n" (numeric indices in the result table).
 -- To avoid creating a new function for each row we create this only once and re-use it.
 -- @param col_index number the column index
 -- @return number the column index
 local function col_index_provider(col_index) return col_index end
 
--- This function creates a result table index provider that returns the column name.
+--- This function creates a result table index provider that returns the column name.
 -- This is used for fetch mode "a" (alphanumeric indices in the result table).
 -- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
 -- @param column_names table a list of column names
@@ -36,7 +36,7 @@ local function create_col_name_provider(column_names) --
     end
 end
 
--- This function extracts the column names from a result set.
+--- This function extracts the column names from a result set.
 -- @param result_set table the result set
 -- @return table a list of column names
 -- @raise an error if the number of columns is not equal to the number reported by the result set
@@ -51,7 +51,7 @@ local function get_column_names(result_set)
     return names
 end
 
--- Extracts the column types from a result set.
+--- Extracts the column types from a result set.
 -- @param result_set table the result set
 -- @return table a list of column types
 local function get_column_types(result_set)
@@ -63,7 +63,7 @@ local function get_column_types(result_set)
     return types
 end
 
--- Create a new instance of the Cursor class.
+--- Create a new instance of the Cursor class.
 -- @param connection_properties ConnectionProperties connection properties
 -- @param websocket ExasolWebsocket the websocket connection to the database
 -- @param session_id string the session ID of the current database connection
@@ -90,7 +90,7 @@ function Cursor:create(connection_properties, websocket, session_id, result_set)
     return object
 end
 
--- Gets a result table index provider for the given fetch mode.
+--- Gets a result table index provider for the given fetch mode.
 -- @param modestring "a"|"n" the fetch mode: "a" for alphanumeric indices, "n" for numeric indices (default)
 -- @return function a function that maps column indices to a table index
 --   in the result table
@@ -102,7 +102,7 @@ function Cursor:_get_result_table_index_provider(modestring)
     end
 end
 
--- Fills the given table with the values of the current row.
+--- Fills the given table with the values of the current row.
 -- @param table table the table to fill
 -- @param modestring "a"|"n" determines which indices are used when filling the table:
 --                   "a" for alphanumeric indices, "n" for numeric indices (default)
@@ -119,7 +119,7 @@ function Cursor:_fill_row(table, modestring)
     end
 end
 
--- Retrieves the next row of results.
+--- Retrieves the next row of results.
 -- If fetch is called without parameters, the results will be returned directly to the caller.
 -- If fetch is called with a table, the results will be copied into the table and the changed table will be returned.
 -- In this case, an optional modestring parameter can be used. It is a string indicating how the resulting table
@@ -158,17 +158,17 @@ function Cursor:fetch(table, modestring)
     return table
 end
 
--- Gets the list of column names.
+--- Gets the list of column names.
 -- @return table the list of column names
 -- [impl -> dsn~luasql-cursor-getcolnames~0]
 function Cursor:getcolnames() return self.column_names end
 
--- Gets the list of column types.
+--- Gets the list of column types.
 -- @return table the list of column types
 -- [impl -> dsn~luasql-cursor-getcoltypes~0]
 function Cursor:getcoltypes() return self.column_types end
 
--- Closes this cursor.
+--- Closes this cursor.
 -- @return boolean <code>true</code> in case of success and <code>false</code> when the cursor is already closed
 -- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()

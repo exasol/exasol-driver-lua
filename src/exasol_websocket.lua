@@ -5,12 +5,12 @@ local log = require("remotelog")
 local raw_websocket = require("websocket")
 local constants = require("constants")
 
--- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
+--- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
 -- @class ExasolWebsocket
 -- @field private websocket Websocket the raw websocket
 local ExasolWebsocket = {}
 
--- Creates a new Exasol websocket.
+--- Creates a new Exasol websocket.
 -- @param websocket Websocket
 -- @return ExasolWebsocket the new websocket
 function ExasolWebsocket._create(websocket)
@@ -21,7 +21,7 @@ function ExasolWebsocket._create(websocket)
     return object
 end
 
--- Creates a new Exasol websocket.
+--- Creates a new Exasol websocket.
 -- @param url string the websocket URL, e.g. <code>wss://exasoldb.example.com:8563</code>
 -- @param connection_properties ConnectionProperties the connection properties
 -- @return ExasolWebsocket the new websocket
@@ -30,7 +30,7 @@ function ExasolWebsocket.connect(url, connection_properties)
     return ExasolWebsocket._create(websocket)
 end
 
--- Sends the login command.
+--- Sends the login command.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 -- This returns a public RSA key used for encrypting the password before sending it with the
 -- send_login_credentials() method.
@@ -41,7 +41,7 @@ function ExasolWebsocket:send_login_command()
     return self:_send_json({command = "login", protocolVersion = 3})
 end
 
--- Sends the login credentials.
+--- Sends the login credentials.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 -- @param username string the username
 -- @param encrypted_password string the password encrypted with the public key returned by send_login_command()
@@ -52,7 +52,7 @@ function ExasolWebsocket:send_login_credentials(username, encrypted_password)
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
 end
 
--- Sends the disconnect command.
+--- Sends the disconnect command.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md
 -- @return table|nil <code>nil</code> if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_disconnect()
@@ -61,7 +61,7 @@ function ExasolWebsocket:send_disconnect()
     return err
 end
 
--- Sends the execute command.
+--- Sends the execute command.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md
 -- @param statement string the SQL statement to execute
 -- @return table|nil from the database or nil if an error occurred
@@ -71,7 +71,7 @@ function ExasolWebsocket:send_execute(statement)
     return self:_send_json(payload)
 end
 
--- Sends the setAttribute command with a given attribute name and value.
+--- Sends the setAttribute command with a given attribute name and value.
 -- To set the null value for an attribute, use <code>constants.NULL</code> or <code>nil</code>.
 -- Both will be translated to <code>null</code> in the JSON command.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/setAttributesV1.md
@@ -84,7 +84,7 @@ function ExasolWebsocket:send_set_attribute(attribute_name, attribute_value)
     return err
 end
 
--- Sends the fetch command.
+--- Sends the fetch command.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/fetchV1.md
 -- @param result_set_handle number result set handle
 -- @param start_position number row offset (0-based) from which to begin data retrieval
@@ -102,7 +102,7 @@ function ExasolWebsocket:send_fetch(result_set_handle, start_position, num_bytes
     return self:_send_json(payload)
 end
 
--- Sends the closeResultSet command.
+--- Sends the closeResultSet command.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/closeResultSetV1.md
 -- @param result_set_handle number result set handle to close
 -- @return table|nil <code>nil</code> if the operation was successful, otherwise the error that occured
@@ -112,7 +112,7 @@ function ExasolWebsocket:send_close_result_set(result_set_handle)
     return err
 end
 
--- Extract the error from the given database response
+--- Extract the error from the given database response
 -- @param response table the response from the database
 -- @return nil|table <code>nil</code> if the operation was successful, otherwise the error that occured
 local function get_response_error(response)
@@ -128,7 +128,7 @@ local function get_response_error(response)
     end
 end
 
--- Send the given payload serialized to JSON to the database and optionally wait for the response
+--- Send the given payload serialized to JSON to the database and optionally wait for the response
 -- and deserialize it from JSON.
 -- @param payload table the payload to send
 -- @param ignore_response boolean|nil <code>false</code> if we expect a response, else <code>true</code>.
@@ -163,7 +163,7 @@ function ExasolWebsocket:_send_json(payload, ignore_response)
     end
 end
 
--- Closes the websocket.
+--- Closes the websocket.
 -- @return boolean <code>true</code> if the operation was successful
 function ExasolWebsocket:close()
     if self.closed then

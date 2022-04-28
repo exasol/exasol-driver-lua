@@ -5,17 +5,17 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
 
--- The number of retries when connection to the data fails.
+--- The number of retries when connection to the data fails.
 local CONNECT_RETRY_COUNT<const> = 3
--- The maximum time in seconds to wait for a response after sending a request.
+--- The maximum time in seconds to wait for a response after sending a request.
 local RECEIVE_TIMEOUT_SECONDS<const> = 5
 
--- This class represents a websocket connection that allows sending and receiving messages.
+--- This class represents a websocket connection that allows sending and receiving messages.
 -- @class Websocket
 -- @field private data_handler WebsocketDatahandler the handler for receiving messages
 local Websocket = {}
 
--- Creates a new instance of this class that is not yet opened/connected.
+--- Creates a new instance of this class that is not yet opened/connected.
 -- @return Websocket the new websocket.
 local function create()
     local object = {data_handler = websocket_datahandler:create()}
@@ -25,13 +25,13 @@ local function create()
     return object
 end
 
--- Check if the given error received during connection is recoverable, i.e. we can try to connect again later.
+--- Check if the given error received during connection is recoverable, i.e. we can try to connect again later.
 -- @param err string the received error
 -- @return boolean <code>true</code> if we can retry the connection, <code>false</code> if this is a permanent error
 --   that does not disappear
 local function recoverable_connection_error(err) return string.match(err, ".*failed: connection refused$") end
 
--- Create a connection to a websocket url with the given number of retries.
+--- Create a connection to a websocket url with the given number of retries.
 -- @param url string the websocket url to connect to, e.g. "wss://host:1234"
 -- @param websocket_options table the options passed to LuWS when opening a socket,
 --                          see https://github.com/toggledbits/LuWS#options for details.
@@ -61,7 +61,7 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
     return connection
 end
 
--- Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
+--- Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
 -- @param url string the websocket url to connect to, e.g. "wss://host:1234"
 -- @param connection_properties ConnectionProperties the connection properties
 -- @return Websocket the open websocket connection
@@ -77,7 +77,7 @@ function Websocket.connect(url, connection_properties)
     return connect_with_retry(url, websocket_options, CONNECT_RETRY_COUNT)
 end
 
--- Wait until we receive a response.
+--- Wait until we receive a response.
 -- This is implemented with busy waiting until wsreceive indicates that data was received.
 -- @param timeout_seconds number the number of seconds to wait for a response
 -- @return nil|table <code>nil</code> if a response was received within the timeout or an error if the response
@@ -115,7 +115,7 @@ function Websocket:_wait_for_response(timeout_seconds)
     end
 end
 
--- Send the given payload and optionally wait for the response and return the response.
+--- Send the given payload and optionally wait for the response and return the response.
 -- @param payload string the payload to send
 -- @param ignore_response boolean <code>false</code> if we expect a response.
 -- @return string the received response or nil if ignore_response was <code>true</code> or an error occurred.
@@ -141,7 +141,7 @@ function Websocket:send_raw(payload, ignore_response)
     end
 end
 
--- Disconnect from the server and close this websocket.
+--- Disconnect from the server and close this websocket.
 function Websocket:close()
     if self.closed then return end
     log.trace("Closing websocket")
