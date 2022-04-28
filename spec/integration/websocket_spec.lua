@@ -20,8 +20,8 @@ local function connect(properties, url)
     return sock
 end
 
-local function assert_connect_successful(properties)
-    local sock = connect(properties)
+local function assert_connect_successful(properties, url)
+    local sock = connect(properties, url)
     assert.is_not_nil(sock)
     assert.is_false(sock.closed)
     local result = sock:send_raw('{"command": "login", "protocolVersion": 3}')
@@ -85,8 +85,10 @@ describe("Websocket", function()
         end
     end)
 
-    it("log available SSL configuration options, useful for debugging", function()
+    teardown(function()
+        -- Log available SSL configuration options, useful for debugging
         local ssl = require("ssl")
+        log.debug("Available ssl configuration options:")
         for key, value in pairs(ssl.config.options) do --
             log.debug("ssl.config.options['%s'] = %s", key, value)
         end
