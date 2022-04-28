@@ -9,14 +9,14 @@ local cjson = require("cjson")
 --- This class represents the result data of a cursor that allows retreiving rows from a result set.
 -- It handles large result sets by fetching new batches automatically.
 -- @classmod CursorData
--- @field private data table|nil the data received from the server. May be <code>nil</code> in case of
+-- @field private data table|nil the data received from the server. May be `nil` in case of
 --   a large result set that requires fetching batches.
 -- @field private current_row number the current row number (starting with 1) of the complete result set
 -- @field private current_row_in_batch number the current row number (starting with 1) in the current batch
 -- @field private num_rows_total number the total row count in the result set
 -- @field private num_rows_in_message number the number of rows in the current batch
 -- @field private num_rows_fetched_total number the number of rows in all batches fetched until now
--- @field private result_set_handle number|nil the result set handle or <code>nil</code> in case of
+-- @field private result_set_handle number|nil the result set handle or `nil` in case of
 --   a small result set
 -- @field private websocket ExasolWebsocket the websocket connection to the database
 -- @field private connection_properties ConnectionProperties the user defined connection settings,
@@ -63,11 +63,11 @@ end
 function CursorData:get_current_row() return self.current_row end
 
 --- Check if there are more rows available in the result set.
--- @return boolean <code>true</code> if there are more rows available
+-- @return boolean `true` if there are more rows available
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
 --- Convert a column value if necessary before returining it.
--- We need to replace <code>cjson.null</code> with <code>luasqlexasol.NULL</code> to hide the implementation
+-- We need to replace `cjson.null` with `luasqlexasol.NULL` to hide the implementation
 -- detail that we are using cjson for JSON parsing.
 local function convert_col_value(col_value)
     if col_value == cjson.null then

@@ -12,7 +12,7 @@ local util = require("util")
 --- The version of this module
 luasqlexasol.VERSION = constants.VERSION
 
---- The value returned by queries to indicate an SQL <code>NULL</code> value.
+--- The value returned by queries to indicate an SQL `NULL` value.
 -- Note: we need to define the NULL constant in separate module constants to break cyclic dependencies.
 luasqlexasol.NULL = constants.NULL
 

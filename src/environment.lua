@@ -54,7 +54,7 @@ end
 -- @param username string the username
 -- @param password string the password
 -- @return table|nil connection metadata in case login was successful
--- @return nil|table <code>nil</code> if the operation was successful, otherwise the error that occured
+-- @return nil|table `nil` if the operation was successful, otherwise the error that occured
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -64,12 +64,12 @@ end
 
 --- Connect to an Exasol database.
 -- @param sourcename string hostname and port of the Exasol database, separated with a colon, e.g.:
---   <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
+--   `exasoldb.example.com:8563`. Note that the port is mandatory.
 -- @param username string the username for logging in to the Exasol database
 -- @param password string the password for logging in to the Exasol database
 -- @param properties optional connection properties
 -- @return Connection|nil a new Connection or nil if the connection failed
--- @return nil|table <code>nil</code> if the operation was successful, otherwise the error that occured
+-- @return nil|table `nil` if the operation was successful, otherwise the error that occured
 -- [impl -> dsn~luasql-environment-connect~0]
 function Environment:connect(sourcename, username, password, properties)
     if self.closed then
@@ -99,7 +99,7 @@ function Environment:connect(sourcename, username, password, properties)
 end
 
 --- Closes the environment and all connections created using it.
--- @return boolean <code>true</code> if all connections where closed successfully
+-- @return boolean `true` if all connections where closed successfully
 -- [impl -> dsn~luasql-environment-close~0]
 function Environment:close()
     if self.closed then

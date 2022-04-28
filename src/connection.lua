@@ -80,7 +80,7 @@ function Connection:execute(statement)
 end
 
 --- Commits the current transaction.
--- @return boolean <code>true</code> in case of success
+-- @return boolean `true` in case of success
 -- [impl -> dsn~luasql-connection-commit~0]
 function Connection:commit()
     self:_verify_connection_open("commit")
@@ -88,7 +88,7 @@ function Connection:commit()
 end
 
 --- Rolls back the current transaction.
--- @return boolean <code>true</code> in case of success
+-- @return boolean `true` in case of success
 -- [impl -> dsn~luasql-connection-rollback~0]
 function Connection:rollback()
     self:_verify_connection_open("rollback")
@@ -96,10 +96,10 @@ function Connection:rollback()
 end
 
 --- Turns on or off the "auto commit" mode.
--- Auto commit is on by default. If auto commit is off, you must explicitly execute the <code>COMMIT</code> command
+-- Auto commit is on by default. If auto commit is off, you must explicitly execute the `COMMIT` command
 -- to commit the transaction.
--- @param autocommit boolean <code>true</code> to enable auto commit, <code>false</code> to disable auto commit
--- @return boolean <code>true</code> in case of success
+-- @param autocommit boolean `true` to enable auto commit, `false` to disable auto commit
+-- @return boolean `true` in case of success
 -- [impl -> dsn~luasql-connection-setautocommit~0]
 function Connection:setautocommit(autocommit)
     self:_verify_connection_open("setautocommit")
@@ -114,7 +114,7 @@ function Connection:setautocommit(autocommit)
 end
 
 --- Closes this connection and all cursors created using this connection.
--- @return boolean <code>true</code> in case of success
+-- @return boolean `true` in case of success
 -- @raise an error in case disconnecting fails
 -- [impl -> dsn~luasql-connection-close~0]
 function Connection:close()
