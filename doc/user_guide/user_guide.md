@@ -1,6 +1,6 @@
-# exasol-driver-lua &mdash; User Guide
+# exasol-driver-lua – User Guide
 
-The Exasol Driver for Lua allows you to execute queries on an Exasol database and retrieve the results. This user guide shows how to use the driver.
+The Exasol Driver for Lua allows you to execute queries on an Exasol database and retrieve the results. This user-guide shows how to use the driver.
 
 ## Installing the Driver and Dependencies
 
@@ -8,9 +8,9 @@ The Exasol Driver for Lua allows you to execute queries on an Exasol database an
 
 This project has the following prerequisites:
 
-* [Lua](https://www.lua.org/) &ge; 5.4
-* [Luarocks](https://luarocks.org/) &ge; 3.8: Package manager for Lua
-* [OpenSSL](https://www.openssl.org/) &ge; 1.1: Library used for TLS connections and RSA encryption
+* [Lua](https://www.lua.org/) ≥ 5.4
+* [Luarocks](https://luarocks.org/) ≥ 3.8: Package manager for Lua
+* [OpenSSL](https://www.openssl.org/) ≥ 1.1: Library used for TLS connections and RSA encryption
 
 Install the prerequisites like this:
 
