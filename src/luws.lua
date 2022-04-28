@@ -235,7 +235,10 @@ function wsopen( url, handler, options )
 			, options=split( default( options.ssl_options, 'all' ) )
 		}
 		D("wsopen() wrap %1 %2", wsconn.socket, opts)
-		sock = ssl.wrap( wsconn.socket, opts )
+		sock, err = ssl.wrap( wsconn.socket, opts )
+		if err ~= nil then
+			return false, "Failed to create SSL socket: '"..err.."'"
+		end
 		D("wsopen() starting handshake");
 		if sock and sock:dohandshake() then
 			D("wsopen() successful SSL/TLS negotiation")
