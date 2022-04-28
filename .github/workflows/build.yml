@@ -50,7 +50,7 @@ jobs:
       - name: "Build"
         run: luarocks make --local
 
-      - name: Run smoketests
+      - name: Run smoketests without database
         run: |
           eval $(luarocks path)
           EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test -- --run=smoketest
@@ -62,6 +62,15 @@ jobs:
             --database-port-forward 8563 \
             --deactivate-database-setup
         working-directory: integration-test-docker-environment
+
+      - name: Run example code
+        run: |
+          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          eval $(luarocks path)
+          EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
+            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            lua doc/user_guide/examples.lua
 
       - name: Run integration tests
         run: |

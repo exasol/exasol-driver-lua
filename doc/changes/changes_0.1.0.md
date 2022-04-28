@@ -31,3 +31,4 @@ Code name: Initial Release
 
 * #17: Added requirements and design documents
 * #34: Adapted documentation of error return type
+* #12: Added user guide
