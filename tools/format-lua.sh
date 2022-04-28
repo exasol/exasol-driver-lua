@@ -12,7 +12,13 @@ readonly test_module_path="$base_dir/spec"
 
 # Don't format third party code
 GLOBIGNORE="$src_module_path/luws.lua"
-lua-format --config="$base_dir/.lua-format" --verbose -i -- "$src_module_path"/*.lua "$test_module_path"/*.lua "$test_module_path"/*/*.lua
+
+lua-format --config="$base_dir/.lua-format" --verbose --in-place -- \
+  "$src_module_path"/*.lua \
+  "$test_module_path"/*.lua \
+  "$test_module_path"/*/*.lua \
+  "$base_dir"/doc/user_guide/examples.lua
+
 unset GLOBIGNORE
 
 "$base_dir/tools/runluacheck.sh"
