@@ -38,14 +38,17 @@ luarocks install --local --deps-only *.rockspec
 On macOS you may need to specify the path to OpenSSL:
 
 ```sh
-openssl=/usr/local/Cellar/openssl@1.1/1.1.1m/
+openssl=/usr/local/Cellar/openssl@1.1/1.1.1n/
 luarocks install --local --deps-only *.rockspec OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
 ```
+
+Adapt the path to `openssl` if you have installed a different version.
 
 ### Install Test and Build Dependencies
 
 ```sh
 luarocks install --local busted
+luarocks install --local ldoc
 ```
 
 #### Troubleshooting `lua-cjson` installation
@@ -129,3 +132,22 @@ To run the requirements tracing with [OpenFastTrace](https://github.com/itsallco
 ```sh
 ./tools/trace-requirements.sh
 ```
+
+# Troubleshooting
+
+## `luarocks install` fails with `bad argument` error
+
+```
+Error: LuaRocks 3.9.0 bug (please report at https://github.com/luarocks/luarocks/issues).
+Arch.: macosx-x86_64
+/Users/chp/.luarocks/share/lua/5.4/socket/http.lua:38: bad argument #1 to 'receive' (string expected, got light userdata)
+stack traceback:
+        [C]: in function 'socket.http.request'
+        .../Cellar/luarocks/3.9.0/share/lua/5.4/luarocks/fs/lua.lua:739: in upvalue 'request'
+        .../Cellar/luarocks/3.9.0/share/lua/5.4/luarocks/fs/lua.lua:847: in upvalue 'http_request'
+        .../Cellar/luarocks/3.9.0/share/lua/5.4/luarocks/fs/lua.lua:907: in function 'luarocks.fs.lua.download'
+```
+
+This is a [known issue](https://github.com/luarocks/luarocks/issues/1302). The recommended solution is to uninstall `luasec` with `luarocks remove --local luasec`.
+
+If this does not help, backup and delete your complete `~/.luarocks`.
