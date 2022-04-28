@@ -5,7 +5,7 @@ local cursor = require("cursor")
 
 --- This class represents a database connection that provides methods for interacting with the database,
 -- e.g. executing queries.
--- @class Connection
+-- @classmod Connection
 -- @field private websocket ExasolWebsocket the websocket
 -- @field private session_id string the session ID for this connection
 -- @field private closed boolean specifies if this connection is closed
@@ -101,7 +101,6 @@ end
 -- @param autocommit boolean <code>true</code> to enable auto commit, <code>false</code> to disable auto commit
 -- @return boolean <code>true</code> in case of success
 -- [impl -> dsn~luasql-connection-setautocommit~0]
--- luacheck: ignore 212 # unused argument autocommit
 function Connection:setautocommit(autocommit)
     self:_verify_connection_open("setautocommit")
     local err = self.websocket:send_set_attribute("autocommit", autocommit)

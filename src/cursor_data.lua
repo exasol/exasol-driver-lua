@@ -8,7 +8,7 @@ local cjson = require("cjson")
 
 --- This class represents the result data of a cursor that allows retreiving rows from a result set.
 -- It handles large result sets by fetching new batches automatically.
--- @class CursorData
+-- @classmod CursorData
 -- @field private data table|nil the data received from the server. May be <code>nil</code> in case of
 --   a large result set that requires fetching batches.
 -- @field private current_row number the current row number (starting with 1) of the complete result set

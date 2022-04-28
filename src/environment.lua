@@ -1,3 +1,9 @@
+--- This class provides methods for connecting to an Exasol database and closing all connections.
+-- @classmod Environment
+-- @field private exasol_websocket ExasolWebsocket
+-- @field private connections table list of created connections
+local Environment = {}
+
 local connection = require("connection")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
@@ -16,12 +22,6 @@ local function load_exasol_websocket(args)
         return require("exasol_websocket")
     end
 end
-
---- This class provides methods for connecting to an Exasol database and closing all connections.
--- @class Environment
--- @field private exasol_websocket ExasolWebsocket
--- @field private connections table list of created connections
-local Environment = {}
 
 --- Create a new instance of the Environment class
 -- @param args table|nil allows injecting a websocket module. This is only useful in unit tests and
@@ -67,6 +67,7 @@ end
 --   <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
 -- @param username string the username for logging in to the Exasol database
 -- @param password string the password for logging in to the Exasol database
+-- @param properties optional connection properties
 -- @return Connection|nil a new Connection or nil if the connection failed
 -- @return nil|table <code>nil</code> if the operation was successful, otherwise the error that occured
 -- [impl -> dsn~luasql-environment-connect~0]

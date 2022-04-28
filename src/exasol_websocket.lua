@@ -1,14 +1,14 @@
+--- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
+-- @classmod ExasolWebsocket
+-- @field private websocket Websocket the raw websocket
+local ExasolWebsocket = {}
+
 local cjson = require("cjson")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local raw_websocket = require("websocket")
 local constants = require("constants")
-
---- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
--- @class ExasolWebsocket
--- @field private websocket Websocket the raw websocket
-local ExasolWebsocket = {}
 
 --- Creates a new Exasol websocket.
 -- @param websocket Websocket

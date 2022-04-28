@@ -5,15 +5,15 @@ local exaerror = require("exaerror")
 local log = require("remotelog")
 local websocket_datahandler = require("websocket_datahandler")
 
---- The number of retries when connection to the data fails.
-local CONNECT_RETRY_COUNT<const> = 3
---- The maximum time in seconds to wait for a response after sending a request.
-local RECEIVE_TIMEOUT_SECONDS<const> = 5
-
 --- This class represents a websocket connection that allows sending and receiving messages.
--- @class Websocket
+-- @classmod Websocket
 -- @field private data_handler WebsocketDatahandler the handler for receiving messages
 local Websocket = {}
+
+-- The number of retries when connection to the data fails.
+local CONNECT_RETRY_COUNT<const> = 3
+-- The maximum time in seconds to wait for a response after sending a request.
+local RECEIVE_TIMEOUT_SECONDS<const> = 5
 
 --- Creates a new instance of this class that is not yet opened/connected.
 -- @return Websocket the new websocket.

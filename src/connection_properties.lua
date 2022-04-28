@@ -5,7 +5,7 @@ local exaerror = require("exaerror")
 local DEFAULT_FETCHSIZE_KIB<const> = 128
 
 --- This class represents configuration properties for a database connection.
--- @class ConnectionProperties
+-- @classmod ConnectionProperties
 -- @field private properties table the properties
 local ConnectionProperties = {}
 

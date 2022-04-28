@@ -4,7 +4,7 @@ local exaerror = require("exaerror")
 
 --- This class is registered as a callback for incoming messages when connecting to a websocket.
 -- It collects incoming messages and logs warnings in case a websocket error occurs.
--- @class WebsocketDatahandler
+-- @classmod WebsocketDatahandler
 -- @field private expecting_data boolean flag indicating if we are expecting to receive data from the websocket or not
 -- @field private data table a list for collecting all data received from the websocket
 local WebsocketDatahandler = {}
