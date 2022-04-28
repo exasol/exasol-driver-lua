@@ -124,7 +124,7 @@ describe("Websocket", function()
             end
         end)
 
-        describe("fails with invalid value for comma separated list with space", function()
+        it("fails with invalid value for comma separated list with space", function()
             assert_connect_fails({tls_options = "no_tlsv1_2, all"},
                                  get_ssl_socket_creation_error("invalid option ( all)"))
         end)
