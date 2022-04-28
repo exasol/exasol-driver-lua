@@ -6,7 +6,6 @@ local raw_websocket = require("websocket")
 local constants = require("constants")
 
 --- This class represents a websocket connection to an Exasol database that provides functions for sending commands.
--- @class ExasolWebsocket
 -- @field private websocket Websocket the raw websocket
 local ExasolWebsocket = {}
 
