@@ -67,6 +67,12 @@ luarocks install lua-cjson --local "CFLAGS=-O3 -Wall -pedantic -DNDEBUG -DLUA_CO
 
 You need an Exasol database for running the tests. You can start a Docker instance either manually as described in [docker-db](https://github.com/EXASOL/docker-db) or using the [integration-test-docker-environment](https://github.com/exasol/integration-test-docker-environment).
 
+To start Exasol in a Docker container, run the following:
+
+```sh
+docker run --publish 8563:8563 --detach --privileged --stop-timeout 120 exasol/docker-db:7.1.9
+```
+
 Once Exasol is running, start the tests by executing:
 
 ```sh
@@ -79,7 +85,7 @@ EXASOL_HOST=<host> \
 
 This will run all tests and print the test coverage.
 
-The following environment variables have a default value and can be omitted:
+The following environment variables have a default value and can be omitted when using the Docker container `exasol/docker-db`:
 
 * `EXASOL_PORT` = `8563`
 * `EXASOL_USER` = `sys`
