@@ -18,6 +18,7 @@ local function load_exasol_websocket(args)
 end
 
 --- This class provides methods for connecting to an Exasol database and closing all connections.
+-- @class Environment
 -- @field private exasol_websocket ExasolWebsocket
 -- @field private connections table list of created connections
 local Environment = {}

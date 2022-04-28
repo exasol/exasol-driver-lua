@@ -5,6 +5,7 @@ local cursor = require("cursor")
 
 --- This class represents a database connection that provides methods for interacting with the database,
 -- e.g. executing queries.
+-- @class Connection
 -- @field private websocket ExasolWebsocket the websocket
 -- @field private session_id string the session ID for this connection
 -- @field private closed boolean specifies if this connection is closed

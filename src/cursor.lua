@@ -9,6 +9,7 @@ local FETCH_MODE_NUMERIC_INDICES = "n"
 local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused variable
 
 --- This class represents a cursor that allows retreiving rows from a result set.
+-- @class Cursor
 -- @field private col_name_provider function
 -- @field private num_columns number
 -- @field private num_rows number

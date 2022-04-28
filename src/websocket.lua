@@ -11,6 +11,7 @@ local CONNECT_RETRY_COUNT<const> = 3
 local RECEIVE_TIMEOUT_SECONDS<const> = 5
 
 --- This class represents a websocket connection that allows sending and receiving messages.
+-- @class Websocket
 -- @field private data_handler WebsocketDatahandler the handler for receiving messages
 local Websocket = {}
 
