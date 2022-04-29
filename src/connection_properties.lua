@@ -6,12 +6,43 @@ local DEFAULT_FETCHSIZE_KIB<const> = 128
 
 --- This class represents configuration properties for a database connection.
 -- @classmod ConnectionProperties
--- @field private properties table the properties
 local ConnectionProperties = {}
 
+------
+-- Available properties for the @{create} method.
+-- @table properties
+--
+-- @field fetchsize_kib The fetch size in KiB used when fetching query result data, see @{get_fetchsize_bytes}. Default value: `128`.
+--
+-- @field tls_verify The TLS verify mode for connecting to Exasol, see @{get_tls_verify} and
+-- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams). Default value: `none`, available values:
+--
+-- * `none`
+-- * `peer`
+-- * `client_once`
+-- * `fail_if_no_peer_cert`
+-- 
+-- @field tls_protocol The TLS protocol for connecting to Exasol, see @{get_tls_protocol} and
+-- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams). Default value: `tlsv1_2`, available values:
+--
+-- * `tlsv1`
+-- * `tlsv1_1`
+-- * `tlsv1_2`
+-- * `tlsv1_3`
+-- 
+-- Run the following command to find out which TLS version your Exasol server supports:
+-- 
+-- `openssl s_client -connect "<IP-Address>:<Port>" < /dev/null 2>/dev/null | grep Protocol`
+--
+-- @field tls_options The TLS options for connecting to Exasol, see @{get_tls_options}.
+-- The value is a comma separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
+-- Default value: `all`. See output of the following Lua code for a list of available values:
+-- 
+-- `require("ssl").config.options`
+
 --- Create a new instance of the Connection class.
--- @param properties table|nil a properties object or `nil` to use default settings
--- @return Connection connection the new instance
+-- @tparam ?table properties a properties object or `nil` to use default settings. See @{properties} for details.
+-- @treturn Connection connection the new instance
 -- @raise error if given properties are not valid
 function ConnectionProperties:create(properties)
     log.trace("Created new connection properties")
@@ -31,51 +62,30 @@ function ConnectionProperties:_validate()
 end
 
 --- Get the configured fetch size in bytes used when fetching query result data.
--- Configuration property: `fetchsize_kib`.
+-- Configuration property: `fetchsize_kib`, see @{properties}.
 -- Default value: `131072` = `128 * 1024`.
--- @return number fetchsize in bytes
+-- @treturn integer fetchsize in bytes
 function ConnectionProperties:get_fetchsize_bytes() --
     return (self.properties.fetchsize_kib or DEFAULT_FETCHSIZE_KIB) * 1024
 end
 
 --- Get the configured TLS verify mode for connecting to Exasol.
--- Configuration property: `tls_verify`.
--- Default value: `none`.
--- Available values: `none`, `peer`, `client_once`, `fail_if_no_peer_cert`.
--- See [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
--- @return string TLS verify mode
+-- Configuration property: `tls_verify`, see @{properties}.
+-- @treturn string TLS verify mode
 function ConnectionProperties:get_tls_verify() --
     return self.properties.tls_verify or "none"
 end
 
 --- Get the configured TLS protocol for connecting to Exasol.
---
--- * Configuration property: `tls_protocol`.
--- * Default value: `tlsv1_2`
--- * Available values:
---     * `tlsv1`
---     * `tlsv1_1`
---     * `tlsv1_2`
---     * `tlsv1_3`
--- 
--- See [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
--- Run the following command to find out which TLS version your Exasol server supports:
--- 
--- `openssl s_client -connect "<IP-Address>:<Port>" < /dev/null 2>/dev/null | grep Protocol`
--- @return string TLS protocol
+-- Configuration property: `tls_protocol`, see @{properties}.
+-- @treturn string TLS protocol
 function ConnectionProperties:get_tls_protocol() --
     return self.properties.tls_protocol or "tlsv1_2"
 end
 
---- Get the configured TLS options for connecting to Exasol.
--- The value is a comma separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
---
--- * Configuration property: `tls_options`.
--- * Default value: `all`.
--- * Available values: see output of
--- 
--- `require("ssl").config.options`
--- @return string TLS options
+--- Get the configured 
+-- Configuration property: `tls_options`, see @{properties}.
+-- @treturn string TLS options
 function ConnectionProperties:get_tls_options() --
     return self.properties.tls_options or "all"
 end

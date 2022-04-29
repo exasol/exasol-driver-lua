@@ -1,9 +1,10 @@
 --- Example usage of the LuaSQL driver for Exasol
--- @module examples
+-- @script examples.lua
 
 local log = require("remotelog")
 
--- This reads the connection configuration from system environment variables
+-- This function reads the connection configuration
+-- from system environment variables
 local function get_config()
     local function get_system_env(varname, default)
         local value = os.getenv(varname) or default

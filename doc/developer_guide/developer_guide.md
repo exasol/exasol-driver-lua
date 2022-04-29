@@ -21,12 +21,6 @@ Install the build dependencies like this:
     sudo yum install plantuml cmake
     ```
 
-Install LuaFormatter like this:
-
-```sh
-luarocks install --local --server=https://luarocks.org/dev luaformatter
-```
-
 ### Install Runtime Dependencies
 
 See the [list of dependencies](../../dependencies.md) for details. Install dependencies by executing:
@@ -49,6 +43,7 @@ Adapt the path to `openssl` if you have installed a different version.
 ```sh
 luarocks install --local busted
 luarocks install --local ldoc
+luarocks install --local --server=https://luarocks.org/dev luaformatter
 ```
 
 #### Troubleshooting `lua-cjson` installation

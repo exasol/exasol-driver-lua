@@ -39,3 +39,4 @@ sort = false
 backtick_references = false
 wrap = true
 no_space_before_args = true
+all = true -- show also local functions

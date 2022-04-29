@@ -24,9 +24,9 @@ local function load_exasol_websocket(args)
 end
 
 --- Create a new instance of the Environment class
--- @param args table|nil allows injecting a websocket module. This is only useful in unit tests and
---   should be nil in production code.
--- @return Environment a new instance
+-- @tparam ?table args allows injecting a websocket module. This is only useful in unit tests and
+--   should be `nil` in production code.
+-- @treturn Environment a new instance
 function Environment:new(args)
     local object = {closed = false, connections = {}}
     object.exasol_websocket = load_exasol_websocket(args)
@@ -36,10 +36,10 @@ function Environment:new(args)
 end
 
 --- Encrypts a password using the given public key modulus and exponent.
--- @param publicKeyModulus string the hex encoded modulus of the public key
--- @param publicKeyExponent string the hex encoded exponent of the public key
--- @param password string the password to encrypt
--- @return string the encrypted password
+-- @tparam string publicKeyModulus the hex encoded modulus of the public key
+-- @tparam string publicKeyExponent the hex encoded exponent of the public key
+-- @tparam string password the password to encrypt
+-- @treturn string the encrypted password
 local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
     local rsa = pkey.new({type = "RSA", bits = 1024})
     local modulus = bignum.new("0x" .. publicKeyModulus)
@@ -50,11 +50,11 @@ end
 
 --- Login to the database.
 -- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
--- @param socket ExasolWebsocket the connection to the database
--- @param username string the username
--- @param password string the password
--- @return table|nil connection metadata in case login was successful
--- @return nil|table `nil` if the operation was successful, otherwise the error that occured
+-- @tparam ExasolWebsocket socket the connection to the database
+-- @tparam string username the username
+-- @tparam string password the password
+-- @treturn ?table connection metadata in case login was successful
+-- @treturn ?table `nil` if the operation was successful, otherwise the error that occured
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -63,15 +63,16 @@ local function login(socket, username, password)
 end
 
 --- Connect to an Exasol database.
--- @param sourcename string hostname and port of the Exasol database, separated with a colon, e.g.:
+-- @tparam string sourcename hostname and port of the Exasol database, separated with a colon, e.g.:
 --   `exasoldb.example.com:8563`. Note that the port is mandatory.
--- @param username string the username for logging in to the Exasol database
--- @param password string the password for logging in to the Exasol database
--- @param properties optional connection properties
--- @return Connection|nil a new Connection or nil if the connection failed
--- @return nil|table `nil` if the operation was successful, otherwise the error that occured
--- [impl -> dsn~luasql-environment-connect~0]
+-- @tparam string username the username for logging in to the Exasol database
+-- @tparam string password the password for logging in to the Exasol database
+-- @tparam ?table properties optional connection properties @ref{ConnectionProperties:create}
+-- @treturn ?Connection a new Connection or `nil` if the connection failed
+-- @treturn ?table `nil` if the operation was successful, otherwise the error that occured
+-- @see ConnectionProperties:create
 function Environment:connect(sourcename, username, password, properties)
+    -- [impl -> dsn~luasql-environment-connect~0]
     if self.closed then
         exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
     end
@@ -99,9 +100,9 @@ function Environment:connect(sourcename, username, password, properties)
 end
 
 --- Closes the environment and all connections created using it.
--- @return boolean `true` if all connections where closed successfully
--- [impl -> dsn~luasql-environment-close~0]
+-- @treturn boolean `true` if all connections where closed successfully
 function Environment:close()
+    -- [impl -> dsn~luasql-environment-close~0]
     if self.closed then
         log.warn(tostring(exaerror.create("W-EDL-20", "Attempted to close an already closed environment")))
         return false
