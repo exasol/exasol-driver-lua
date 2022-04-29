@@ -1,7 +1,7 @@
-local log = require("remotelog")
+--- Example usage of the LuaSQL driver for Exasol
+-- @module examples
 
--- Import the library
-local driver = require("luasqlexasol")
+local log = require("remotelog")
 
 -- This reads the connection configuration from system environment variables
 local function get_config()
@@ -26,12 +26,15 @@ log.set_level("INFO")
 local config = get_config()
 local source_name = config.host .. ":" .. config.port
 
---
--- Create a new connection
---
+-- Import the library
+local driver = require("luasqlexasol")
 
 -- Create a new environment
 local environment = driver.exasol()
+
+--
+-- Create a new connection
+--
 
 -- Define optional connection properties
 local properties = {tls_verify = "none", tls_protocol = "tlsv1_2", tls_options = "no_tlsv1"}

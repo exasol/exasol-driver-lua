@@ -35,7 +35,7 @@ jobs:
       - name: Install LuaRocks
         uses: leafo/gh-actions-luarocks@v4
         with:
-          luarocksVersion: "3.8.0"
+          luarocksVersion: "3.9.0"
 
       - name: Print versions
         run: |
@@ -46,6 +46,7 @@ jobs:
       - name: Install Lua dependencies
         run: |
           luarocks install --local --deps-only *.rockspec
+          luarocks install --local ldoc
 
       - name: "Build"
         run: luarocks make --local
@@ -54,6 +55,9 @@ jobs:
         run: |
           eval $(luarocks path)
           EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test -- --run=smoketest
+      
+      - name: Build API documentation
+        run: ./tools/build-docs.sh
 
       - name: Spawn Exasol environment
         run: |
