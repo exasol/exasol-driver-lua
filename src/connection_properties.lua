@@ -4,18 +4,19 @@ local exaerror = require("exaerror")
 
 local DEFAULT_FETCHSIZE_KIB<const> = 128
 
---- This class represents configuration properties for a database connection.
+--- This internal class represents configuration properties for a database connection.
 -- @classmod ConnectionProperties
 local ConnectionProperties = {}
 
 ------
--- Available properties for the @{create} method.
+-- Available properties for the @{ConnectionProperties:create} method.
 -- @table properties
 --
--- @field fetchsize_kib The fetch size in KiB used when fetching query result data, see @{get_fetchsize_bytes}.
+-- @field fetchsize_kib The fetch size in KiB used when fetching query result data,
+-- see @{ConnectionProperties:get_fetchsize_bytes}.
 -- Default value: `128`.
 --
--- @field tls_verify The TLS verify mode for connecting to Exasol, see @{get_tls_verify} and
+-- @field tls_verify The TLS verify mode for connecting to Exasol, see @{ConnectionProperties:get_tls_verify} and
 -- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
 -- Default value: `none`, available values:
 --
@@ -24,7 +25,7 @@ local ConnectionProperties = {}
 -- * `client_once`
 -- * `fail_if_no_peer_cert`
 --
--- @field tls_protocol The TLS protocol for connecting to Exasol, see @{get_tls_protocol} and
+-- @field tls_protocol The TLS protocol for connecting to Exasol, see @{ConnectionProperties:get_tls_protocol} and
 -- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
 -- Default value: `tlsv1_2`, available values:
 --
@@ -37,14 +38,15 @@ local ConnectionProperties = {}
 --
 -- `openssl s_client -connect "<IP-Address>:<Port>" < /dev/null 2>/dev/null | grep Protocol`
 --
--- @field tls_options The TLS options for connecting to Exasol, see @{get_tls_options}.
+-- @field tls_options The TLS options for connecting to Exasol, see @{ConnectionProperties:get_tls_options}.
 -- The value is a comma separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
 -- Default value: `all`. See output of the following Lua code for a list of available values:
 --
 -- `require("ssl").config.options`
 
 --- Create a new instance of the Connection class.
--- @tparam ?table properties a properties object or `nil` to use default settings. See @{properties} for details.
+-- @tparam ?table properties a properties object or `nil` to use default settings.
+--   See @{ConnectionProperties:properties} for details.
 -- @treturn Connection connection the new instance
 -- @raise error if given properties are not valid
 function ConnectionProperties:create(properties)
@@ -65,7 +67,7 @@ function ConnectionProperties:_validate()
 end
 
 --- Get the configured fetch size in bytes used when fetching query result data.
--- Configuration property: `fetchsize_kib`, see @{properties}.
+-- Configuration property: `fetchsize_kib`, see @{ConnectionProperties:properties}.
 -- Default value: `131072` = `128 * 1024`.
 -- @treturn integer fetchsize in bytes
 function ConnectionProperties:get_fetchsize_bytes() --
@@ -73,21 +75,21 @@ function ConnectionProperties:get_fetchsize_bytes() --
 end
 
 --- Get the configured TLS verify mode for connecting to Exasol.
--- Configuration property: `tls_verify`, see @{properties}.
+-- Configuration property: `tls_verify`, see @{ConnectionProperties:properties}.
 -- @treturn string TLS verify mode
 function ConnectionProperties:get_tls_verify() --
     return self.properties.tls_verify or "none"
 end
 
 --- Get the configured TLS protocol for connecting to Exasol.
--- Configuration property: `tls_protocol`, see @{properties}.
+-- Configuration property: `tls_protocol`, see @{ConnectionProperties:properties}.
 -- @treturn string TLS protocol
 function ConnectionProperties:get_tls_protocol() --
     return self.properties.tls_protocol or "tlsv1_2"
 end
 
 --- Get the configured TLS options for connection to Exasol.
--- Configuration property: `tls_options`, see @{properties}.
+-- Configuration property: `tls_options`, see @{ConnectionProperties.properties}.
 -- @treturn string TLS options
 function ConnectionProperties:get_tls_options() --
     return self.properties.tls_options or "all"

@@ -2,7 +2,7 @@
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
---- This class is registered as a callback for incoming messages when connecting to a websocket.
+--- This internal class is registered as a callback for incoming messages when connecting to a websocket.
 -- It collects incoming messages and logs warnings in case a websocket error occurs.
 -- @classmod WebsocketDatahandler
 -- @field private expecting_data boolean flag indicating if we are expecting to receive data from the websocket or not
@@ -10,7 +10,7 @@ local exaerror = require("exaerror")
 local WebsocketDatahandler = {}
 
 --- Create a new instance of the WebsocketDatahandler class.
--- @return WebsocketDatahandler a new instance
+-- @treturn WebsocketDatahandler a new instance
 function WebsocketDatahandler:create()
     local object = {expecting_data = false, data = {}}
     self.__index = self
@@ -19,8 +19,8 @@ function WebsocketDatahandler:create()
 end
 
 --- Checks if the given websocket opcode represents an error or not.
--- @param opcode boolean|number the received websocket opcode
--- @return boolean `true` if the opcode represents an error that should be logged
+-- @tparam boolean|number opcode the received websocket opcode
+-- @treturn boolean `true` if the opcode represents an error that should be logged
 local function is_websocket_error(opcode)
     -- LuWS uses false to indicate an error
     return type(opcode) == "boolean" and opcode == false
@@ -28,10 +28,11 @@ end
 
 --- Callback function for handling data received from a websocket. This method collects valid
 -- data in a list and logs and logs a warning in case an error was received.
--- @param conn table the websocket connection
--- @param opcode boolean|number the websocket opcode. See https://datatracker.ietf.org/doc/html/rfc6455#section-11.8
+-- @tparam table conn the websocket connection
+-- @tparam boolean|number opcode the websocket opcode. See
+-- [RFC 6455](https://datatracker.ietf.org/doc/html/rfc6455#section-11.8)
 -- for details about opcodes
--- @param message string the received message
+-- @tparam string message the received message
 -- @raise an error in case we where not expecting to receive any data
 function WebsocketDatahandler:handle_data(conn, opcode, message)
     if is_websocket_error(opcode) then
@@ -66,7 +67,7 @@ function WebsocketDatahandler:expected_data_received()
 end
 
 --- Get all message data collected by this handler.
--- @return string|nil the concatenated received messages or nil if no message was received
+-- @treturn string|nil the concatenated received messages or `nil` if no message was received
 function WebsocketDatahandler:get_data()
     if #self.data == 0 then
         log.debug("No messages received since collection started")
@@ -77,7 +78,7 @@ function WebsocketDatahandler:get_data()
 end
 
 --- Check if this handler has received any data.
--- @return boolean `true` if at least one message was received
+-- @treturn boolean `true` if at least one message was received
 function WebsocketDatahandler:has_received_data() return #self.data > 0 end
 
 return WebsocketDatahandler

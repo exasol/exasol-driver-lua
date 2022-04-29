@@ -6,7 +6,7 @@ local cjson = require("cjson")
 
 -- luacheck: no unused args
 
---- This class represents the result data of a cursor that allows retreiving rows from a result set.
+--- This internal class represents the result data of a cursor that allows retreiving rows from a result set.
 -- It handles large result sets by fetching new batches automatically.
 -- @classmod CursorData
 -- @field private data table|nil the data received from the server. May be `nil` in case of
@@ -24,10 +24,10 @@ local cjson = require("cjson")
 local CursorData = {}
 
 --- Create a new instance of the CursorData class.
--- @param connection_properties ConnectionProperties the user defined connection settings, containing e.g. fetch size
--- @param websocket ExasolWebsocket the websocket connection to the database
--- @param result_set table the result set received when executing a query
--- @return CursorData a new CursorData instance
+-- @tparam ConnectionProperties connection_properties the user defined connection settings, containing e.g. fetch size
+-- @tparam ExasolWebsocket websocket the websocket connection to the database
+-- @tparam table result_set the result set received when executing a query
+-- @treturn CursorData a new CursorData instance
 -- @raise an error in case the result set is invalid
 function CursorData:create(connection_properties, websocket, result_set)
     local object = {
@@ -59,11 +59,11 @@ function CursorData:next_row()
 end
 
 --- Get the current row number.
--- @return number the current row number (starting with 1) of the complete result set
+-- @treturn number the current row number (starting with 1) of the complete result set
 function CursorData:get_current_row() return self.current_row end
 
 --- Check if there are more rows available in the result set.
--- @return boolean `true` if there are more rows available
+-- @treturn boolean `true` if there are more rows available
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
 --- Convert a column value if necessary before returining it.
@@ -79,8 +79,8 @@ end
 
 --- Get a column value from the current row.
 -- Fetches the next batch in case not enough data is available.
--- @param column_index number the column index starting with 1
--- @return any the value of the given column
+-- @tparam number column_index the column index starting with 1
+-- @treturn any the value of the given column
 function CursorData:get_column_value(column_index)
     self:_fetch_data()
     log.trace("Fetching row %d of %d (%d of %d in current batch)", self.current_row, self.num_rows_total,
@@ -115,10 +115,13 @@ function CursorData:_fetch_data()
     if not self:_more_data_available() then self:_fetch_next_data_batch() end
 end
 
+--- Check if the cursor has reached the last row of the complete result set.
 function CursorData:_end_of_result_set_reached() return self.current_row > self.num_rows_total end
 
+--- Check if more rows are available in the current batch or if the next batch must be fetched.
 function CursorData:_more_data_available() return self.current_row_in_batch <= self.num_rows_in_message end
 
+--- Fetches the next batch of the result set from the database.
 function CursorData:_fetch_next_data_batch()
     log.trace("Fetching next data batch. Current row in batch: %d, rows in message: %d", self.current_row_in_batch,
               self.num_rows_in_message)

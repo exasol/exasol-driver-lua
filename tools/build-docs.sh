@@ -12,3 +12,5 @@ mkdir --parents "$target_dir"
 
 #cd "$src_module_path"
 ldoc --config "$base_dir/config.ld" --verbose --fatalwarnings .
+
+echo "ldoc result: $?"

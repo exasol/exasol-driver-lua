@@ -3,8 +3,8 @@ local log = require("remotelog")
 local exaerror = require("exaerror")
 local cursor = require("cursor")
 
---- This class represents a database connection that provides methods for interacting with the database,
--- e.g. executing queries.
+--- This class represents a database connection.
+-- It provides methods for interacting with the database, e.g. executing queries.
 -- @classmod Connection
 -- @field private websocket ExasolWebsocket the websocket
 -- @field private session_id string the session ID for this connection
@@ -12,10 +12,10 @@ local cursor = require("cursor")
 local Connection = {}
 
 --- Create a new instance of the Connection class.
--- @param connection_properties ConnectionProperties the connection properties
--- @param websocket ExasolWebsocket websocket connection to the database
--- @param session_id string session ID of the current database connection
--- @return Connection the new instance
+-- @tparam ConnectionProperties connection_properties the connection properties
+-- @tparam ExasolWebsocket websocket websocket connection to the database
+-- @tparam string session_id session ID of the current database connection
+-- @treturn Connection the new instance
 function Connection:create(connection_properties, websocket, session_id)
     log.trace("Created new connection with session ID %d", session_id)
     local object = {
@@ -31,7 +31,7 @@ function Connection:create(connection_properties, websocket, session_id)
 end
 
 --- Verify that this connection is open before executing an operation
--- @param operation string the operation to be executed (used in the potential error message)
+-- @tparam string operation the operation to be executed (used in the potential error message)
 -- @raise an error if this connection is closed
 function Connection:_verify_connection_open(operation)
     if self.closed then
@@ -41,10 +41,10 @@ function Connection:_verify_connection_open(operation)
 end
 
 --- Executes the given SQL statement.
--- @param statement string the SQL statement to execute
--- @return Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
+-- @tparam string statement the SQL statement to execute
+-- @treturn Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
 --   or nil in case there was an error executing the statement
--- @return nil|table in case there was an error executing the statement or nil if the statement
+-- @treturn table|nil in case there was an error executing the statement or nil if the statement
 --   was executed successfully
 -- [impl -> dsn~luasql-connection-execute~0]
 function Connection:execute(statement)
@@ -80,7 +80,7 @@ function Connection:execute(statement)
 end
 
 --- Commits the current transaction.
--- @return boolean `true` in case of success
+-- @treturn boolean `true` in case of success
 -- [impl -> dsn~luasql-connection-commit~0]
 function Connection:commit()
     self:_verify_connection_open("commit")
@@ -88,7 +88,7 @@ function Connection:commit()
 end
 
 --- Rolls back the current transaction.
--- @return boolean `true` in case of success
+-- @treturn boolean `true` in case of success
 -- [impl -> dsn~luasql-connection-rollback~0]
 function Connection:rollback()
     self:_verify_connection_open("rollback")
@@ -98,8 +98,8 @@ end
 --- Turns on or off the "auto commit" mode.
 -- Auto commit is on by default. If auto commit is off, you must explicitly execute the `COMMIT` command
 -- to commit the transaction.
--- @param autocommit boolean `true` to enable auto commit, `false` to disable auto commit
--- @return boolean `true` in case of success
+-- @tparam boolean autocommit `true` to enable auto commit, `false` to disable auto commit
+-- @treturn boolean `true` in case of success
 -- [impl -> dsn~luasql-connection-setautocommit~0]
 function Connection:setautocommit(autocommit)
     self:_verify_connection_open("setautocommit")
@@ -114,7 +114,7 @@ function Connection:setautocommit(autocommit)
 end
 
 --- Closes this connection and all cursors created using this connection.
--- @return boolean `true` in case of success
+-- @treturn boolean `true` in case of success
 -- @raise an error in case disconnecting fails
 -- [impl -> dsn~luasql-connection-close~0]
 function Connection:close()

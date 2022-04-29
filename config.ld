@@ -19,11 +19,11 @@ description = [[# A LuaSQL driver for the Exasol database
 * [LuaSQL project](https://keplerproject.github.io/luasql/)
 * [LuaSQL manual](https://keplerproject.github.io/luasql/manual.html)
 ]]
-file = {"./src/",exclude={"./src/luws.lua"}}
+title = "Reference"
+file = {"./src/", exclude={"./src/luws.lua"}}
 examples = {"./doc/user_guide/examples.lua"}
 --readme = "./README.md"
 readme = {"./doc/user_guide/user_guide.md", "./doc/developer_guide/developer_guide.md"}
-title = "Reference"
 package = "."
 format = "markdown"
 output = "index"

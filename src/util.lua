@@ -1,4 +1,4 @@
---- This module contains common utility functions.
+--- This internal module contains common utility functions.
 -- @module util
 local util = {}
 

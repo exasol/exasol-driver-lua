@@ -1,4 +1,4 @@
---- This module contains constants used by the Exasol driver.
+--- This internal module contains constants used by the Exasol driver.
 -- @module constants
 local constants = {}
 

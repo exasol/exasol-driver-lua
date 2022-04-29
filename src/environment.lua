@@ -49,12 +49,11 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
 end
 
 --- Login to the database.
--- See https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md
 -- @tparam ExasolWebsocket socket the connection to the database
 -- @tparam string username the username
--- @tparam string password the password
--- @treturn ?table connection metadata in case login was successful
--- @treturn ?table `nil` if the operation was successful, otherwise the error that occured
+-- @tparam string password the unencrypted password
+-- @treturn table|nil connection metadata in case login was successful
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
     if err then return nil, err end
@@ -67,9 +66,9 @@ end
 --   `exasoldb.example.com:8563`. Note that the port is mandatory.
 -- @tparam string username the username for logging in to the Exasol database
 -- @tparam string password the password for logging in to the Exasol database
--- @tparam ?table properties optional connection properties @ref{ConnectionProperties:create}
--- @treturn ?Connection a new Connection or `nil` if the connection failed
--- @treturn ?table `nil` if the operation was successful, otherwise the error that occured
+-- @tparam ?table properties optional connection properties, see @{ConnectionProperties:properties}
+-- @treturn Connection|nil a new Connection or `nil` if the connection failed
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 -- @see ConnectionProperties:create
 function Environment:connect(sourcename, username, password, properties)
     -- [impl -> dsn~luasql-environment-connect~0]
