@@ -39,5 +39,6 @@ jobs:
           branch: gh-pages
           folder: target/ldoc
           target-folder: api
+          clean: true
           single-commit: true
           force: true
