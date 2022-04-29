@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
+
       - name: Install Lua
         uses: leafo/gh-actions-lua@v8
         with:
@@ -33,9 +34,10 @@ jobs:
           ./tools/build-docs.sh
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: target/ldoc
+          target-folder: api
           single-commit: true
           force: true
