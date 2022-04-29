@@ -4,7 +4,6 @@ local constants = {}
 
 local util = require("util")
 
-
 --- The version of this module
 constants.VERSION = "0.1.0"
 

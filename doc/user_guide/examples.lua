@@ -1,6 +1,5 @@
 --- Example usage of the LuaSQL driver for Exasol
 -- @script examples.lua
-
 local log = require("remotelog")
 
 -- This function reads the connection configuration
@@ -8,7 +7,10 @@ local log = require("remotelog")
 local function get_config()
     local function get_system_env(varname, default)
         local value = os.getenv(varname) or default
-        if value == nil then error("Environment variable '" .. varname .. "' is required but is not defined") end
+        if value == nil then
+            error("Environment variable '" .. varname ..
+                          "' is required but is not defined")
+        end
         return value
     end
 
@@ -38,13 +40,20 @@ local environment = driver.exasol()
 --
 
 -- Define optional connection properties
-local properties = {tls_verify = "none", tls_protocol = "tlsv1_2", tls_options = "no_tlsv1"}
+local properties = {
+    tls_verify = "none",
+    tls_protocol = "tlsv1_2",
+    tls_options = "no_tlsv1"
+}
 
 -- Create the connection
-local connection, err = environment:connect(source_name, config.user, config.password, properties)
+local connection, err = environment:connect(source_name, config.user,
+                                            config.password, properties)
 -- Handle connection error
 if err == nil then
-    log.info("Successfully connected to Exasol database at %s with user %s", source_name, config.user)
+    log.info(
+            "Successfully connected to Exasol database at %s with user %s",
+            source_name, config.user)
 else
     error("Connection failed: " .. err)
 end
@@ -91,7 +100,8 @@ row = cursor:fetch(row, "a")
 local index = 1
 -- Iterate over rows
 while row ~= nil do
-    log.info("  - row %d: %s = '%s'", index, row['PARAM_NAME'], row['PARAM_VALUE'])
+    log.info("  - row %d: %s = '%s'", index, row['PARAM_NAME'],
+             row['PARAM_VALUE'])
     row = cursor:fetch(row, "a")
     index = index + 1
 end

@@ -16,8 +16,9 @@ GLOBIGNORE="$src_module_path/luws.lua"
 lua-format --config="$base_dir/.lua-format" --verbose --in-place -- \
   "$src_module_path"/*.lua \
   "$test_module_path"/*.lua \
-  "$test_module_path"/*/*.lua \
-  "$base_dir"/doc/user_guide/examples.lua
+  "$test_module_path"/*/*.lua
+
+lua-format --config="$base_dir/.lua-format" --column-limit=75 --verbose --in-place "$base_dir"/doc/user_guide/examples.lua
 
 unset GLOBIGNORE
 

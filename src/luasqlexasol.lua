@@ -8,7 +8,6 @@ local log = require("remotelog")
 local constants = require("constants")
 local util = require("util")
 
-
 --- The version of this module
 luasqlexasol.VERSION = constants.VERSION
 
