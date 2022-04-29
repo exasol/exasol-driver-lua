@@ -17,6 +17,7 @@ Code name: Initial Release
 ## Bugfixes
 
 * #16: Fixed sporadic Websocket connection errors
+* #51: Fixed wrong error message for invalid TLS parameter values
 
 ## Refactoring
 
