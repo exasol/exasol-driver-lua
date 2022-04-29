@@ -20,7 +20,7 @@ return {
   ci_repeated = {
     --output = "junit",
     --Xoutput = "target/test-reports/test-report-repeated.xml",
-    ["repeat"] = 20
+    ["repeat"] = 1
   },
   smoketest = {
     tags = {"smoketest"}
