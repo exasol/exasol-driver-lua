@@ -13,6 +13,7 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 ## Information for Users
 
 * [User Guide](doc/user_guide/user_guide.md)
+* [API Documentation](https://exasol.github.io/exasol-driver-lua/api/)
 * [Change Log](doc/changes/changelog.md)
 * [MIT License](LICENSE)
 
