@@ -1,0 +1,41 @@
+name: Publish API documentation
+
+on:
+  push:
+#    branches:
+#      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Install Lua
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: 5.4
+
+      - name: Install LuaRocks
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luarocksVersion: "3.9.0"
+
+      - name: Install Tools
+        run: |
+          luarocks install --local ldoc
+
+      - name: Generate API documentation
+        run: |
+          ./tools/build-docs.sh
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages
+          folder: target/ldoc
+          single-commit: true
+          force: true
