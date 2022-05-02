@@ -4,8 +4,6 @@
 project = "Lua driver for Exasol"
 description = [[# A LuaSQL driver for the Exasol database
 
-A LuaSQL driver for the Exasol database.
-
 Check out the [user guide](https://github.com/exasol/exasol-driver-lua/blob/main/doc/user_guide/user_guide.md) for more details.
 
 ## Features
@@ -16,9 +14,9 @@ Check out the [user guide](https://github.com/exasol/exasol-driver-lua/blob/main
 
 ## Information for Users
 
+* [GitHub project](https://github.com/exasol/exasol-driver-lua)
 * [User Guide](https://github.com/exasol/exasol-driver-lua/blob/main/doc/user_guide/user_guide.md)
 * [Example Usage](examples/examples.lua.html)
-* [API Documentation](https://exasol.github.io/exasol-driver-lua/api/)
 * [Change Log](https://github.com/exasol/exasol-driver-lua/blob/main/doc/changes/changelog.md)
 * [MIT License](https://github.com/exasol/exasol-driver-lua/blob/main/LICENSE)
 
