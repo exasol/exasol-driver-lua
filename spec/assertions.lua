@@ -18,7 +18,7 @@ local function deep_equals(object1, object2)
     return true
 end
 
-local function is_json(state, arguments)
+local function is_json(_, arguments)
     local expected = arguments[1]
     if type(expected) == "string" then expected = cjson.decode(expected) end
     return function(actual)

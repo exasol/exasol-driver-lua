@@ -1,4 +1,4 @@
---- Utility functions for creating query result stubs used in unit tests
+-- Utility functions for creating query result stubs used in unit tests
 local resultstub = {}
 
 function resultstub.create_resultset(column_names, rows)
@@ -22,9 +22,9 @@ function resultstub.create_empty_resultset_with_columns(columns)
     return {numRows = 0, numRowsInMessage = 0, numColumns = #columns, columns = columns, data = {}}
 end
 
---- Creates a result set with a result set handle and without row data.
---- The database returns this kind of result for large result sets
---- where we need to fetch the row data in a separate request.
+-- Creates a result set with a result set handle and without row data.
+-- The database returns this kind of result for large result sets
+-- where we need to fetch the row data in a separate request.
 function resultstub.create_batched_resultset(column_names, total_row_count, result_set_handle)
     column_names = column_names or {}
     local columns = {}

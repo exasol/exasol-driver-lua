@@ -8,28 +8,28 @@ local CursorData = require("cursor_data")
 local FETCH_MODE_NUMERIC_INDICES = "n"
 local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused variable
 
---- This class represents a cursor that allows retreiving rows from a result set.
---- @class Cursor
---- @field private col_name_provider function
---- @field private num_columns number
---- @field private num_rows number
---- @field private data CursorData
---- @field private websocket ExasolWebsocket
---- @field private result_set_handle string|nil
+--- This class represents a cursor that allows retrieving rows from a result set.
+-- @classmod Cursor
+-- @field private col_name_provider function
+-- @field private num_columns number
+-- @field private num_rows number
+-- @field private data CursorData
+-- @field private websocket ExasolWebsocket
+-- @field private result_set_handle string|nil
 local Cursor = {}
 
 --- This result table index provider returns the column index.
---- This is used for fetch mode "n" (numeric indices in the result table).
---- To avoid creating a new function for each row we create this only once and re-use it.
---- @param col_index number the column index
---- @return number the column index
+-- This is used for fetch mode "n" (numeric indices in the result table).
+-- To avoid creating a new function for each row we create this only once and re-use it.
+-- @tparam number col_index the column index
+-- @treturn number the column index
 local function col_index_provider(col_index) return col_index end
 
 --- This function creates a result table index provider that returns the column name.
---- This is used for fetch mode "a" (alphanumeric indices in the result table).
---- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
---- @param column_names table a list of column names
---- @return function result table index provider that maps the column index to column names
+-- This is used for fetch mode "a" (alphanumeric indices in the result table).
+-- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
+-- @tparam table column_names a list of column names
+-- @treturn function result table index provider that maps the column index to column names
 local function create_col_name_provider(column_names) --
     return function(col_index) --
         return column_names[col_index]
@@ -37,9 +37,9 @@ local function create_col_name_provider(column_names) --
 end
 
 --- This function extracts the column names from a result set.
---- @param result_set table the result set
---- @return table a list of column names
---- @raise an error if the number of columns is not equal to the number reported by the result set
+-- @tparam table result_set the result set
+-- @treturn table a list of column names
+-- @raise an error if the number of columns is not equal to the number reported by the result set
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
@@ -52,8 +52,8 @@ local function get_column_names(result_set)
 end
 
 --- Extracts the column types from a result set.
---- @param result_set table the result set
---- @return table a list of column types
+-- @tparam table result_set the result set
+-- @treturn table a list of column types
 local function get_column_types(result_set)
     local types = {}
     local E<const> = {}
@@ -64,12 +64,12 @@ local function get_column_types(result_set)
 end
 
 --- Create a new instance of the Cursor class.
---- @param connection_properties ConnectionProperties connection properties
---- @param websocket ExasolWebsocket the websocket connection to the database
---- @param session_id string the session ID of the current database connection
---- @param result_set table the result set returned by the database
---- @return Cursor a new Cursor instance
---- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
+-- @tparam ConnectionProperties connection_properties connection properties
+-- @tparam ExasolWebsocket websocket the websocket connection to the database
+-- @tparam string session_id the session ID of the current database connection
+-- @tparam table result_set the result set returned by the database
+-- @treturn Cursor a new Cursor instance
+-- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
     local column_types = get_column_types(result_set)
@@ -91,9 +91,9 @@ function Cursor:create(connection_properties, websocket, session_id, result_set)
 end
 
 --- Gets a result table index provider for the given fetch mode.
---- @param modestring "a"|"n" the fetch mode: "a" for alphanumeric indices, "n" for numeric indices (default)
---- @return function a function that maps column indices to a table index
----   in the result table
+-- @tparam "a"|"n" modestring the fetch mode: `"a"` for alphanumeric indices, `"n"` for numeric indices
+-- @treturn function a function that maps column indices to a table index
+--   in the result table
 function Cursor:_get_result_table_index_provider(modestring)
     if modestring ~= FETCH_MODE_NUMERIC_INDICES then
         return self.col_name_provider
@@ -103,9 +103,9 @@ function Cursor:_get_result_table_index_provider(modestring)
 end
 
 --- Fills the given table with the values of the current row.
---- @param table table the table to fill
---- @param modestring "a"|"n" determines which indices are used when filling the table:
----                   "a" for alphanumeric indices, "n" for numeric indices (default)
+-- @tparam table table the table to fill
+-- @tparam "a"|"n" modestring determines which indices are used when filling the table:
+--   `"a"` for alphanumeric indices, `"n"` for numeric indices
 function Cursor:_fill_row(table, modestring)
     local col_name_provider = self:_get_result_table_index_provider(modestring)
     for col = 1, self.num_columns do
@@ -120,28 +120,30 @@ function Cursor:_fill_row(table, modestring)
 end
 
 --- Retrieves the next row of results.
---- If fetch is called without parameters, the results will be returned directly to the caller.
---- If fetch is called with a table, the results will be copied into the table and the changed table will be returned.
---- In this case, an optional modestring parameter can be used. It is a string indicating how the resulting table
---- should be constructed. The mode string can contain:
---- - "n": the resulting table will have numerical indices (default)
---- - "a": the resulting table will have alphanumerical indices
---- The numerical indices are the positions of the result columns in the SELECT statement;
---- the alphanumerical indices are the names of the fields.
----
---- The optional table parameter is a table that should be used to store the next row. This allows
---- the use of a single table for many fetches, which can improve the overall performance.
----
---- A call to fetch after the last row has already being returned, will close the corresponding cursor.
---- The result values are converted to Lua types, i.e. <code>nil</code>, number and string.
----
---- Null values from the database are converted <code>luasqlexasol.NULL</code>.
---- You can test for it with <code>value == luasqlexasol.NULL</code>.
----
---- @param table table|nil the table to which the result will be copied or nil to return a new table
---- @param modestring nil|"a"|"n" the mode as described above
---- @return table|nil row data as described above or nil if there are no more rows
---- [impl -> dsn~luasql-cursor-fetch~0]
+-- If fetch is called without parameters, the results will be returned directly to the caller.
+-- If fetch is called with a table, the results will be copied into the table and the changed table will be returned.
+-- In this case, an optional modestring parameter can be used. It is a string indicating how the resulting table
+-- should be constructed. The mode string can contain:
+--
+-- * `"n"`: the resulting table will have numerical indices (default)
+-- * `"a"`: the resulting table will have alphanumerical indices
+--
+-- The numerical indices are the positions of the result columns in the `SELECT` statement;
+-- the alphanumerical indices are the names of the fields.
+--
+-- The optional table parameter is a table that should be used to store the next row. This allows
+-- the use of a single table for many fetches, which can improve the overall performance.
+--
+-- A call to fetch after the last row has already being returned, will close the corresponding cursor.
+-- The result values are converted to Lua types, i.e. `nil`, number and string.
+--
+-- Null values from the database are converted `luasqlexasol.NULL`.
+-- You can test for it with `value == luasqlexasol.NULL`.
+--
+-- @tparam table|nil table the table to which the result will be copied or `nil` to return a new table
+-- @tparam nil|"a"|"n" modestring the mode as described above
+-- @treturn table|nil row data as described above or `nil` if there are no more rows
+-- [impl -> dsn~luasql-cursor-fetch~0]
 function Cursor:fetch(table, modestring)
     if self.closed then
         exaerror.create("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
@@ -159,18 +161,18 @@ function Cursor:fetch(table, modestring)
 end
 
 --- Gets the list of column names.
---- @return table the list of column names
---- [impl -> dsn~luasql-cursor-getcolnames~0]
+-- @treturn table the list of column names
+-- [impl -> dsn~luasql-cursor-getcolnames~0]
 function Cursor:getcolnames() return self.column_names end
 
 --- Gets the list of column types.
---- @return table the list of column types
---- [impl -> dsn~luasql-cursor-getcoltypes~0]
+-- @treturn table the list of column types
+-- [impl -> dsn~luasql-cursor-getcoltypes~0]
 function Cursor:getcoltypes() return self.column_types end
 
 --- Closes this cursor.
---- @return boolean <code>true</code> in case of success and <code>false</code> when the cursor is already closed
---- [impl -> dsn~luasql-cursor-close~0]
+-- @treturn boolean `true` in case of success and `false` when the cursor is already closed
+-- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()
     if self.closed then
         log.warn(tostring(exaerror.create("W-EDL-33", "Attempted to close an already closed cursor")))

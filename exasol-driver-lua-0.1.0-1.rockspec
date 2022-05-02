@@ -42,7 +42,8 @@ test_dependencies = {
     "mockagne >= 1.0-2",
     "luacov >= 0.15.0-1",
     "luacov-coveralls >= 0.2.3-1",
-    "luacheck >= 0.25.0-1"
+    "luacheck >= 0.25.0-1",
+    "ldoc >= 1.4.6-2"
 }
 
 test = {

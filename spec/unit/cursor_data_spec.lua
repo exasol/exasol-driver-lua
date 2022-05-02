@@ -41,7 +41,7 @@ describe("CursorData", function()
     end
 
     local function trap_unwanted_fetch()
-        websocket_stub.send_fetch = function(_self, actual_result_set_handle, actual_start_position, actual_num_bytes)
+        websocket_stub.send_fetch = function(_, actual_result_set_handle, actual_start_position, actual_num_bytes)
             error("Expected websocket:send_fetch() not be called but was called with result set handle " ..
                           actual_result_set_handle .. ", start pos " .. actual_start_position .. " and num bytes " ..
                           actual_num_bytes)
@@ -49,9 +49,7 @@ describe("CursorData", function()
     end
 
     local function simulate_fetch_error(stub, err)
-        stub.send_fetch = function(_self, actual_result_set_handle, actual_start_position, actual_num_bytes)
-            return nil, err
-        end
+        stub.send_fetch = function() return nil, err end
         return stub
     end
 

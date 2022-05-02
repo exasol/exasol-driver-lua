@@ -6,29 +6,29 @@ local cjson = require("cjson")
 
 -- luacheck: no unused args
 
---- This class represents the result data of a cursor that allows retreiving rows from a result set.
---- It handles large result sets by fetching new batches automatically.
---- @class CursorData
---- @field private data table|nil the data received from the server. May be <code>nil</code> in case of
----   a large result set that requires fetching batches.
---- @field private current_row number the current row number (starting with 1) of the complete result set
---- @field private current_row_in_batch number the current row number (starting with 1) in the current batch
---- @field private num_rows_total number the total row count in the result set
---- @field private num_rows_in_message number the number of rows in the current batch
---- @field private num_rows_fetched_total number the number of rows in all batches fetched until now
---- @field private result_set_handle number|nil the result set handle or <code>nil</code> in case of
----   a small result set
---- @field private websocket ExasolWebsocket the websocket connection to the database
---- @field private connection_properties ConnectionProperties the user defined connection settings,
----   containing e.g. fetch size
+--- This internal class represents the result data of a cursor that allows retreiving rows from a result set.
+-- It handles large result sets by fetching new batches automatically.
+-- @classmod CursorData
+-- @field private data table|nil the data received from the server. May be `nil` in case of
+--   a large result set that requires fetching batches.
+-- @field private current_row number the current row number (starting with 1) of the complete result set
+-- @field private current_row_in_batch number the current row number (starting with 1) in the current batch
+-- @field private num_rows_total number the total row count in the result set
+-- @field private num_rows_in_message number the number of rows in the current batch
+-- @field private num_rows_fetched_total number the number of rows in all batches fetched until now
+-- @field private result_set_handle number|nil the result set handle or `nil` in case of
+--   a small result set
+-- @field private websocket ExasolWebsocket the websocket connection to the database
+-- @field private connection_properties ConnectionProperties the user defined connection settings,
+--   containing e.g. fetch size
 local CursorData = {}
 
 --- Create a new instance of the CursorData class.
---- @param connection_properties ConnectionProperties the user defined connection settings, containing e.g. fetch size
---- @param websocket ExasolWebsocket the websocket connection to the database
---- @param result_set table the result set received when executing a query
---- @return CursorData a new CursorData instance
---- @raise an error in case the result set is invalid
+-- @tparam ConnectionProperties connection_properties the user defined connection settings, containing e.g. fetch size
+-- @tparam ExasolWebsocket websocket the websocket connection to the database
+-- @tparam table result_set the result set received when executing a query
+-- @treturn CursorData a new CursorData instance
+-- @raise an error in case the result set is invalid
 function CursorData:create(connection_properties, websocket, result_set)
     local object = {
         websocket = websocket,
@@ -59,16 +59,16 @@ function CursorData:next_row()
 end
 
 --- Get the current row number.
---- @return number the current row number (starting with 1) of the complete result set
+-- @treturn number the current row number (starting with 1) of the complete result set
 function CursorData:get_current_row() return self.current_row end
 
 --- Check if there are more rows available in the result set.
---- @return boolean <code>true</code> if there are more rows available
+-- @treturn boolean `true` if there are more rows available
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
 --- Convert a column value if necessary before returining it.
---- We need to replace <code>cjson.null</code> with <code>luasqlexasol.NULL</code> to hide the implementation
---- detail that we are using cjson for JSON parsing.
+-- We need to replace `cjson.null` with `luasqlexasol.NULL` to hide the implementation
+-- detail that we are using cjson for JSON parsing.
 local function convert_col_value(col_value)
     if col_value == cjson.null then
         return constants.NULL
@@ -78,9 +78,9 @@ local function convert_col_value(col_value)
 end
 
 --- Get a column value from the current row.
---- Fetches the next batch in case not enough data is available.
---- @param column_index number the column index starting with 1
---- @return any the value of the given column
+-- Fetches the next batch in case not enough data is available.
+-- @tparam number column_index the column index starting with 1
+-- @treturn any the value of the given column
 function CursorData:get_column_value(column_index)
     self:_fetch_data()
     log.trace("Fetching row %d of %d (%d of %d in current batch)", self.current_row, self.num_rows_total,
@@ -115,10 +115,13 @@ function CursorData:_fetch_data()
     if not self:_more_data_available() then self:_fetch_next_data_batch() end
 end
 
+--- Check if the cursor has reached the last row of the complete result set.
 function CursorData:_end_of_result_set_reached() return self.current_row > self.num_rows_total end
 
+--- Check if more rows are available in the current batch or if the next batch must be fetched.
 function CursorData:_more_data_available() return self.current_row_in_batch <= self.num_rows_in_message end
 
+--- Fetches the next batch of the result set from the database.
 function CursorData:_fetch_next_data_batch()
     log.trace("Fetching next data batch. Current row in batch: %d, rows in message: %d", self.current_row_in_batch,
               self.num_rows_in_message)

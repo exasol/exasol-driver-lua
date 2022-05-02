@@ -1,12 +1,12 @@
+--- This internal module contains common utility functions.
+-- @module util
+local util = {}
+
 local exaerror = require("exaerror")
 
---- This module contains common utility functions.
--- @module M
-local M = {}
-
 --- Make a table read-only be wrapping it in a proxy that raises an error for modifications.
---- See https://www.lua.org/pil/13.4.5.html for details.
-function M.read_only(table)
+-- See https://www.lua.org/pil/13.4.5.html for details.
+function util.read_only(table)
     local proxy = {}
     local metatable = {
         __index = table,
@@ -20,4 +20,4 @@ function M.read_only(table)
     return proxy
 end
 
-return M
+return util
