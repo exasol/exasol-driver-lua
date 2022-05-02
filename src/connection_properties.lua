@@ -8,8 +8,7 @@ local DEFAULT_FETCHSIZE_KIB<const> = 128
 -- @classmod ConnectionProperties
 local ConnectionProperties = {}
 
-------
--- Available properties for the @{ConnectionProperties:create} method.
+--- Available properties for the @{ConnectionProperties:create} method.
 -- @table properties
 --
 -- @field fetchsize_kib The fetch size in KiB used when fetching query result data,
@@ -39,14 +38,14 @@ local ConnectionProperties = {}
 -- `openssl s_client -connect "<IP-Address>:<Port>" < /dev/null 2>/dev/null | grep Protocol`
 --
 -- @field tls_options The TLS options for connecting to Exasol, see @{ConnectionProperties:get_tls_options}.
--- The value is a comma separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
+-- The value is a comma-separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
 -- Default value: `all`. See output of the following Lua code for a list of available values:
 --
 -- `require("ssl").config.options`
 
 --- Create a new instance of the Connection class.
--- @tparam ?table properties a properties object or `nil` to use default settings.
---   See @{ConnectionProperties:properties} for details.
+-- @tparam ?table properties a properties object or `nil` to use default settings,
+--   see @{ConnectionProperties:properties} for details
 -- @treturn Connection connection the new instance
 -- @raise error if given properties are not valid
 function ConnectionProperties:create(properties)
