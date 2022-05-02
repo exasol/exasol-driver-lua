@@ -22,7 +22,6 @@ description = [[# A LuaSQL driver for the Exasol database
 title = "Reference"
 file = {"./src/", exclude={"./src/luws.lua"}}
 examples = {"./doc/user_guide/examples.lua"}
---readme = "./README.md"
 readme = {"./doc/user_guide/user_guide.md", "./doc/developer_guide/developer_guide.md"}
 package = "."
 format = "markdown"

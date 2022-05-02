@@ -35,10 +35,6 @@ local driver = require("luasqlexasol")
 -- Create a new environment
 local environment = driver.exasol()
 
---
--- Create a new connection
---
-
 -- Define optional connection properties
 local properties = {
     tls_verify = "none",
