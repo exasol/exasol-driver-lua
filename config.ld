@@ -4,25 +4,39 @@
 project = "Lua driver for Exasol"
 description = [[# A LuaSQL driver for the Exasol database
 
-* [Example usage](./examples/examples.lua.html)
+A LuaSQL driver for the Exasol database.
 
-## More Information
+Check out the [user guide](https://github.com/exasol/exasol-driver-lua/blob/main/doc/user_guide/user_guide.md) for more details.
 
-* [GitHub project](https://github.com/exasol/exasol-driver-lua)
-* [User Guide](topics/user_guide.md.html)
-* [Changelog](https://github.com/exasol/exasol-driver-lua/blob/main/doc/changes/changelog.md)
-* [Developer Guide](topics/developer_guide.md.html)
-* [Exasol database](https://www.exasol.com/)
+## Features
 
-## LuaSQL
+1. Connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements
+1. Encrypted communication via TLS
+1. Compatible with the [LuaSQL](https://keplerproject.github.io/luasql/) API
 
-* [LuaSQL project](https://keplerproject.github.io/luasql/)
-* [LuaSQL manual](https://keplerproject.github.io/luasql/manual.html)
+## Information for Users
+
+* [User Guide](https://github.com/exasol/exasol-driver-lua/blob/main/doc/user_guide/user_guide.md)
+* [Example Usage](examples/examples.lua.html)
+* [API Documentation](https://exasol.github.io/exasol-driver-lua/api/)
+* [Change Log](https://github.com/exasol/exasol-driver-lua/blob/main/doc/changes/changelog.md)
+* [MIT License](https://github.com/exasol/exasol-driver-lua/blob/main/LICENSE)
+
+### Dependencies
+
+See the [dependencies list](https://github.com/exasol/exasol-driver-lua/blob/main/dependencies.md) for build and test dependencies and license information.
+
+## Information for Developers
+
+Requirement, design documents and coverage tags are written in [OpenFastTrace](https://github.com/itsallcode/openfasttrace) format.
+
+* [Developers Guide](https://github.com/exasol/exasol-driver-lua/blob/main/doc/developer_guide/developer_guide.md)
+* [System Requirements](https://github.com/exasol/exasol-driver-lua/blob/main/doc/system_requirements.md)
+* [Design](https://github.com/exasol/exasol-driver-lua/blob/main/doc/design.md)
 ]]
 title = "Reference"
 file = {"./src/", exclude={"./src/luws.lua"}}
 examples = {"./doc/user_guide/examples.lua"}
-readme = {"./doc/user_guide/user_guide.md", "./doc/developer_guide/developer_guide.md"}
 package = "."
 format = "markdown"
 output = "index"
