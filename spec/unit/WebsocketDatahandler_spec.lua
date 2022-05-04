@@ -2,7 +2,7 @@
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 
-local datahandler = require("websocket_datahandler")
+local datahandler = require("WebsocketDatahandler")
 
 describe("WebsocketDatahandler", function()
     local connection_stub = {}

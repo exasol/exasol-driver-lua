@@ -11,7 +11,7 @@ local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local ConnectionProperties = require("connection_properties")
+local ConnectionProperties = require("ConnectionProperties")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -19,7 +19,7 @@ local function load_exasol_websocket(args)
     if args and args.exasol_websocket then
         return args.exasol_websocket
     else
-        return require("exasol_websocket")
+        return require("ExasolWebsocket")
     end
 end
 

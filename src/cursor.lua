@@ -1,7 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local CursorData = require("cursor_data")
+local CursorData = require("CursorData")
 
 -- luacheck: no unused args
 

@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local ConnectionProperties = require("connection_properties")
+local ConnectionProperties = require("ConnectionProperties")
 local config = require("config")
 config.configure_logging()
 

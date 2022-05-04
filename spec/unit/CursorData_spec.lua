@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local CursorData = require("cursor_data")
+local CursorData = require("CursorData")
 local driver = require("luasqlexasol")
 local cjson = require("cjson")
 local config = require("config")

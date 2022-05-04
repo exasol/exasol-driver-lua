@@ -3,7 +3,7 @@
 require("busted.runner")()
 local cursor = require("cursor")
 local config = require("config")
-local ConnectionProperties = require("connection_properties")
+local ConnectionProperties = require("ConnectionProperties")
 local resultstub = require("resultstub")
 config.configure_logging()
 
