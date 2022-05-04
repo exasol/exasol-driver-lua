@@ -46,8 +46,8 @@ end
 --   or nil in case there was an error executing the statement
 -- @treturn table|nil in case there was an error executing the statement or nil if the statement
 --   was executed successfully
--- [impl -> dsn~luasql-connection-execute~0]
 function Connection:execute(statement)
+    -- [impl -> dsn~luasql-connection-execute~0]
     self:_verify_connection_open("execute")
     log.trace("Executing statement '%s'", statement)
     local result, err = self.websocket:send_execute(statement)
@@ -81,16 +81,16 @@ end
 
 --- Commits the current transaction.
 -- @treturn boolean `true` in case of success
--- [impl -> dsn~luasql-connection-commit~0]
 function Connection:commit()
+    -- [impl -> dsn~luasql-connection-commit~0]
     self:_verify_connection_open("commit")
     error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
 
 --- Rolls back the current transaction.
 -- @treturn boolean `true` in case of success
--- [impl -> dsn~luasql-connection-rollback~0]
 function Connection:rollback()
+    -- [impl -> dsn~luasql-connection-rollback~0]
     self:_verify_connection_open("rollback")
     error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
 end
@@ -100,8 +100,8 @@ end
 -- to commit the transaction.
 -- @tparam boolean autocommit `true` to enable auto commit, `false` to disable auto commit
 -- @treturn boolean `true` in case of success
--- [impl -> dsn~luasql-connection-setautocommit~0]
 function Connection:setautocommit(autocommit)
+    -- [impl -> dsn~luasql-connection-setautocommit~0]
     self:_verify_connection_open("setautocommit")
     local err = self.websocket:send_set_attribute("autocommit", autocommit)
     if err then
@@ -116,8 +116,8 @@ end
 --- Closes this connection and all cursors created using this connection.
 -- @treturn boolean `true` in case of success
 -- @raise an error in case disconnecting fails
--- [impl -> dsn~luasql-connection-close~0]
 function Connection:close()
+    -- [impl -> dsn~luasql-connection-close~0]
     if self.closed then
         log.warn(tostring(exaerror.create("W-EDL-35", "Connection with session ID {{session_id}} already closed",
                                           {session_id = self.session_id})))

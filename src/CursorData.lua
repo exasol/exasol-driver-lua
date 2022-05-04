@@ -100,8 +100,8 @@ function CursorData:get_column_value(column_index)
 end
 
 --- Fetch the next batch of data if no more rows are available locally.
--- [impl -> dsn~luasql-cursor-fetch-resultsethandle~0]
 function CursorData:_fetch_data()
+    -- [impl -> dsn~luasql-cursor-fetch-resultsethandle~0]
     if not self.result_set_handle and not self.data then
         exaerror.create("F-EDL-25", "Neither data nor result set handle available"):add_ticket_mitigation():raise()
     end
