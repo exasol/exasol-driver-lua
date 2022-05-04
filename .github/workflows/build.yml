@@ -59,6 +59,13 @@ jobs:
       - name: Build API documentation
         run: ./tools/build-docs.sh
 
+      - name: Upload API documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-documentation
+          path: target/ldoc/
+          if-no-files-found: error
+
       - name: Spawn Exasol environment
         run: |
           ./start-test-env spawn-test-environment --environment-name test \
