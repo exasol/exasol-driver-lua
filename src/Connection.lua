@@ -1,7 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local cursor = require("cursor")
+local cursor = require("Cursor")
 
 --- This class represents a database connection.
 -- It provides methods for interacting with the database, e.g. executing queries.
