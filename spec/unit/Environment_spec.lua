@@ -19,7 +19,7 @@ local function reset_websocket_stub(stub)
             publicKeyExponent = "010001"
         }
     end
-    stub.send_login_credentials = function() return {sessionId = "sessionId0"} end
+    stub.send_login_credentials = function() return {sessionId = 12345} end
     stub.send_disconnect = function() return nil end
     stub.close = function() end
 end
