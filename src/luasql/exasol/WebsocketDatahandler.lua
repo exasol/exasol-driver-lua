@@ -10,7 +10,7 @@ local exaerror = require("exaerror")
 local WebsocketDatahandler = {}
 
 --- Create a new instance of the WebsocketDatahandler class.
--- @treturn WebsocketDatahandler a new instance
+-- @treturn luasql.exasol.WebsocketDatahandler a new instance
 function WebsocketDatahandler:create()
     local object = {expecting_data = false, data = {}}
     self.__index = self

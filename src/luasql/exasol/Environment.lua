@@ -26,7 +26,7 @@ end
 --- Create a new instance of the Environment class
 -- @tparam ?table args allows injecting a websocket module. This is only useful in unit tests and
 --   should be `nil` in production code.
--- @treturn Environment a new instance
+-- @treturn luasql.exasol.Environment a new instance
 function Environment:new(args)
     local object = {closed = false, connections = {}}
     object.exasol_websocket = load_exasol_websocket(args)
@@ -49,7 +49,7 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
 end
 
 --- Login to the database.
--- @tparam ExasolWebsocket socket the connection to the database
+-- @tparam luasql.exasol.ExasolWebsocket socket the connection to the database
 -- @tparam string username the username
 -- @tparam string password the unencrypted password
 -- @treturn table|nil connection metadata in case login was successful
@@ -67,7 +67,7 @@ end
 -- @tparam string username the username for logging in to the Exasol database
 -- @tparam string password the password for logging in to the Exasol database
 -- @tparam ?table properties optional connection properties, see @{luasql.exasol.ConnectionProperties:properties}
--- @treturn Connection|nil a new Connection or `nil` if the connection failed
+-- @treturn luasql.exasol.Connection|nil a new Connection or `nil` if the connection failed
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 -- @see ConnectionProperties:create
 function Environment:connect(sourcename, username, password, properties)

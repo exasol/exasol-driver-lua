@@ -12,10 +12,10 @@ local cursor = require("luasql.exasol.Cursor")
 local Connection = {}
 
 --- Create a new instance of the Connection class.
--- @tparam ConnectionProperties connection_properties the connection properties
--- @tparam ExasolWebsocket websocket websocket connection to the database
+-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+-- @tparam luasql.exasol.ExasolWebsocket websocket websocket connection to the database
 -- @tparam string session_id session ID of the current database connection
--- @treturn Connection the new instance
+-- @treturn luasql.exasol.Connection the new instance
 function Connection:create(connection_properties, websocket, session_id)
     log.trace("Created new connection with session ID %d", session_id)
     local object = {
@@ -42,7 +42,7 @@ end
 
 --- Executes the given SQL statement.
 -- @tparam string statement the SQL statement to execute
--- @treturn Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
+-- @treturn luasql.exasol.Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
 --   or nil in case there was an error executing the statement
 -- @treturn table|nil in case there was an error executing the statement or nil if the statement
 --   was executed successfully

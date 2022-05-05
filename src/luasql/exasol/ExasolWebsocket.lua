@@ -12,8 +12,8 @@ local raw_websocket = require("luasql.exasol.Websocket")
 local constants = require("luasql.exasol.constants")
 
 --- Creates a new Exasol websocket.
--- @tparam Websocket websocket the websocket to wrap
--- @treturn ExasolWebsocket the new websocket
+-- @tparam luasql.exasol.Websocket websocket the websocket to wrap
+-- @treturn luasql.exasol.ExasolWebsocket the new websocket
 function ExasolWebsocket._create(websocket)
     local object = {websocket = websocket, closed = false}
     object.closed = false
@@ -24,8 +24,8 @@ end
 
 --- Connects to an Exasol database.
 -- @tparam string url the websocket URL, e.g. `wss://exasoldb.example.com:8563`
--- @tparam ConnectionProperties connection_properties the connection properties
--- @treturn ExasolWebsocket the new websocket
+-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+-- @treturn luasql.exasol.ExasolWebsocket the new websocket
 function ExasolWebsocket.connect(url, connection_properties)
     local websocket<const> = raw_websocket.connect(url, connection_properties)
     return ExasolWebsocket._create(websocket)

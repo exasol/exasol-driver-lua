@@ -16,7 +16,7 @@ exasol.VERSION = constants.VERSION
 exasol.NULL = constants.NULL
 
 --- Create a new environment that allows connecting to an Exasol database.
--- @treturn Environment new environment
+-- @treturn luasql.exasol.Environment new environment
 function exasol.exasol()
     -- [impl -> dsn~luasql-entry-point~0]
     log.trace("Created new luasql.exasol environment")

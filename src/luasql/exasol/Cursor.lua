@@ -64,11 +64,11 @@ local function get_column_types(result_set)
 end
 
 --- Create a new instance of the Cursor class.
--- @tparam ConnectionProperties connection_properties connection properties
--- @tparam ExasolWebsocket websocket the websocket connection to the database
+-- @tparam luasql.exasol.ConnectionProperties connection_properties connection properties
+-- @tparam luasql.exasol.ExasolWebsocket websocket the websocket connection to the database
 -- @tparam string session_id the session ID of the current database connection
 -- @tparam table result_set the result set returned by the database
--- @treturn Cursor a new Cursor instance
+-- @treturn luasql.exasol.Cursor a new Cursor instance
 -- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)

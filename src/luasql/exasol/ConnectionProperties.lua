@@ -46,7 +46,7 @@ local ConnectionProperties = {}
 --- Create a new instance of the Connection class.
 -- @tparam ?table properties a properties object or `nil` to use default settings,
 --   see @{luasql.exasol.ConnectionProperties:properties} for details
--- @treturn Connection connection the new instance
+-- @treturn luasql.exasol.Connection connection the new instance
 -- @raise error if given properties are not valid
 function ConnectionProperties:create(properties)
     log.trace("Created new connection properties")

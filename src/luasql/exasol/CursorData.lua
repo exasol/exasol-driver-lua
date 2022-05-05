@@ -24,10 +24,10 @@ local cjson = require("cjson")
 local CursorData = {}
 
 --- Create a new instance of the CursorData class.
--- @tparam ConnectionProperties connection_properties the user defined connection settings, containing e.g. fetch size
--- @tparam ExasolWebsocket websocket the websocket connection to the database
+-- @tparam luasql.exasol.ConnectionProperties connection_properties the user defined connection settings, containing e.g. fetch size
+-- @tparam luasql.exasol.ExasolWebsocket websocket the websocket connection to the database
 -- @tparam table result_set the result set received when executing a query
--- @treturn CursorData a new CursorData instance
+-- @treturn luasql.exasol.CursorData a new CursorData instance
 -- @raise an error in case the result set is invalid
 function CursorData:create(connection_properties, websocket, result_set)
     local object = {
