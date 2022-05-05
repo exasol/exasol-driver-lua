@@ -5,7 +5,7 @@ local cjson = require("cjson")
 local match = require("luassert.match")
 require("assertions")
 
-local exasol_websocket = require("exasol_websocket")
+local exasol_websocket = require("ExasolWebsocket")
 local constants = require("constants")
 local config = require("config")
 config.configure_logging()

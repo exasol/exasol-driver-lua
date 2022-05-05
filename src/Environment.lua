@@ -4,14 +4,14 @@
 -- @field private connections table list of created connections
 local Environment = {}
 
-local connection = require("connection")
+local connection = require("Connection")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local ConnectionProperties = require("connection_properties")
+local ConnectionProperties = require("ConnectionProperties")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -19,7 +19,7 @@ local function load_exasol_websocket(args)
     if args and args.exasol_websocket then
         return args.exasol_websocket
     else
-        return require("exasol_websocket")
+        return require("ExasolWebsocket")
     end
 end
 
@@ -90,7 +90,7 @@ function Environment:connect(sourcename, username, password, properties)
         err:add_mitigations("Check the credentials you provided.")
         return nil, err
     end
-    log.trace("Connected to Exasol %s, maximum message size: %d bytes", response.releaseVersion,
+    log.trace("Connected to Exasol %s, maximum message size: %s bytes", response.releaseVersion,
               response.maxDataMessageSize)
     local session_id = response.sessionId
     local conn = connection:create(connection_properties, socket, session_id)

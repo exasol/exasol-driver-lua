@@ -2,7 +2,7 @@
 -- @module luasqlexasol
 local luasqlexasol = {}
 
-local Environment = require("environment")
+local Environment = require("Environment")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local constants = require("constants")

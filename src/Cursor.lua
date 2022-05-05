@@ -1,7 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local CursorData = require("cursor_data")
+local CursorData = require("CursorData")
 
 -- luacheck: no unused args
 
@@ -143,8 +143,8 @@ end
 -- @tparam table|nil table the table to which the result will be copied or `nil` to return a new table
 -- @tparam nil|"a"|"n" modestring the mode as described above
 -- @treturn table|nil row data as described above or `nil` if there are no more rows
--- [impl -> dsn~luasql-cursor-fetch~0]
 function Cursor:fetch(table, modestring)
+    -- [impl -> dsn~luasql-cursor-fetch~0]
     if self.closed then
         exaerror.create("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
     end
@@ -162,18 +162,22 @@ end
 
 --- Gets the list of column names.
 -- @treturn table the list of column names
--- [impl -> dsn~luasql-cursor-getcolnames~0]
-function Cursor:getcolnames() return self.column_names end
+function Cursor:getcolnames()
+    -- [impl -> dsn~luasql-cursor-getcolnames~0]
+    return self.column_names
+end
 
 --- Gets the list of column types.
 -- @treturn table the list of column types
--- [impl -> dsn~luasql-cursor-getcoltypes~0]
-function Cursor:getcoltypes() return self.column_types end
+function Cursor:getcoltypes()
+    -- [impl -> dsn~luasql-cursor-getcoltypes~0]
+    return self.column_types
+end
 
 --- Closes this cursor.
 -- @treturn boolean `true` in case of success and `false` when the cursor is already closed
--- [impl -> dsn~luasql-cursor-close~0]
 function Cursor:close()
+    -- [impl -> dsn~luasql-cursor-close~0]
     if self.closed then
         log.warn(tostring(exaerror.create("W-EDL-33", "Attempted to close an already closed cursor")))
         return false

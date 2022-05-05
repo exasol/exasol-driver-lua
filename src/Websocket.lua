@@ -3,7 +3,7 @@ require("luws")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local websocket_datahandler = require("websocket_datahandler")
+local websocket_datahandler = require("WebsocketDatahandler")
 
 --- This internal class represents a websocket connection that allows sending and receiving messages.
 -- @classmod Websocket
