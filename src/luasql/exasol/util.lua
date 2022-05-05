@@ -1,5 +1,5 @@
 --- This internal module contains common utility functions.
--- @module util
+-- @module luasql.exasol.util
 local util = {}
 
 local exaerror = require("exaerror")

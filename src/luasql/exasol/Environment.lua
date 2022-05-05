@@ -1,5 +1,5 @@
 --- This class provides methods for connecting to an Exasol database and closing all connections.
--- @classmod Environment
+-- @classmod luasql.exasol.Environment
 -- @field private exasol_websocket ExasolWebsocket
 -- @field private connections table list of created connections
 local Environment = {}
@@ -66,7 +66,7 @@ end
 --   `exasoldb.example.com:8563`. Note that the port is mandatory.
 -- @tparam string username the username for logging in to the Exasol database
 -- @tparam string password the password for logging in to the Exasol database
--- @tparam ?table properties optional connection properties, see @{ConnectionProperties:properties}
+-- @tparam ?table properties optional connection properties, see @{luasql.exasol.ConnectionProperties:properties}
 -- @treturn Connection|nil a new Connection or `nil` if the connection failed
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 -- @see ConnectionProperties:create

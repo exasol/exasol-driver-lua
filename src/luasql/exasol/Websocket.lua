@@ -6,7 +6,7 @@ local log = require("remotelog")
 local websocket_datahandler = require("luasql.exasol.WebsocketDatahandler")
 
 --- This internal class represents a websocket connection that allows sending and receiving messages.
--- @classmod Websocket
+-- @classmod luasql.exasol.Websocket
 -- @field private data_handler WebsocketDatahandler the handler for receiving messages
 local Websocket = {}
 

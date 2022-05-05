@@ -5,7 +5,7 @@ local cursor = require("luasql.exasol.Cursor")
 
 --- This class represents a database connection.
 -- It provides methods for interacting with the database, e.g. executing queries.
--- @classmod Connection
+-- @classmod luasql.exasol.Connection
 -- @field private websocket ExasolWebsocket the websocket
 -- @field private session_id string the session ID for this connection
 -- @field private closed boolean specifies if this connection is closed

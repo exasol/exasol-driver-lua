@@ -33,7 +33,7 @@ Requirement, design documents and coverage tags are written in [OpenFastTrace](h
 * [Design](https://github.com/exasol/exasol-driver-lua/blob/main/doc/design.md)
 ]]
 title = "Reference"
-file = {"./src/", exclude={"./src/luws.lua"}}
+file = {"./src/", exclude={"./src/luasql/exasol/luws.lua"}}
 examples = {"./doc/user_guide/examples.lua"}
 package = "."
 format = "markdown"
