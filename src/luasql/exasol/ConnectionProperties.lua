@@ -15,7 +15,8 @@ local ConnectionProperties = {}
 -- see @{luasql.exasol.ConnectionProperties:get_fetchsize_bytes}.
 -- Default value: `128`.
 --
--- @field tls_verify The TLS verify mode for connecting to Exasol, see @{luasql.exasol.ConnectionProperties:get_tls_verify} and
+-- @field tls_verify The TLS verify mode for connecting to Exasol,
+--   see @{luasql.exasol.ConnectionProperties:get_tls_verify} and
 -- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
 -- Default value: `none`, available values:
 --
@@ -24,7 +25,8 @@ local ConnectionProperties = {}
 -- * `client_once`
 -- * `fail_if_no_peer_cert`
 --
--- @field tls_protocol The TLS protocol for connecting to Exasol, see @{luasql.exasol.ConnectionProperties:get_tls_protocol} and
+-- @field tls_protocol The TLS protocol for connecting to Exasol,
+--   see @{luasql.exasol.ConnectionProperties:get_tls_protocol} and
 -- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
 -- Default value: `tlsv1_2`, available values:
 --
@@ -37,7 +39,8 @@ local ConnectionProperties = {}
 --
 -- `openssl s_client -connect "<IP-Address>:<Port>" < /dev/null 2>/dev/null | grep Protocol`
 --
--- @field tls_options The TLS options for connecting to Exasol, see @{luasql.exasol.ConnectionProperties:get_tls_options}.
+-- @field tls_options The TLS options for connecting to Exasol,
+--   see @{luasql.exasol.ConnectionProperties:get_tls_options}.
 -- The value is a comma-separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
 -- Default value: `all`. See output of the following Lua code for a list of available values:
 --

@@ -42,9 +42,10 @@ end
 
 --- Executes the given SQL statement.
 -- @tparam string statement the SQL statement to execute
--- @treturn luasql.exasol.Cursor|number|nil a Cursor object if there are results, the number of rows affected by the command
---   or nil in case there was an error executing the statement
--- @treturn table|nil in case there was an error executing the statement or nil if the statement
+-- @treturn luasql.exasol.Cursor|number|nil a Cursor object if there are results,
+--   the number of rows affected by the command
+--   or `nil` in case there was an error executing the statement
+-- @treturn table|nil in case there was an error executing the statement or `nil` if the statement
 --   was executed successfully
 function Connection:execute(statement)
     -- [impl -> dsn~luasql-connection-execute~0]
