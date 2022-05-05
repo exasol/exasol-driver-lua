@@ -1,14 +1,14 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local constants = require("constants")
+local constants = require("luasql.exasol.constants")
 local config = require("config")
 config.configure_logging()
 
 local log_mock = mock(require("remotelog"), true)
 package.preload["remotelog"] = function() return log_mock end
 
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 
 describe("Entry point", function()
 

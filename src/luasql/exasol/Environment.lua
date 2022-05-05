@@ -4,14 +4,14 @@
 -- @field private connections table list of created connections
 local Environment = {}
 
-local connection = require("Connection")
+local connection = require("luasql.exasol.Connection")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local ConnectionProperties = require("ConnectionProperties")
+local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -19,7 +19,7 @@ local function load_exasol_websocket(args)
     if args and args.exasol_websocket then
         return args.exasol_websocket
     else
-        return require("ExasolWebsocket")
+        return require("luasql.exasol.ExasolWebsocket")
     end
 end
 

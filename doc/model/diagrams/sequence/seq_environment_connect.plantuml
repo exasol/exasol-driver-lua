@@ -3,7 +3,7 @@
 
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
-participant "luasqlexasol\ndriver"  as entry
+participant "luasql.exasol\ndriver" as entry
 participant Environment as env << (C,#ADD1B2) >>
 participant Connection as conn << (C,#ADD1B2) >>
 participant ExasolWebsocket as ws << (C,#ADD1B2) >>

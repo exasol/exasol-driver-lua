@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 local config = require("config")
 
 config.configure_logging()

@@ -8,8 +8,8 @@ local cjson = require("cjson")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local raw_websocket = require("Websocket")
-local constants = require("constants")
+local raw_websocket = require("luasql.exasol.Websocket")
+local constants = require("luasql.exasol.constants")
 
 --- Creates a new Exasol websocket.
 -- @tparam Websocket websocket the websocket to wrap

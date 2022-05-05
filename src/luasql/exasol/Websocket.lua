@@ -1,9 +1,9 @@
 -- luacheck: globals wsopen wssend wsreceive wsclose
-require("luws")
+require("luasql.exasol.luws")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local websocket_datahandler = require("WebsocketDatahandler")
+local websocket_datahandler = require("luasql.exasol.WebsocketDatahandler")
 
 --- This internal class represents a websocket connection that allows sending and receiving messages.
 -- @classmod Websocket

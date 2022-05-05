@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 local config = require("config")
 
 config.configure_logging()
@@ -48,7 +48,7 @@ describe("Cursor", function()
                          "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
 
-        it("returns NULL as luasqlexasol.NULL", function()
+        it("returns NULL as luasql.exasol.NULL", function()
             local cursor = assert(connection:execute("select 1, null"))
             local first_row = cursor:fetch()
             assert.is_same({1, driver.NULL}, first_row)

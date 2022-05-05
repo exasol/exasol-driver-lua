@@ -1,7 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local constants = require("constants")
+local constants = require("luasql.exasol.constants")
 local cjson = require("cjson")
 
 -- luacheck: no unused args
@@ -67,7 +67,7 @@ function CursorData:get_current_row() return self.current_row end
 function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
 
 --- Convert a column value if necessary before returining it.
--- We need to replace `cjson.null` with `luasqlexasol.NULL` to hide the implementation
+-- We need to replace `cjson.null` with `luasql.exasol.NULL` to hide the implementation
 -- detail that we are using cjson for JSON parsing.
 local function convert_col_value(col_value)
     if col_value == cjson.null then

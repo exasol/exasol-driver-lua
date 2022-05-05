@@ -1,7 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local CursorData = require("CursorData")
+local CursorData = require("luasql.exasol.CursorData")
 
 -- luacheck: no unused args
 
@@ -137,8 +137,8 @@ end
 -- A call to fetch after the last row has already being returned, will close the corresponding cursor.
 -- The result values are converted to Lua types, i.e. `nil`, number and string.
 --
--- Null values from the database are converted `luasqlexasol.NULL`.
--- You can test for it with `value == luasqlexasol.NULL`.
+-- Null values from the database are converted `luasql.exasol.NULL`.
+-- You can test for it with `value == luasql.exasol.NULL`.
 --
 -- @tparam table|nil table the table to which the result will be copied or `nil` to return a new table
 -- @tparam nil|"a"|"n" modestring the mode as described above
