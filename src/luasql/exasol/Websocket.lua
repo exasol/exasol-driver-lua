@@ -1,12 +1,12 @@
 -- luacheck: globals wsopen wssend wsreceive wsclose
-require("luws")
+require("luasql.exasol.luws")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local websocket_datahandler = require("WebsocketDatahandler")
+local websocket_datahandler = require("luasql.exasol.WebsocketDatahandler")
 
 --- This internal class represents a websocket connection that allows sending and receiving messages.
--- @classmod Websocket
+-- @classmod luasql.exasol.Websocket
 -- @field private data_handler WebsocketDatahandler the handler for receiving messages
 local Websocket = {}
 
@@ -16,7 +16,7 @@ local CONNECT_RETRY_COUNT<const> = 3
 local RECEIVE_TIMEOUT_SECONDS<const> = 5
 
 --- Creates a new instance of this class that is not yet opened/connected.
--- @treturn Websocket the new websocket.
+-- @treturn luasql.exasol.Websocket the new websocket.
 local function create()
     local object = {data_handler = websocket_datahandler:create()}
     object.closed = false
@@ -36,7 +36,7 @@ local function recoverable_connection_error(err) return string.match(err, ".*fai
 -- @tparam table websocket_options the options passed to LuWS when opening a socket,
 --   see [LuWS documentation](https://github.com/toggledbits/LuWS#options) for details.
 -- @tparam number remaining_retries the remaining number of retries. If this is 0, there will be no retry.
--- @treturn Websocket the open websocket connection
+-- @treturn luasql.exasol.Websocket the open websocket connection
 -- @raise an error if connection does not succeed after the given number of retries
 local function connect_with_retry(url, websocket_options, remaining_retries)
     log.trace("Connecting to websocket url %s with %d remaining retries", url, remaining_retries)
@@ -63,8 +63,8 @@ end
 
 --- Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
 -- @tparam string url the websocket url to connect to, e.g. "wss://host:1234"
--- @tparam ConnectionProperties connection_properties the connection properties
--- @treturn Websocket the open websocket connection
+-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+-- @treturn luasql.exasol.Websocket the open websocket connection
 -- @raise an error if connection does not succeed after the given number of retries
 function Websocket.connect(url, connection_properties)
     local websocket_options = {

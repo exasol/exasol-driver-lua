@@ -1,5 +1,5 @@
 require("busted.runner")()
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 local log = require("remotelog")
 
 local M = {}

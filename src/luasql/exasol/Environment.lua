@@ -1,17 +1,17 @@
 --- This class provides methods for connecting to an Exasol database and closing all connections.
--- @classmod Environment
+-- @classmod luasql.exasol.Environment
 -- @field private exasol_websocket ExasolWebsocket
 -- @field private connections table list of created connections
 local Environment = {}
 
-local connection = require("Connection")
+local connection = require("luasql.exasol.Connection")
 local pkey = require("openssl.pkey")
 local bignum = require("openssl.bignum")
 local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local ConnectionProperties = require("ConnectionProperties")
+local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
 
 local WEBSOCKET_PROTOCOL = "wss"
 
@@ -19,14 +19,14 @@ local function load_exasol_websocket(args)
     if args and args.exasol_websocket then
         return args.exasol_websocket
     else
-        return require("ExasolWebsocket")
+        return require("luasql.exasol.ExasolWebsocket")
     end
 end
 
 --- Create a new instance of the Environment class
 -- @tparam ?table args allows injecting a websocket module. This is only useful in unit tests and
 --   should be `nil` in production code.
--- @treturn Environment a new instance
+-- @treturn luasql.exasol.Environment a new instance
 function Environment:new(args)
     local object = {closed = false, connections = {}}
     object.exasol_websocket = load_exasol_websocket(args)
@@ -49,7 +49,7 @@ local function encrypt_password(publicKeyModulus, publicKeyExponent, password)
 end
 
 --- Login to the database.
--- @tparam ExasolWebsocket socket the connection to the database
+-- @tparam luasql.exasol.ExasolWebsocket socket the connection to the database
 -- @tparam string username the username
 -- @tparam string password the unencrypted password
 -- @treturn table|nil connection metadata in case login was successful
@@ -66,8 +66,8 @@ end
 --   `exasoldb.example.com:8563`. Note that the port is mandatory.
 -- @tparam string username the username for logging in to the Exasol database
 -- @tparam string password the password for logging in to the Exasol database
--- @tparam ?table properties optional connection properties, see @{ConnectionProperties:properties}
--- @treturn Connection|nil a new Connection or `nil` if the connection failed
+-- @tparam ?table properties optional connection properties, see @{luasql.exasol.ConnectionProperties:properties}
+-- @treturn luasql.exasol.Connection|nil a new Connection or `nil` if the connection failed
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 -- @see ConnectionProperties:create
 function Environment:connect(sourcename, username, password, properties)

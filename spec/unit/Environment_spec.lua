@@ -2,7 +2,7 @@
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 
-local environment = require("Environment")
+local environment = require("luasql.exasol.Environment")
 local config = require("config")
 config.configure_logging()
 

@@ -1,8 +1,8 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local CursorData = require("CursorData")
-local driver = require("luasqlexasol")
+local CursorData = require("luasql.exasol.CursorData")
+local driver = require("luasql.exasol")
 local cjson = require("cjson")
 local config = require("config")
 local log = require("remotelog")
@@ -166,7 +166,7 @@ describe("CursorData", function()
                 assert.is_same(2, data:get_column_value(1))
             end)
 
-            it("converts cjson.null to luasqlexasol.NULL", function()
+            it("converts cjson.null to luasql.exasol.NULL", function()
                 data = create_cursor_data(create_resultset({"c1", "c2"}, {{c1 = 1, c2 = cjson.null}}))
                 assert_row({1, driver.NULL})
             end)

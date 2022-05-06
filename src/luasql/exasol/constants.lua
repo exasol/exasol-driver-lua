@@ -1,8 +1,8 @@
 --- This internal module contains constants used by the Exasol driver.
--- @module constants
+-- @module luasql.exasol.constants
 local constants = {}
 
-local util = require("util")
+local util = require("luasql.exasol.util")
 
 --- The version of this module
 constants.VERSION = "0.1.0"

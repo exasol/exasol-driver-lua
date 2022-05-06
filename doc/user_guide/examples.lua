@@ -30,7 +30,7 @@ local config = get_config()
 local source_name = config.host .. ":" .. config.port
 
 -- Import the library
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 
 -- Create a new environment
 local environment = driver.exasol()

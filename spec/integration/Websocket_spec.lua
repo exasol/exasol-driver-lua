@@ -1,8 +1,8 @@
 ---@diagnostic disable: undefined-global
 -- luacheck: globals describe it before_each after_each
 require("busted.runner")()
-local websocket = require("Websocket")
-local ConnectionProperties = require("ConnectionProperties")
+local websocket = require("luasql.exasol.Websocket")
+local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
 local log = require("remotelog")
 local config = require("config")
 config.configure_logging()

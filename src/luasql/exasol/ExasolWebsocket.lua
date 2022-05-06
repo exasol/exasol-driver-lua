@@ -1,6 +1,6 @@
 --- This internal class represents a websocket connection to an Exasol database that
 -- provides convenient functions for sending commands and evaluating the result.
--- @classmod ExasolWebsocket
+-- @classmod luasql.exasol.ExasolWebsocket
 -- @field private websocket Websocket the raw websocket
 local ExasolWebsocket = {}
 
@@ -8,12 +8,12 @@ local cjson = require("cjson")
 local exaerror = require("exaerror")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local raw_websocket = require("Websocket")
-local constants = require("constants")
+local raw_websocket = require("luasql.exasol.Websocket")
+local constants = require("luasql.exasol.constants")
 
 --- Creates a new Exasol websocket.
--- @tparam Websocket websocket the websocket to wrap
--- @treturn ExasolWebsocket the new websocket
+-- @tparam luasql.exasol.Websocket websocket the websocket to wrap
+-- @treturn luasql.exasol.ExasolWebsocket the new websocket
 function ExasolWebsocket._create(websocket)
     local object = {websocket = websocket, closed = false}
     object.closed = false
@@ -24,8 +24,8 @@ end
 
 --- Connects to an Exasol database.
 -- @tparam string url the websocket URL, e.g. `wss://exasoldb.example.com:8563`
--- @tparam ConnectionProperties connection_properties the connection properties
--- @treturn ExasolWebsocket the new websocket
+-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+-- @treturn luasql.exasol.ExasolWebsocket the new websocket
 function ExasolWebsocket.connect(url, connection_properties)
     local websocket<const> = raw_websocket.connect(url, connection_properties)
     return ExasolWebsocket._create(websocket)
@@ -35,7 +35,7 @@ end
 -- See Exasol API documentation for the
 -- [`login` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md).
 -- This returns a public RSA key used for encrypting the password before sending it with the
--- @{ExasolWebsocket:send_login_credentials} method.
+-- @{luasql.exasol.ExasolWebsocket:send_login_credentials} method.
 -- @treturn table|nil the public RSA key or `nil` if an error occurred
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_login_command()
@@ -48,7 +48,7 @@ end
 -- [`login` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md).
 -- @tparam string username the username
 -- @tparam string encrypted_password the password encrypted with the public key returned by
---   @{ExasolWebsocket:send_login_command}
+--   @{luasql.exasol.ExasolWebsocket:send_login_command}
 -- @treturn table|nil response data from the database or `nil` if an error occurred
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_login_credentials(username, encrypted_password)

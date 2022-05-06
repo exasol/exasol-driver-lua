@@ -34,14 +34,14 @@ eval $(luarocks path)
 Then install `exasol-driver-lua` and required [Lua libraries](../../dependencies.md) by running
 
 ```sh
-luarocks install --local luasqlexasol
+luarocks install --local luasql-exasol
 ```
 
 On macOS you may need to specify the path to OpenSSL:
 
 ```sh
 openssl=/usr/local/Cellar/openssl@1.1/1.1.1m/
-luarocks install --local luasqlexasol OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
+luarocks install --local luasql-exasol OPENSSL_DIR=$openssl CRYPTO_DIR=$openssl
 ```
 
 ## Executable Example
@@ -98,7 +98,7 @@ The environment allows you to create database connections:
 
 ```lua
 -- Import the library
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 -- Create a new environment
 local environment = driver.exasol()
 

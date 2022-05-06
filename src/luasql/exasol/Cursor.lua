@@ -1,7 +1,7 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local exaerror = require("exaerror")
-local CursorData = require("CursorData")
+local CursorData = require("luasql.exasol.CursorData")
 
 -- luacheck: no unused args
 
@@ -9,7 +9,7 @@ local FETCH_MODE_NUMERIC_INDICES = "n"
 local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused variable
 
 --- This class represents a cursor that allows retrieving rows from a result set.
--- @classmod Cursor
+-- @classmod luasql.exasol.Cursor
 -- @field private col_name_provider function
 -- @field private num_columns number
 -- @field private num_rows number
@@ -64,11 +64,11 @@ local function get_column_types(result_set)
 end
 
 --- Create a new instance of the Cursor class.
--- @tparam ConnectionProperties connection_properties connection properties
--- @tparam ExasolWebsocket websocket the websocket connection to the database
+-- @tparam luasql.exasol.ConnectionProperties connection_properties connection properties
+-- @tparam luasql.exasol.ExasolWebsocket websocket the websocket connection to the database
 -- @tparam string session_id the session ID of the current database connection
 -- @tparam table result_set the result set returned by the database
--- @treturn Cursor a new Cursor instance
+-- @treturn luasql.exasol.Cursor a new Cursor instance
 -- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
 function Cursor:create(connection_properties, websocket, session_id, result_set)
     local column_names = get_column_names(result_set)
@@ -137,8 +137,8 @@ end
 -- A call to fetch after the last row has already being returned, will close the corresponding cursor.
 -- The result values are converted to Lua types, i.e. `nil`, number and string.
 --
--- Null values from the database are converted `luasqlexasol.NULL`.
--- You can test for it with `value == luasqlexasol.NULL`.
+-- Null values from the database are converted `luasql.exasol.NULL`.
+-- You can test for it with `value == luasql.exasol.NULL`.
 --
 -- @tparam table|nil table the table to which the result will be copied or `nil` to return a new table
 -- @tparam nil|"a"|"n" modestring the mode as described above

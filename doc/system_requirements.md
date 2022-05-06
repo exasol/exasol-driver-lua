@@ -84,7 +84,7 @@ EDL implements the [LuaSQL API](https://keplerproject.github.io/luasql/manual.ht
 Client code can load EDL using a `require` statement and create an [Environment](#environment) object:
 
 ```lua
-local driver = require("luasqlexasol")
+local driver = require("luasql.exasol")
 local env = driver.exasol()
 ```
 Covers:
