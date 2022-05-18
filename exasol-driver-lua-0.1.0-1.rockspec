@@ -43,7 +43,8 @@ test_dependencies = {
     "luacov >= 0.15.0-1",
     "luacov-coveralls >= 0.2.3-1",
     "luacheck >= 0.25.0-1",
-    "ldoc >= 1.4.6-2"
+    "ldoc >= 1.4.6-2",
+    "amalg >= 0.8-1"
 }
 
 test = {
