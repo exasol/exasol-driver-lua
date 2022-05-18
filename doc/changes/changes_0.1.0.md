@@ -14,6 +14,7 @@ Code name: Initial Release
 * #43: Implemented `cursor:getcolnames()`
 * #7: Allow specifying TLS options for connecting to Exasol
 * #41: Implemented `connection:commit()`
+* #42: Implemented `connection:rollback()`
 
 ## Bugfixes
 

@@ -97,7 +97,11 @@ end
 function Connection:rollback()
     -- [impl -> dsn~luasql-connection-rollback~0]
     self:_verify_connection_open("rollback")
-    error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+    local _, err = self:execute("rollback")
+    if err ~= nil then --
+        log.error(tostring(exaerror.create("E-EDL-40", "Failed to rollback: {{error}}", {error = tostring(err)})))
+    end
+    return err == nil
 end
 
 --- Turns on or off the "auto commit" mode.
