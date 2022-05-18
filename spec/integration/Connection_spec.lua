@@ -22,6 +22,32 @@ describe("Connection", function()
         return schema_name
     end
 
+    local function create_table(schema_name)
+        local table_name = string.format('"%s"."tab"', schema_name)
+        assert(connection:execute(string.format("create table %s (id integer constraint primary key, name varchar(10))",
+                                                table_name)))
+        return table_name
+    end
+
+    local function insert_row(table_name, id, name)
+        local row_count = assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name, id,
+                                                                  name)))
+        assert.is_same(1, row_count)
+    end
+
+    local function assert_row_count_in_new_connection(table_name, expected_row_count)
+        local other_connection = create_connection()
+        finally(function() other_connection:close() end)
+        local cursor = assert(other_connection:execute(string.format("select count(*) from %s", table_name)))
+        finally(function() cursor:close() end)
+        local actual_row_count = cursor:fetch()[1]
+        assert.same(expected_row_count, actual_row_count, "row count")
+    end
+
+    local function set_autocommit(autocommit)
+        assert.is_true(connection:setautocommit(autocommit), "setautocommit result")
+    end
+
     before_each(function()
         env = driver.exasol()
         connection = create_connection()
@@ -112,32 +138,37 @@ describe("Connection", function()
         end)
     end)
 
+    describe("commit()", function()
+        it("returns true for empty transaction", function()
+            set_autocommit(false)
+            assert.is_true(connection:commit())
+        end)
+
+        it("returns true when autocommit is on", function()
+            set_autocommit(true)
+            assert.is_true(connection:commit())
+        end)
+
+        it("returns true for non-empty transaction", function()
+            local schema_name = create_schema()
+            local table_name = create_table(schema_name)
+            set_autocommit(false)
+            insert_row(table_name, 1, "a")
+            assert.is_true(connection:commit())
+        end)
+
+        it("commits a transaction", function()
+            local schema_name = create_schema()
+            local table_name = create_table(schema_name)
+            set_autocommit(false)
+            insert_row(table_name, 1, "a")
+            assert_row_count_in_new_connection(table_name, 0)
+            connection:commit()
+            assert_row_count_in_new_connection(table_name, 1)
+        end)
+    end)
+
     describe("setautocommit()", function()
-        local function create_table(schema_name)
-            local table_name = string.format('"%s"."tab"', schema_name)
-            assert(connection:execute(string.format("create table %s (id integer, name varchar(10))", table_name)))
-            return table_name
-        end
-
-        local function insert_row(table_name, id, name)
-            local row_count = assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name,
-                                                                      id, name)))
-            assert.is_same(1, row_count)
-        end
-
-        local function assert_row_count_in_new_connection(table_name, expected_row_count)
-            local other_connection = create_connection()
-            finally(function() other_connection:close() end)
-            local cursor = assert(other_connection:execute(string.format("select count(*) from %s", table_name)))
-            finally(function() cursor:close() end)
-            local actual_row_count = cursor:fetch()[1]
-            assert.same(expected_row_count, actual_row_count, "row count")
-        end
-
-        local function set_autocommit(autocommit)
-            assert.is_true(connection:setautocommit(autocommit), "setautocommit result")
-        end
-
         it("enables autocommit by default", function()
             local schema_name = create_schema()
             local table_name = create_table(schema_name)

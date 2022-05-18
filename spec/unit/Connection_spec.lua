@@ -34,6 +34,11 @@ local function simulate_result_set(result_set)
     execute_error = nil
 end
 
+local function simulate_rowcount_result(row_count)
+    simulate_result(1, {{resultType = "rowCount", rowCount = row_count}})
+    execute_error = nil
+end
+
 local function simulate_error(err)
     execute_result = nil
     execute_error = err
@@ -122,6 +127,16 @@ Mitigations:
             assert.is_nil(cursor:fetch())
         end)
 
+        it("returns row count 0", function()
+            simulate_rowcount_result(0)
+            assert.is_same(0, assert(conn:execute("statement")))
+        end)
+
+        it("returns row count non-zero", function()
+            simulate_rowcount_result(42)
+            assert.is_same(42, assert(conn:execute("statement")))
+        end)
+
         it("raises error when connection is closed", function()
             conn:close()
             assert.has_error(function() conn:execute("statement") end,
@@ -134,6 +149,22 @@ Mitigations:
             conn:close()
             assert.has_error(function() conn:commit() end,
                              "E-EDL-12: Connection already closed when trying to call 'commit'")
+        end)
+
+        it("executes the COMMIT statement", function()
+            simulate_rowcount_result(0)
+            conn:commit()
+            assert.stub(websocket_mock.send_execute).was.called_with(match.is_table(), "commit")
+        end)
+
+        it("returns true for success", function()
+            simulate_rowcount_result(0)
+            assert.is_true(conn:commit())
+        end)
+
+        it("returns false for failure #only", function()
+            simulate_error("mock error")
+            assert.is_false(conn:commit())
         end)
     end)
 
