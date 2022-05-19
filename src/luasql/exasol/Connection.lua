@@ -86,10 +86,12 @@ function Connection:commit()
     -- [impl -> dsn~luasql-connection-commit~0]
     self:_verify_connection_open("commit")
     local _, err = self:execute("commit")
-    if err ~= nil then --
+    if err == nil then
+        return true
+    else
         log.error(tostring(exaerror.create("E-EDL-39", "Failed to commit: {{error}}", {error = tostring(err)})))
+        return false
     end
-    return err == nil
 end
 
 --- Rolls back the current transaction.
