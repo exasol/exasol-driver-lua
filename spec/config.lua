@@ -1,4 +1,3 @@
-require("busted.runner")()
 local driver = require("luasql.exasol")
 local log = require("remotelog")
 

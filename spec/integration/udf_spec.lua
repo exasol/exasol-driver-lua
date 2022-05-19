@@ -3,31 +3,12 @@
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
+local amalg= require("amalg_util")
 
 config.configure_logging()
 local connection_params = config.get_connection_params()
-local amalgamated_file_path = nil
 
-local function get_amalgamated_file()
-    if amalgamated_file_path then return amalgamated_file_path end
-    local success, result, status = os.execute("tools/amalg.sh")
-    assert.is_true(success)
-    assert.is_same("exit", result)
-    assert.is_same(0, status)
-    amalgamated_file_path = "target/exasol-driver-amalg.lua"
-    local file = assert(io.open(amalgamated_file_path, "r"))
-    assert.is_not_nil(file, "Amalgamated file " .. amalgamated_file_path .. " not found")
-    file:close()
-    return amalgamated_file_path
-end
 
-local function read_amalgamated_file()
-    local path = get_amalgamated_file()
-    local file = assert(io.open(path, "r"))
-    local content = file:read("*all")
-    file:close()
-    return content
-end
 
 describe("driver works inside an UDF", function()
     local env = nil
@@ -54,20 +35,19 @@ describe("driver works inside an UDF", function()
     end
 
     it("creating udf works", function()
-        local schema_name = create_schema()
-        local content = read_amalgamated_file()
-        local statement = "CREATE OR REPLACE LUA SCALAR SCRIPT " .. schema_name .. ".EXASOL_DRIVER() RETURNS INT AS " ..
-                                  content
-        assert(conn:execute(statement))
-        assert(conn:execute("CREATE OR REPLACE LUA SCALAR SCRIPT " .. schema_name ..
-                                    ".RUN_TEST() RETURNS VARCHAR(2000) AS\n" .. --
-        'exa.import("' .. schema_name .. '.EXASOL_DRIVER", "EXASOL")\n' .. [[
+        local script = [[
 function run(ctx)
-    --return tostring(exasol.exasol())
-    return "blubb"
+    return "hello world"
 end
-]]))
-        local cursor = assert(conn:execute("select " .. schema_name .. ".RUN_TEST()"))
+]]
+        local content = amalg.amalgamate_with_script(nil)
+        print("---------------", content, "-----------------")
+        local schema_name = create_schema()
+        local statement = "CREATE OR REPLACE LUA SCALAR SCRIPT " .. schema_name .. ".RUN_TEST(lua_script VARCHAR(2000)) RETURNS VARCHAR(2000) AS\n" ..
+                                  content .. "\n/"
+        assert(conn:execute(statement))
+
+        local cursor = assert(conn:execute("select " .. schema_name .. ".RUN_TEST('blah')"))
         local result = cursor:fetch()
         cursor:close()
         print("result: " .. result[1])
