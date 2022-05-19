@@ -12,7 +12,7 @@ describe("Smoketest", function()
     before_each(function() env = driver.exasol() end)
 
     after_each(function()
-        env:close()
+        assert.is_true(env:close())
         env = nil
     end)
 
