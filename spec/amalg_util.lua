@@ -13,7 +13,7 @@ local function load_rockspec(path)
     return env
 end
 
-local function get_module_names()
+local function get_driver_module_names()
     local path = get_rockspec_filename()
     local rockspec = load_rockspec(path)
     local modules = {}
@@ -23,7 +23,7 @@ end
 
 --  amalg.lua --debug $script_arg --output "$output_file" $module_names
 local function amalgamate(lua_path, modules, script_path)
-    local command = "LUA_PATH=" .. lua_path .. " amalg.lua --debug"
+    local command = "LUA_PATH=" .. lua_path .. " amalg.lua --fallback"
     if script_path then command = command .. " --script=" .. script_path end
     command = command .. " " .. table.concat(modules, " ")
     local file = io.popen(command, "r")
@@ -43,8 +43,19 @@ end
 
 local function get_lua_path() return "src/?.lua" end
 
+local function get_third_party_module_names() return {"remotelog", "exaerror", "message_expander"} end
+
+local function insert_all(target, list) for _, value in ipairs(list) do table.insert(target, value) end end
+
+local function concat_tables(list1, list2)
+    local result = {}
+    insert_all(result, list1)
+    insert_all(result, list2)
+    return result
+end
+
 function M.amalgamate_with_script(script_content)
-    local modules = get_module_names()
+    local modules = concat_tables(get_driver_module_names(), get_third_party_module_names())
     local script_path = write_temp_file(script_content)
     local lua_path = get_lua_path()
     local content = amalgamate(lua_path, modules, script_path)

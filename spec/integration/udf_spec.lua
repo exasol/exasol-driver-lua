@@ -3,12 +3,10 @@
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
-local amalg= require("amalg_util")
+local amalg = require("amalg_util")
 
 config.configure_logging()
 local connection_params = config.get_connection_params()
-
-
 
 describe("driver works inside an UDF", function()
     local env = nil
@@ -34,18 +32,22 @@ describe("driver works inside an UDF", function()
         return schema_name
     end
 
+    local function create_script_with_driver(schema_name, script_content)
+        local content = amalg.amalgamate_with_script(script_content)
+        local statement = "CREATE OR REPLACE LUA SCALAR SCRIPT " .. schema_name ..
+                                  ".RUN_TEST(lua_script VARCHAR(2000)) RETURNS VARCHAR(2000) AS\n" .. content .. "\n/"
+        assert(conn:execute(statement))
+    end
+
     it("creating udf works", function()
         local script = [[
+local driver = require("luasql.exasol")
 function run(ctx)
-    return "hello world"
+    return "Loaded driver: "..tostring(driver)
 end
 ]]
-        local content = amalg.amalgamate_with_script(nil)
-        print("---------------", content, "-----------------")
         local schema_name = create_schema()
-        local statement = "CREATE OR REPLACE LUA SCALAR SCRIPT " .. schema_name .. ".RUN_TEST(lua_script VARCHAR(2000)) RETURNS VARCHAR(2000) AS\n" ..
-                                  content .. "\n/"
-        assert(conn:execute(statement))
+        create_script_with_driver(schema_name, script)
 
         local cursor = assert(conn:execute("select " .. schema_name .. ".RUN_TEST('blah')"))
         local result = cursor:fetch()
