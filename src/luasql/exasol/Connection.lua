@@ -85,7 +85,13 @@ end
 function Connection:commit()
     -- [impl -> dsn~luasql-connection-commit~0]
     self:_verify_connection_open("commit")
-    error("Commit will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+    local _, err = self:execute("commit")
+    if err == nil then
+        return true
+    else
+        log.error(tostring(exaerror.create("E-EDL-39", "Failed to commit: {{error}}", {error = tostring(err)})))
+        return false
+    end
 end
 
 --- Rolls back the current transaction.
