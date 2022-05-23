@@ -22,17 +22,17 @@ describe("Connection", function()
         return schema_name
     end
 
-    local function create_table(schema_name)
-        local table_name = string.format('"%s"."tab"', schema_name)
+    local function create_table(schema_name, table_name)
+        local qualified_table_name = string.format('"%s"."%s"', schema_name, table_name)
         assert(connection:execute(string.format("create table %s (id integer constraint primary key, name varchar(10))",
-                                                table_name)))
-        return table_name
+                                                qualified_table_name)))
+        return qualified_table_name
     end
 
     local function insert_row(table_name, id, name)
         local row_count = assert(connection:execute(string.format("insert into %s values (%d, '%s')", table_name, id,
                                                                   name)))
-        assert.is_same(1, row_count)
+        assert.is_same(1, row_count, "row inserted")
     end
 
     local function assert_row_count(connection_to_use, table_name, expected_row_count)
@@ -155,7 +155,7 @@ describe("Connection", function()
 
         it("returns true for non-empty transaction", function()
             local schema_name = create_schema()
-            local table_name = create_table(schema_name)
+            local table_name = create_table(schema_name, "tab")
             set_autocommit(false)
             insert_row(table_name, 1, "a")
             assert.is_true(connection:commit())
@@ -163,7 +163,7 @@ describe("Connection", function()
 
         it("commits a transaction", function()
             local schema_name = create_schema()
-            local table_name = create_table(schema_name)
+            local table_name = create_table(schema_name, "tab")
             set_autocommit(false)
             insert_row(table_name, 1, "a")
             assert_row_count_in_new_connection(table_name, 0)
@@ -205,14 +205,14 @@ describe("Connection", function()
     describe("setautocommit()", function()
         it("enables autocommit by default", function()
             local schema_name = create_schema()
-            local table_name = create_table(schema_name)
+            local table_name = create_table(schema_name, "tab")
             insert_row(table_name, 1, "a")
             assert_row_count_in_new_connection(table_name, 1)
         end)
 
         it("enables autocommit", function()
             local schema_name = create_schema()
-            local table_name = create_table(schema_name)
+            local table_name = create_table(schema_name, "tab")
             set_autocommit(true)
             insert_row(table_name, 1, "a")
             assert_row_count_in_new_connection(table_name, 1)
@@ -220,7 +220,7 @@ describe("Connection", function()
 
         it("disables autocommit", function()
             local schema_name = create_schema()
-            local table_name = create_table(schema_name)
+            local table_name = create_table(schema_name, "tab")
             set_autocommit(false)
             insert_row(table_name, 1, "a")
             assert_row_count_in_new_connection(table_name, 0)
@@ -228,7 +228,7 @@ describe("Connection", function()
 
         it("requires explicit commit when disabled", function()
             local schema_name = create_schema()
-            local table_name = create_table(schema_name)
+            local table_name = create_table(schema_name, "tab")
             set_autocommit(false)
             insert_row(table_name, 1, "a")
             assert(connection:execute("commit"))
