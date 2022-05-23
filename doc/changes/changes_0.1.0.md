@@ -1,4 +1,4 @@
-# exasol-driver-lua 0.1.0, released 2022-04-??
+# exasol-driver-lua 0.1.0, released 2022-05-??
 
 Code name: Initial Release
 
@@ -13,6 +13,7 @@ Code name: Initial Release
 * #44: Implemented `cursor:getcoltypes()`
 * #43: Implemented `cursor:getcolnames()`
 * #7: Allow specifying TLS options for connecting to Exasol
+* #41: Implemented `connection:commit()`
 
 ## Bugfixes
 
