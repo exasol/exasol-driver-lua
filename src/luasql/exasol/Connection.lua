@@ -100,10 +100,12 @@ function Connection:rollback()
     -- [impl -> dsn~luasql-connection-rollback~0]
     self:_verify_connection_open("rollback")
     local _, err = self:execute("rollback")
-    if err ~= nil then --
+    if err == nil then
+        return true
+    else
         log.error(tostring(exaerror.create("E-EDL-40", "Failed to rollback: {{error}}", {error = tostring(err)})))
+        return false
     end
-    return err == nil
 end
 
 --- Turns on or off the "auto commit" mode.
