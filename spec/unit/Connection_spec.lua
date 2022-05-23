@@ -174,6 +174,22 @@ Mitigations:
             assert.has_error(function() conn:rollback() end,
                              "E-EDL-12: Connection already closed when trying to call 'rollback'")
         end)
+
+        it("executes the ROLLBACK statement", function()
+            simulate_rowcount_result(0)
+            conn:rollback()
+            assert.stub(websocket_mock.send_execute).was.called_with(match.is_table(), "rollback")
+        end)
+
+        it("returns true for success", function()
+            simulate_rowcount_result(0)
+            assert.is_true(conn:rollback())
+        end)
+
+        it("returns false for failure #only", function()
+            simulate_error("mock error")
+            assert.is_false(conn:rollback())
+        end)
     end)
 
     describe("setautocommit()", function()
