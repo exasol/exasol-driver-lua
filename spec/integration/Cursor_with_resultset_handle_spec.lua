@@ -20,7 +20,9 @@ describe("Cursor with resultset handle", function()
         assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
     end
 
-    before_each(function() env = driver.exasol() end)
+    before_each(function()
+        env = driver.exasol()
+    end)
 
     after_each(function()
         env:close()
@@ -63,17 +65,24 @@ describe("Cursor with resultset handle", function()
         connection:close()
     end
 
-    it("fetches small result sets with default fetchsize", function() test_result_with(999) end)
+    it("fetches small result sets with default fetchsize", function()
+        test_result_with(999)
+    end)
 
     it("fetches large result sets with default fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
-       function() test_result_with(2000) end)
+       function()
+        test_result_with(2000)
+    end)
 
-    it("fetches large result sets with small fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
-       function() test_result_with(2000, {fetchsize_kib = 5}) end)
+    it("fetches large result sets with small fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
+        test_result_with(2000, {fetchsize_kib = 5})
+    end)
 
-    it("fetches large result sets with large fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]",
-       function() test_result_with(2000, {fetchsize_kib = 50000}) end)
+    it("fetches large result sets with large fetchsize [itest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
+        test_result_with(2000, {fetchsize_kib = 50000})
+    end)
 
-    it("fetches large result sets with very small fetch size",
-       function() test_result_with(1000, {fetchsize_kib = 1 / 1024}) end)
+    it("fetches large result sets with very small fetch size", function()
+        test_result_with(1000, {fetchsize_kib = 1 / 1024})
+    end)
 end)

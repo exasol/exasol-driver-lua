@@ -61,11 +61,15 @@ end
 
 --- Get the current row number.
 -- @treturn number the current row number (starting with 1) of the complete result set
-function CursorData:get_current_row() return self.current_row end
+function CursorData:get_current_row()
+    return self.current_row
+end
 
 --- Check if there are more rows available in the result set.
 -- @treturn boolean `true` if there are more rows available
-function CursorData:has_more_rows() return self.current_row <= self.num_rows_total end
+function CursorData:has_more_rows()
+    return self.current_row <= self.num_rows_total
+end
 
 --- Convert a column value if necessary before returining it.
 -- We need to replace `cjson.null` with `luasql.exasol.NULL` to hide the implementation
@@ -113,14 +117,20 @@ function CursorData:_fetch_data()
     if self:_end_of_result_set_reached() then
         exaerror.create("E-EDL-31", "No more rows available in result set"):add_ticket_mitigation():raise()
     end
-    if not self:_more_data_available() then self:_fetch_next_data_batch() end
+    if not self:_more_data_available() then
+        self:_fetch_next_data_batch()
+    end
 end
 
 --- Check if the cursor has reached the last row of the complete result set.
-function CursorData:_end_of_result_set_reached() return self.current_row > self.num_rows_total end
+function CursorData:_end_of_result_set_reached()
+    return self.current_row > self.num_rows_total
+end
 
 --- Check if more rows are available in the current batch or if the next batch must be fetched.
-function CursorData:_more_data_available() return self.current_row_in_batch <= self.num_rows_in_message end
+function CursorData:_more_data_available()
+    return self.current_row_in_batch <= self.num_rows_in_message
+end
 
 --- Fetches the next batch of the result set from the database.
 function CursorData:_fetch_next_data_batch()
@@ -130,9 +140,8 @@ function CursorData:_fetch_next_data_batch()
     local fetch_size = self.connection_properties:get_fetchsize_bytes()
     local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, fetch_size)
     if err then
-        exaerror.create("E-EDL-26",
-                        "Error fetching result data for handle {{result_set_handle}} with start position " ..
-                                "{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}", {
+        exaerror.create("E-EDL-26", "Error fetching result data for handle {{result_set_handle}} with start position "
+                                .. "{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}", {
             result_set_handle = self.result_set_handle,
             start_position = start_position,
             fetch_size_bytes = fetch_size,

@@ -23,15 +23,17 @@ local Cursor = {}
 -- To avoid creating a new function for each row we create this only once and re-use it.
 -- @tparam number col_index the column index
 -- @treturn number the column index
-local function col_index_provider(col_index) return col_index end
+local function col_index_provider(col_index)
+    return col_index
+end
 
 --- This function creates a result table index provider that returns the column name.
 -- This is used for fetch mode "a" (alphanumeric indices in the result table).
 -- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
 -- @tparam table column_names a list of column names
 -- @treturn function result table index provider that maps the column index to column names
-local function create_col_name_provider(column_names) --
-    return function(col_index) --
+local function create_col_name_provider(column_names)
+    return function(col_index)
         return column_names[col_index]
     end
 end
@@ -43,11 +45,13 @@ end
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
-        exaerror.create("E-EDL-24", "Result set reports {{expected_col_count}} but only " ..
-                                "{{actual_col_count}} columns are available", args):add_ticket_mitigation():raise()
+        exaerror.create("E-EDL-24", "Result set reports {{expected_col_count}} but only "
+                                .. "{{actual_col_count}} columns are available", args):add_ticket_mitigation():raise()
     end
     local names = {}
-    for _, column in ipairs(result_set.columns) do table.insert(names, column.name) end
+    for _, column in ipairs(result_set.columns) do
+        table.insert(names, column.name)
+    end
     return names
 end
 
@@ -57,7 +61,7 @@ end
 local function get_column_types(result_set)
     local types = {}
     local E<const> = {}
-    for _, column in ipairs(result_set.columns) do --
+    for _, column in ipairs(result_set.columns) do
         table.insert(types, (column.dataType or E).type)
     end
     return types
@@ -150,7 +154,9 @@ function Cursor:fetch(table, modestring)
     end
     if not self.data:has_more_rows() then
         log.trace("End of result set reached, no more rows after %d", self.num_rows)
-        if not self.closed then self:close() end
+        if not self.closed then
+            self:close()
+        end
         return nil
     end
     table = table or {}

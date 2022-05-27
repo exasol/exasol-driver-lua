@@ -6,7 +6,9 @@ local config = require("config")
 config.configure_logging()
 
 local function assert_validation_error(properties, expected_error)
-    assert.error(function() ConnectionProperties:create(properties) end, expected_error)
+    assert.error(function()
+        ConnectionProperties:create(properties)
+    end, expected_error)
 end
 
 describe("ConnectionProperties", function()
@@ -33,11 +35,13 @@ Mitigations:
             assert.is_same(512, props:get_fetchsize_bytes())
         end)
 
-        it("raises error for zero value",
-           function() assert_validation_error({fetchsize_kib = 0}, EXPECTED_VALIDATION_ERROR) end)
+        it("raises error for zero value", function()
+            assert_validation_error({fetchsize_kib = 0}, EXPECTED_VALIDATION_ERROR)
+        end)
 
-        it("raises error for negative value",
-           function() assert_validation_error({fetchsize_kib = -1}, EXPECTED_VALIDATION_ERROR) end)
+        it("raises error for negative value", function()
+            assert_validation_error({fetchsize_kib = -1}, EXPECTED_VALIDATION_ERROR)
+        end)
     end)
 
     describe("tls_verify properties", function()

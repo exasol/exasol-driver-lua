@@ -70,7 +70,9 @@ function Connection:execute(statement)
     end
     local first_result = result.results[1]
     local result_type = first_result.resultType
-    if result_type == "rowCount" then return first_result.rowCount, nil end
+    if result_type == "rowCount" then
+        return first_result.rowCount, nil
+    end
     if result_type ~= "resultSet" then
         local args = {result_type = result_type or "nil"}
         exaerror.create("E-EDL-9", "Got unexpected result type {{result_type}}", args):add_ticket_mitigation():raise()

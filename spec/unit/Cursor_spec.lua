@@ -16,7 +16,12 @@ describe("Cursor", function()
     local websocket_mock = nil
 
     before_each(function()
-        websocket_stub = {close = function() end, send_close_result_set = function() end}
+        websocket_stub = {
+            close = function()
+            end,
+            send_close_result_set = function()
+            end
+        }
         websocket_mock = mock(websocket_stub, false)
     end)
 
@@ -27,8 +32,9 @@ describe("Cursor", function()
 
     describe("create()", function()
         it("raises error for inconsistent column count", function()
-            assert.has_error(function() create_cursor({numColumns = 2, columns = {}}) end,
-                             [[E-EDL-24: Result set reports 2 but only 0 columns are available
+            assert.has_error(function()
+                create_cursor({numColumns = 2, columns = {}})
+            end, [[E-EDL-24: Result set reports 2 but only 0 columns are available
 
 Mitigations:
 
@@ -40,8 +46,9 @@ Mitigations:
         it("raises error when cursor is closed", function()
             local cur = create_cursor(create_resultset({}, {}))
             cur:close()
-            assert.has_error(function() cur:fetch() end,
-                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+            assert.has_error(function()
+                cur:fetch()
+            end, "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
 
         it("returns nil when result set is empty", function()
@@ -131,8 +138,9 @@ Mitigations:
             assert.is_not_nil(cur:fetch())
             assert.is_not_nil(cur:fetch())
             assert.is_nil(cur:fetch())
-            assert.has_error(function() cur:fetch() end,
-                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+            assert.has_error(function()
+                cur:fetch()
+            end, "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
     end)
 
@@ -213,14 +221,19 @@ Mitigations:
 
         it("raises error when closing the result set handle fails", function()
             local cur = create_cursor(resultstub.create_batched_resultset({}, 0, RESULT_SET_HANDLE))
-            websocket_stub.send_close_result_set = function() return "mock error" end
-            assert.error(function() cur:close() end,
-                         "E-EDL-28: Failed to close result set 1730798808850104321: 'mock error'")
+            websocket_stub.send_close_result_set = function()
+                return "mock error"
+            end
+            assert.error(function()
+                cur:close()
+            end, "E-EDL-28: Failed to close result set 1730798808850104321: 'mock error'")
         end)
 
         it("returns true when closing the result set handle succeeds", function()
             local cur = create_cursor(resultstub.create_batched_resultset({}, 0, RESULT_SET_HANDLE))
-            websocket_stub.send_close_result_set = function() return nil end
+            websocket_stub.send_close_result_set = function()
+                return nil
+            end
             assert.is_true(cur:close())
         end)
 

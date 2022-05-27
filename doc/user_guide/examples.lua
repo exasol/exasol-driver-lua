@@ -8,8 +8,8 @@ local function get_config()
     local function get_system_env(varname, default)
         local value = os.getenv(varname) or default
         if value == nil then
-            error("Environment variable '" .. varname ..
-                          "' is required but is not defined")
+            error("Environment variable '" .. varname
+                          .. "' is required but is not defined")
         end
         return value
     end

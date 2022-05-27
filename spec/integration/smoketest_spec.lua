@@ -9,7 +9,9 @@ config.configure_logging()
 describe("Smoketest", function()
     local env = nil
 
-    before_each(function() env = driver.exasol() end)
+    before_each(function()
+        env = driver.exasol()
+    end)
 
     after_each(function()
         env:close()
@@ -17,8 +19,8 @@ describe("Smoketest", function()
     end)
 
     it("#smoketest", function()
-        assert.error_matches(function() env:connect("invalid:8563", "user", "password") end,
-                             "E%-EDL%-1: Error connecting to 'wss://invalid:8563': " ..
-                                     "'Connection to invalid:8563 failed:.*")
+        assert.error_matches(function()
+            env:connect("invalid:8563", "user", "password")
+        end, "E%-EDL%-1: Error connecting to 'wss://invalid:8563': " .. "'Connection to invalid:8563 failed:.*")
     end)
 end)

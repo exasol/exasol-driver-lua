@@ -40,8 +40,8 @@ function WebsocketDatahandler:handle_data(conn, opcode, message)
         return
     end
     if not self.expecting_data then
-        local err = exaerror.create("E-EDL-5", "Not expecting data from websocket but received message " ..
-                                            "with opcode {{opcode}} and data {{message}}",
+        local err = exaerror.create("E-EDL-5", "Not expecting data from websocket but received message "
+                                            .. "with opcode {{opcode}} and data {{message}}",
                                     {opcode = tostring(opcode), message = message}):add_ticket_mitigation()
         log.warn(tostring(err))
         return
@@ -79,6 +79,8 @@ end
 
 --- Check if this handler has received any data.
 -- @treturn boolean `true` if at least one message was received
-function WebsocketDatahandler:has_received_data() return #self.data > 0 end
+function WebsocketDatahandler:has_received_data()
+    return #self.data > 0
+end
 
 return WebsocketDatahandler
