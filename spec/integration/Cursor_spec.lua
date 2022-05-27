@@ -90,7 +90,7 @@ describe("Cursor", function()
 
         it("returns multiple columns in multiple rows", function()
             local cursor = assert(connection:execute(
-                                          "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
+                    "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
             assert.is_same({1, "a"}, cursor:fetch())
             assert.is_same({2, "b"}, cursor:fetch())
             assert.is_same({3, "c"}, cursor:fetch())

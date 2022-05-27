@@ -66,7 +66,7 @@ describe("Websocket", function()
             for _, tls_verify_option in ipairs({"invalid", ""}) do
                 it(string.format("%q", tls_verify_option), function()
                     assert_connect_fails({tls_verify = tls_verify_option}, get_ssl_socket_creation_error(
-                                                 "invalid verify option (" .. tls_verify_option .. ")"))
+                            "invalid verify option (" .. tls_verify_option .. ")"))
                 end)
             end
         end)
@@ -93,7 +93,7 @@ describe("Websocket", function()
             for _, tls_protocol_option in ipairs({"invalid", ""}) do
                 it(string.format("%q", tls_protocol_option), function()
                     assert_connect_fails({tls_protocol = tls_protocol_option}, get_ssl_socket_creation_error(
-                                                 "invalid protocol (" .. tls_protocol_option .. ")"))
+                            "invalid protocol (" .. tls_protocol_option .. ")"))
                 end)
             end
         end)

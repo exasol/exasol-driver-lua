@@ -66,7 +66,7 @@ function Connection:execute(statement)
                exaerror.create("E-EDL-8",
                                "Got {{numResults}} results for statement {{statement}} but at most one is supported",
                                {numResults = num_results, statement = statement}):add_mitigations(
-                       "Use only statements that return a single result")
+                "Use only statements that return a single result")
     end
     local first_result = result.results[1]
     local result_type = first_result.resultType
