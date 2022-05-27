@@ -56,7 +56,9 @@ end
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 local function login(socket, username, password)
     local response, err = socket:send_login_command()
-    if err then return nil, err end
+    if err then
+        return nil, err
+    end
     local encrypted_password = encrypt_password(response.publicKeyModulus, response.publicKeyExponent, password)
     return socket:send_login_credentials(username, encrypted_password)
 end

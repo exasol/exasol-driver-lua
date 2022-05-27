@@ -26,21 +26,29 @@ describe("ExasolWebsocket", function()
         send_raw_error = nil
     end
 
-    local function simulate_response(raw_response) simulate_response_string(cjson.encode(raw_response)) end
+    local function simulate_response(raw_response)
+        simulate_response_string(cjson.encode(raw_response))
+    end
 
     local function simulate_ok_response(response_data)
         simulate_response({status = "ok", responseData = response_data})
     end
 
     before_each(function()
-        local socket_stub = {close = function() end, send_raw = function()
-            return send_raw_response, send_raw_error
-        end}
+        local socket_stub = {
+            close = function()
+            end,
+            send_raw = function()
+                return send_raw_response, send_raw_error
+            end
+        }
         socket_mock = mock(socket_stub, false)
         exa_socket = exasol_websocket._create(socket_mock)
     end)
 
-    after_each(function() exa_socket = nil end)
+    after_each(function()
+        exa_socket = nil
+    end)
 
     local function assert_raw_send(expected_json, ignore_response)
         assert.stub(socket_mock.send_raw).was.called_with(match.is_table(), match.is_json(expected_json),
@@ -49,15 +57,17 @@ describe("ExasolWebsocket", function()
 
     it("raises error when trying to send command with closed socket", function()
         exa_socket:close()
-        assert.has_error(function() exa_socket:send_disconnect() end,
-                         [[E-EDL-22: Websocket already closed when trying to send payload '{"command":"disconnect"}']])
+        assert.has_error(function()
+            exa_socket:send_disconnect()
+        end, [[E-EDL-22: Websocket already closed when trying to send payload '{"command":"disconnect"}']])
     end)
 
     describe("send_login_command()", function()
         it("raises error response is nil", function()
             simulate_response_string(nil)
-            assert.error_matches(function() exa_socket:send_login_command() end,
-                                 "E%-EDL%-2: Did not receive response for request payload.*")
+            assert.error_matches(function()
+                exa_socket:send_login_command()
+            end, "E%-EDL%-2: Did not receive response for request payload.*")
         end)
 
         it("returns error when socket returns error", function()
@@ -243,7 +253,9 @@ describe("ExasolWebsocket", function()
             assert.is_nil(exa_socket.websocket)
         end)
 
-        it("returns true when called once", function() assert.is_true(exa_socket:close()) end)
+        it("returns true when called once", function()
+            assert.is_true(exa_socket:close())
+        end)
 
         it("returns false when called twice", function()
             exa_socket:close()

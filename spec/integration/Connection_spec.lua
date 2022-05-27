@@ -18,7 +18,9 @@ describe("Connection", function()
         local schema_name = string.format("CONNECTION_TEST_%d", os.time())
         assert(connection:execute(string.format("drop schema if exists %s cascade", schema_name)))
         assert(connection:execute(string.format("create schema %s", schema_name)))
-        finally(function() assert(connection:execute(string.format("drop schema %s cascade", schema_name))) end)
+        finally(function()
+            assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
+        end)
         return schema_name
     end
 
@@ -44,7 +46,9 @@ describe("Connection", function()
 
     local function assert_row_count_in_new_connection(table_name, expected_row_count)
         local other_connection = create_connection()
-        finally(function() other_connection:close() end)
+        finally(function()
+            other_connection:close()
+        end)
         assert_row_count(other_connection, table_name, expected_row_count)
     end
 
@@ -131,14 +135,15 @@ describe("Connection", function()
         it("returns error when executing an invalid query", function()
             local cursor, err = connection:execute("select")
             assert.is_nil(cursor)
-            assert.matches("E%-EDL%-6: Error executing statement 'select': E%-EDL%-10: Received DB status 'error' " ..
-                                   "with code 42000: 'syntax error, unexpected ';'", tostring(err))
+            assert.matches("E%-EDL%-6: Error executing statement 'select': E%-EDL%-10: Received DB status 'error' "
+                                   .. "with code 42000: 'syntax error, unexpected ';'", tostring(err))
         end)
 
         it("fails executing a query when already closed", function()
             connection:close()
-            assert.has_error(function() connection:execute("select 1") end,
-                             "E-EDL-12: Connection already closed when trying to call 'execute'")
+            assert.has_error(function()
+                connection:execute("select 1")
+            end, "E-EDL-12: Connection already closed when trying to call 'execute'")
         end)
     end)
 
