@@ -45,6 +45,8 @@ describe("Environment", function()
             assert.matches("E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: "
                                    .. "'Connection exception %- authentication failed.''.*", error_message)
         else
+            -- This alternative error occurs sporadically when the database closes the Websocket
+            -- before we can read the response.
             assert.matches("E%-EDL%-19: Login failed because socket is closed%. Probably credentials are wrong: "
                                    .. "'E%-EDL%-4: Error receiving data while waiting for response for .*s: 'closed'.*",
                            error_message)
