@@ -118,7 +118,10 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
-      - name: Run repeated tests
+      - name: Run repeated unit tests
+        run: luarocks test -- --run=ci_repeated_utest
+
+      - name: Run repeated integration tests
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
           eval $(luarocks path)
@@ -126,7 +129,7 @@ jobs:
             EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
             EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
-            luarocks test -- --run=ci_repeated
+            luarocks test -- --run=ci_repeated_itest
 
 
 ## Deactivated until requirements and coverage are added
