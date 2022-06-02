@@ -20,13 +20,9 @@ return {
   ci_repeated = {
     ["repeat"] = 20
   },
-  ci_repeated_utest = {
-    ROOT = {"spec/unit"},
-    ["repeat"] = 5
-  },
   ci_repeated_itest = {
     ROOT = {"spec/integration"},
-    ["repeat"] = 5
+    ["repeat"] = 20
   },
   smoketest = {
     tags = {"smoketest"}

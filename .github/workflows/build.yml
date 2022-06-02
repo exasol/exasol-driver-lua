@@ -118,9 +118,6 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
-      - name: Run repeated unit tests
-        run: luarocks test -- --run=ci_repeated_utest
-
       - name: Run repeated integration tests
         run: |
           source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
