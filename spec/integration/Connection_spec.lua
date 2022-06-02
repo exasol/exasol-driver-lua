@@ -147,6 +147,7 @@ describe("Connection", function()
         end)
     end)
 
+    -- [itest -> dsn~luasql-connection-commit~0]
     describe("commit()", function()
         it("returns true for empty transaction", function()
             set_autocommit(false)
@@ -177,6 +178,7 @@ describe("Connection", function()
         end)
     end)
 
+    -- [itest -> dsn~luasql-connection-rollback~0]
     describe("rollback()", function()
         it("returns true for empty transaction", function()
             set_autocommit(false)
@@ -207,6 +209,7 @@ describe("Connection", function()
         end)
     end)
 
+    -- [itest -> dsn~luasql-connection-setautocommit~0]
     describe("setautocommit()", function()
         it("enables autocommit by default", function()
             local schema_name = create_schema()
