@@ -8,15 +8,14 @@ describe("Exasol data types", function()
     local env = nil
     local connection = nil
 
-    setup(function()
-        -- To speedup tests we re-use a single connection for all tests as tests are read-only.
+    before_each(function()
         env = driver.exasol()
         local connection_params = config.get_connection_params()
         connection = assert(env:connect(connection_params.source_name, connection_params.user,
                                         connection_params.password))
     end)
 
-    teardown(function()
+    after_each(function()
         assert.is_true(connection:close())
         assert.is_true(env:close())
     end)
