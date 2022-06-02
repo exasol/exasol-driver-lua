@@ -29,7 +29,9 @@ end
 -- @tparam string err the received error
 -- @treturn boolean `true` if we can retry the connection, `false` if this is a permanent error
 --   that does not disappear
-local function recoverable_connection_error(err) return string.match(err, ".*failed: connection refused$") end
+local function recoverable_connection_error(err)
+    return string.match(err, ".*failed: connection refused$")
+end
 
 --- Create a connection to a websocket url with the given number of retries.
 -- @tparam string url the websocket url to connect to, e.g. "wss://host:1234"
@@ -50,8 +52,8 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
         else
             remaining_retries = remaining_retries - 1
             log.warn(tostring(exaerror.create("W-EDL-15",
-                                              "Websocket connection to {{url}} failed with error {{error}}, " ..
-                                                      "remaining retries: {{remaining_retries}}",
+                                              "Websocket connection to {{url}} failed with error {{error}}, "
+                                                      .. "remaining retries: {{remaining_retries}}",
                                               {url = url, error = err, remaining_retries = remaining_retries})))
             return connect_with_retry(url, websocket_options, remaining_retries)
         end
@@ -89,8 +91,8 @@ function Websocket:_wait_for_response(timeout_seconds)
     while true do
         local result, err = wsreceive(self.websocket)
         if type(err) == "string" then
-            local wrapped_error = exaerror.create("E-EDL-4", "Error receiving data while waiting for response " ..
-                                                          "for {{waiting_time}}s: {{error}}",
+            local wrapped_error = exaerror.create("E-EDL-4", "Error receiving data while waiting for response "
+                                                          .. "for {{waiting_time}}s: {{error}}",
                                                   {error = err, waiting_time = os.clock() - start})
             wrapped_error.cause = err
             log.error(tostring(wrapped_error))
@@ -103,8 +105,8 @@ function Websocket:_wait_for_response(timeout_seconds)
         end
         if total_wait_time_seconds >= timeout_seconds then
             return exaerror.create("E-EDL-18",
-                                   "Timeout after {{waiting_time}}s and {{try_count}} tries waiting for data, " ..
-                                           " last result: {{result}}, last error: {{error}}", {
+                                   "Timeout after {{waiting_time}}s and {{try_count}} tries waiting for data, "
+                                           .. " last result: {{result}}, last error: {{error}}", {
                 waiting_time = total_wait_time_seconds,
                 try_count = try_count,
                 result = result,
@@ -121,7 +123,9 @@ end
 -- @treturn string the received response or `nil` if ignore_response was `true` or an error occurred.
 -- @treturn nil|table `nil` if the operation was successful, otherwise the error that occured
 function Websocket:send_raw(payload, ignore_response)
-    if not ignore_response then self.data_handler:expect_data() end
+    if not ignore_response then
+        self.data_handler:expect_data()
+    end
     local _, err = wssend(self.websocket, 1, payload)
     if err == nil then
         if ignore_response then
@@ -143,7 +147,9 @@ end
 
 --- Disconnect from the server and close this websocket.
 function Websocket:close()
-    if self.closed then return end
+    if self.closed then
+        return
+    end
     log.trace("Closing websocket")
     wsclose(self.websocket)
     self.websocket = nil

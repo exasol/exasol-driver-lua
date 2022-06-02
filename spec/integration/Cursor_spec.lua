@@ -18,7 +18,9 @@ describe("Cursor", function()
     end)
 
     after_each(function()
-        if connection then connection:close() end
+        if connection then
+            connection:close()
+        end
         env:close()
         env = nil
         connection = nil
@@ -44,8 +46,9 @@ describe("Cursor", function()
             local cursor = assert(connection:execute("select 1"))
             assert.is_same({1}, cursor:fetch())
             assert.is_nil(cursor:fetch())
-            assert.error(function() cursor:fetch() end,
-                         "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+            assert.error(function()
+                cursor:fetch()
+            end, "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
 
         it("returns NULL as luasql.exasol.NULL", function()
@@ -87,7 +90,7 @@ describe("Cursor", function()
 
         it("returns multiple columns in multiple rows", function()
             local cursor = assert(connection:execute(
-                                          "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
+                    "select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)"))
             assert.is_same({1, "a"}, cursor:fetch())
             assert.is_same({2, "b"}, cursor:fetch())
             assert.is_same({3, "c"}, cursor:fetch())
@@ -98,8 +101,9 @@ describe("Cursor", function()
         it("fails when cursor is already closed", function()
             local cursor = assert(connection:execute("select 1"))
             cursor:close()
-            assert.has_error(function() cursor:fetch() end,
-                             "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+            assert.has_error(function()
+                cursor:fetch()
+            end, "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
     end)
 
@@ -141,8 +145,9 @@ describe("Cursor", function()
         it("closes cursor", function()
             local cursor = assert(connection:execute("select 1"))
             cursor:close()
-            assert.error(function() cursor:fetch() end,
-                         "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
+            assert.error(function()
+                cursor:fetch()
+            end, "E-EDL-13: Cursor closed while trying to fetch datasets from cursor")
         end)
 
         it("doesn't fail when called twice", function()

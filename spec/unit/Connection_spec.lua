@@ -15,10 +15,17 @@ local set_attribute_error = nil
 
 local function create_websocket_stub()
     return {
-        send_execute = function() return execute_result, execute_error end,
-        send_set_attribute = function() return set_attribute_error end,
-        send_disconnect = function() end,
-        close = function() return true end
+        send_execute = function()
+            return execute_result, execute_error
+        end,
+        send_set_attribute = function()
+            return set_attribute_error
+        end,
+        send_disconnect = function()
+        end,
+        close = function()
+            return true
+        end
     }
 end
 
@@ -58,13 +65,16 @@ describe("Connection", function()
         set_attribute_error = nil
     end)
 
-    after_each(function() conn = nil end)
+    after_each(function()
+        conn = nil
+    end)
 
     describe("execute()", function()
         it("raises error when no results available", function()
             simulate_result(0, {})
-            assert.has_error(function() conn:execute("statement") end,
-                             [[E-EDL-7: Got no results for statement 'statement'
+            assert.has_error(function()
+                conn:execute("statement")
+            end, [[E-EDL-7: Got no results for statement 'statement'
 
 Mitigations:
 
@@ -84,7 +94,9 @@ Mitigations:
 
         it("raises error for unknown result type", function()
             simulate_result(1, {{resultType = "unknown"}})
-            assert.has_error(function() conn:execute("statement") end, [[E-EDL-9: Got unexpected result type 'unknown'
+            assert.has_error(function()
+                conn:execute("statement")
+            end, [[E-EDL-9: Got unexpected result type 'unknown'
 
 Mitigations:
 
@@ -139,16 +151,18 @@ Mitigations:
 
         it("raises error when connection is closed", function()
             conn:close()
-            assert.has_error(function() conn:execute("statement") end,
-                             "E-EDL-12: Connection already closed when trying to call 'execute'")
+            assert.has_error(function()
+                conn:execute("statement")
+            end, "E-EDL-12: Connection already closed when trying to call 'execute'")
         end)
     end)
 
     describe("commit()", function()
         it("raises error when connection is closed", function()
             conn:close()
-            assert.has_error(function() conn:commit() end,
-                             "E-EDL-12: Connection already closed when trying to call 'commit'")
+            assert.has_error(function()
+                conn:commit()
+            end, "E-EDL-12: Connection already closed when trying to call 'commit'")
         end)
 
         it("executes the COMMIT statement", function()
@@ -171,16 +185,34 @@ Mitigations:
     describe("rollback()", function()
         it("raises error when connection is closed", function()
             conn:close()
-            assert.has_error(function() conn:rollback() end,
-                             "E-EDL-12: Connection already closed when trying to call 'rollback'")
+            assert.has_error(function()
+                conn:rollback()
+            end, "E-EDL-12: Connection already closed when trying to call 'rollback'")
+        end)
+
+        it("executes the ROLLBACK statement", function()
+            simulate_rowcount_result(0)
+            conn:rollback()
+            assert.stub(websocket_mock.send_execute).was.called_with(match.is_table(), "rollback")
+        end)
+
+        it("returns true for success", function()
+            simulate_rowcount_result(0)
+            assert.is_true(conn:rollback())
+        end)
+
+        it("returns false for failure #only", function()
+            simulate_error("mock error")
+            assert.is_false(conn:rollback())
         end)
     end)
 
     describe("setautocommit()", function()
         it("raises error when connection is closed", function()
             conn:close()
-            assert.has_error(function() conn:setautocommit(true) end,
-                             "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
+            assert.has_error(function()
+                conn:setautocommit(true)
+            end, "E-EDL-12: Connection already closed when trying to call 'setautocommit'")
         end)
 
         it("returns true when operation was successful", function()
@@ -199,14 +231,20 @@ Mitigations:
                 assert.stub(websocket_mock.send_set_attribute).was.called_with(match.is_table(), "autocommit", value)
             end
 
-            it("value true", function() assert_autocommit_attribute_set(true) end)
+            it("value true", function()
+                assert_autocommit_attribute_set(true)
+            end)
 
-            it("value false", function() assert_autocommit_attribute_set(false) end)
+            it("value false", function()
+                assert_autocommit_attribute_set(false)
+            end)
         end)
     end)
 
     describe("close()", function()
-        it("returns true when called once", function() assert.is_true(conn:close()) end)
+        it("returns true when called once", function()
+            assert.is_true(conn:close())
+        end)
 
         it("returns false when called twice", function()
             conn:close()
@@ -214,7 +252,9 @@ Mitigations:
         end)
 
         it("returns false when closing the websocket returns false", function()
-            websocket_stub.close = function() return false end
+            websocket_stub.close = function()
+                return false
+            end
             assert.is_false(conn:close())
         end)
 
@@ -232,9 +272,12 @@ Mitigations:
         end)
 
         it("raises error when sending disconnect fails", function()
-            websocket_stub.send_disconnect = function() return "mock error" end
-            assert.error(function() conn:close() end,
-                         "E-EDL-11: Error closing session 1730798808850104320: 'mock error'")
+            websocket_stub.send_disconnect = function()
+                return "mock error"
+            end
+            assert.error(function()
+                conn:close()
+            end, "E-EDL-11: Error closing session 1730798808850104320: 'mock error'")
         end)
 
         it("does not close an open cursor", function()

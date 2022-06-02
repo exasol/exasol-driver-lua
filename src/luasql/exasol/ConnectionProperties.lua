@@ -72,28 +72,28 @@ end
 -- Configuration property: `fetchsize_kib`, see @{luasql.exasol.ConnectionProperties:properties}.
 -- Default value: `131072` = `128 * 1024`.
 -- @treturn integer fetchsize in bytes
-function ConnectionProperties:get_fetchsize_bytes() --
+function ConnectionProperties:get_fetchsize_bytes()
     return (self.properties.fetchsize_kib or DEFAULT_FETCHSIZE_KIB) * 1024
 end
 
 --- Get the configured TLS verify mode for connecting to Exasol.
 -- Configuration property: `tls_verify`, see @{luasql.exasol.ConnectionProperties:properties}.
 -- @treturn string TLS verify mode
-function ConnectionProperties:get_tls_verify() --
+function ConnectionProperties:get_tls_verify()
     return self.properties.tls_verify or "none"
 end
 
 --- Get the configured TLS protocol for connecting to Exasol.
 -- Configuration property: `tls_protocol`, see @{luasql.exasol.ConnectionProperties:properties}.
 -- @treturn string TLS protocol
-function ConnectionProperties:get_tls_protocol() --
+function ConnectionProperties:get_tls_protocol()
     return self.properties.tls_protocol or "tlsv1_2"
 end
 
 --- Get the configured TLS options for connection to Exasol.
 -- Configuration property: `tls_options`, see @{luasql.exasol.ConnectionProperties.properties}.
 -- @treturn string TLS options
-function ConnectionProperties:get_tls_options() --
+function ConnectionProperties:get_tls_options()
     return self.properties.tls_options or "all"
 end
 

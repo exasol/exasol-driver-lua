@@ -66,11 +66,13 @@ function Connection:execute(statement)
                exaerror.create("E-EDL-8",
                                "Got {{numResults}} results for statement {{statement}} but at most one is supported",
                                {numResults = num_results, statement = statement}):add_mitigations(
-                       "Use only statements that return a single result")
+                "Use only statements that return a single result")
     end
     local first_result = result.results[1]
     local result_type = first_result.resultType
-    if result_type == "rowCount" then return first_result.rowCount, nil end
+    if result_type == "rowCount" then
+        return first_result.rowCount, nil
+    end
     if result_type ~= "resultSet" then
         local args = {result_type = result_type or "nil"}
         exaerror.create("E-EDL-9", "Got unexpected result type {{result_type}}", args):add_ticket_mitigation():raise()
@@ -99,7 +101,13 @@ end
 function Connection:rollback()
     -- [impl -> dsn~luasql-connection-rollback~0]
     self:_verify_connection_open("rollback")
-    error("Rollback will be implemented in https://github.com/exasol/exasol-driver-lua/issues/14")
+    local _, err = self:execute("rollback")
+    if err == nil then
+        return true
+    else
+        log.error(tostring(exaerror.create("E-EDL-40", "Failed to rollback: {{error}}", {error = tostring(err)})))
+        return false
+    end
 end
 
 --- Turns on or off the "auto commit" mode.

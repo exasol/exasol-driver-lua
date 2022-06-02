@@ -11,7 +11,9 @@ function resultstub.create_resultset(column_names, rows)
         data[column_index] = {}
         for row_index, row in ipairs(rows) do
             local value = row[column_name]
-            if value == nil then error("No value for row " .. row_index .. " column " .. column_name) end
+            if value == nil then
+                error("No value for row " .. row_index .. " column " .. column_name)
+            end
             table.insert(data[column_index], value)
         end
     end
@@ -28,7 +30,9 @@ end
 function resultstub.create_batched_resultset(column_names, total_row_count, result_set_handle)
     column_names = column_names or {}
     local columns = {}
-    for _, column_name in ipairs(column_names) do table.insert(columns, {name = column_name}) end
+    for _, column_name in ipairs(column_names) do
+        table.insert(columns, {name = column_name})
+    end
     return {
         resultSetHandle = result_set_handle,
         numRows = total_row_count,
@@ -49,7 +53,9 @@ function resultstub.create_fetch_result(column_names, rows)
         data[column_index] = {}
         for row_index, row in ipairs(rows) do
             local value = row[column_name]
-            if value == nil then error("No value for row " .. row_index .. " column " .. column_name) end
+            if value == nil then
+                error("No value for row " .. row_index .. " column " .. column_name)
+            end
             table.insert(data[column_index], value)
         end
     end

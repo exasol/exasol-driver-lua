@@ -24,7 +24,9 @@ local function connect(properties, url)
     properties = properties or {}
     local connection_properties = ConnectionProperties:create(properties)
     local sock = websocket.connect(url, connection_properties)
-    finally(function() sock:close() end)
+    finally(function()
+        sock:close()
+    end)
     return sock
 end
 
@@ -37,7 +39,9 @@ local function assert_connect_successful(properties, url)
 end
 
 local function assert_connect_fails(properties, expected_error)
-    assert.error(function() connect(properties) end, expected_error)
+    assert.error(function()
+        connect(properties)
+    end, expected_error)
 end
 
 describe("Websocket", function()
@@ -52,8 +56,7 @@ describe("Websocket", function()
 
         describe("fails SSL negotiation for valid value", function()
             for _, tls_verify_option in ipairs({"peer", "client_once", "fail_if_no_peer_cert"}) do
-                it(string.format("%q", tls_verify_option),
-                   function()
+                it(string.format("%q", tls_verify_option), function()
                     assert_connect_fails({tls_verify = tls_verify_option}, ssl_negotion_failed_error)
                 end)
             end
@@ -63,7 +66,7 @@ describe("Websocket", function()
             for _, tls_verify_option in ipairs({"invalid", ""}) do
                 it(string.format("%q", tls_verify_option), function()
                     assert_connect_fails({tls_verify = tls_verify_option}, get_ssl_socket_creation_error(
-                                                 "invalid verify option (" .. tls_verify_option .. ")"))
+                            "invalid verify option (" .. tls_verify_option .. ")"))
                 end)
             end
         end)
@@ -72,15 +75,15 @@ describe("Websocket", function()
     describe("with tls_protocol option", function()
         describe("connects successfully for value", function()
             for _, tls_protocol_option in ipairs({"any", "tlsv1_2"}) do
-                it(string.format("value %q", tls_protocol_option),
-                   function() assert_connect_successful({tls_protocol = tls_protocol_option}) end)
+                it(string.format("value %q", tls_protocol_option), function()
+                    assert_connect_successful({tls_protocol = tls_protocol_option})
+                end)
             end
         end)
 
         describe("fails SSL negotiation for valid value", function()
             for _, tls_protocol_option in ipairs({"tlsv1", "tlsv1_1", "tlsv1_3"}) do
-                it(string.format("%q", tls_protocol_option),
-                   function()
+                it(string.format("%q", tls_protocol_option), function()
                     assert_connect_fails({tls_protocol = tls_protocol_option}, ssl_negotion_failed_error)
                 end)
             end
@@ -90,7 +93,7 @@ describe("Websocket", function()
             for _, tls_protocol_option in ipairs({"invalid", ""}) do
                 it(string.format("%q", tls_protocol_option), function()
                     assert_connect_fails({tls_protocol = tls_protocol_option}, get_ssl_socket_creation_error(
-                                                 "invalid protocol (" .. tls_protocol_option .. ")"))
+                            "invalid protocol (" .. tls_protocol_option .. ")"))
                 end)
             end
         end)
@@ -101,15 +104,15 @@ describe("Websocket", function()
             for _, tls_options in ipairs({
                 "", "all", "no_tlsv1_1", "no_tlsv1_3", "no_tlsv1", "no_tlsv1_1,no_tlsv1_3,no_tlsv1"
             }) do
-                it(string.format("%q", tls_options),
-                   function() assert_connect_successful({tls_options = tls_options}) end)
+                it(string.format("%q", tls_options), function()
+                    assert_connect_successful({tls_options = tls_options})
+                end)
             end
         end)
 
         describe("fails SSL negotiation for valid value", function()
             for _, tls_options in ipairs({"no_tlsv1_2", "no_tlsv1_2,all", "no_tlsv1_2,all"}) do
-                it(string.format("%q", tls_options),
-                   function()
+                it(string.format("%q", tls_options), function()
                     assert_connect_fails({tls_options = tls_options}, ssl_negotion_failed_error)
                 end)
             end

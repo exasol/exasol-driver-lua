@@ -7,7 +7,9 @@ local datahandler = require("luasql.exasol.WebsocketDatahandler")
 describe("WebsocketDatahandler", function()
     local connection_stub = {}
     local handler = nil
-    before_each(function() handler = datahandler:create() end)
+    before_each(function()
+        handler = datahandler:create()
+    end)
 
     describe("handle_data()", function()
 
@@ -31,7 +33,9 @@ describe("WebsocketDatahandler", function()
     end)
 
     describe("get_data()", function()
-        it("returns nil when nothing is collected", function() assert.is_nil(handler:get_data()) end)
+        it("returns nil when nothing is collected", function()
+            assert.is_nil(handler:get_data())
+        end)
 
         it("returns data when expected data was received", function()
             handler:expect_data()
@@ -49,7 +53,9 @@ describe("WebsocketDatahandler", function()
     end)
 
     describe("has_received_data()", function()
-        it("returns false when no message received", function() assert.is_false(handler:has_received_data()) end)
+        it("returns false when no message received", function()
+            assert.is_false(handler:has_received_data())
+        end)
         it("returns true when messages received", function()
             handler:expect_data()
             handler:handle_data(connection_stub, true, "msg1")

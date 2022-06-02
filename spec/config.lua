@@ -5,7 +5,9 @@ local M = {}
 
 local function get_optional_system_env(varname, default)
     local value = os.getenv(varname)
-    if value == nil then return default end
+    if value == nil then
+        return default
+    end
     return value
 end
 
@@ -45,7 +47,9 @@ end
 
 function M.configure_logging()
     local luws_trace = get_optional_system_env("LUWS_TRACE", nil)
-    if luws_trace == "TRACE" then enable_luws_trace_log() end
+    if luws_trace == "TRACE" then
+        enable_luws_trace_log()
+    end
     local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
     log.set_level(log_level)
 end

@@ -86,7 +86,9 @@ end
 -- @tparam string|number|boolean|nil attribute_value the value of the attribute to set, e.g. `false`
 -- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
 function ExasolWebsocket:send_set_attribute(attribute_name, attribute_value)
-    if attribute_value == nil or attribute_value == constants.NULL then attribute_value = cjson.null end
+    if attribute_value == nil or attribute_value == constants.NULL then
+        attribute_value = cjson.null
+    end
     local _, err = self:_send_json({command = "setAttributes", attributes = {[attribute_name] = attribute_value}})
     return err
 end
@@ -125,7 +127,9 @@ end
 -- @tparam table response the response from the database
 -- @treturn nil|table `nil` the error that occured or `nil` if the response was successful
 local function get_response_error(response)
-    if response.status == "ok" then return nil end
+    if response.status == "ok" then
+        return nil
+    end
     if response.exception then
         local sqlCode = response.exception.sqlCode or "nil"
         local text = response.exception.text or "nil"
@@ -153,8 +157,12 @@ function ExasolWebsocket:_send_json(payload, ignore_response)
 
     log.trace("Sending payload '%s', ignore response=%s", raw_payload, ignore_response)
     local raw_response, err = self.websocket:send_raw(raw_payload, ignore_response)
-    if ignore_response then return nil, nil end
-    if err then return nil, err end
+    if ignore_response then
+        return nil, nil
+    end
+    if err then
+        return nil, err
+    end
     if raw_response == nil then
         err = exaerror.create("E-EDL-2", "Did not receive response for request payload {{payload}}.",
                               {payload = raw_payload})

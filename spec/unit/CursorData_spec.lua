@@ -42,21 +42,30 @@ describe("CursorData", function()
 
     local function trap_unwanted_fetch()
         websocket_stub.send_fetch = function(_, actual_result_set_handle, actual_start_position, actual_num_bytes)
-            error("Expected websocket:send_fetch() not be called but was called with result set handle " ..
-                          actual_result_set_handle .. ", start pos " .. actual_start_position .. " and num bytes " ..
-                          actual_num_bytes)
+            error("Expected websocket:send_fetch() not be called but was called with result set handle "
+                          .. actual_result_set_handle .. ", start pos " .. actual_start_position .. " and num bytes "
+                          .. actual_num_bytes)
         end
     end
 
     local function simulate_fetch_error(stub, err)
-        stub.send_fetch = function() return nil, err end
+        stub.send_fetch = function()
+            return nil, err
+        end
         return stub
     end
 
     before_each(function()
-        websocket_stub = {close = function() end}
+        websocket_stub = {
+            close = function()
+            end
+        }
         trap_unwanted_fetch()
-        connection_properties_stub = {get_fetchsize_bytes = function() return FETCH_SIZE_BYTES end}
+        connection_properties_stub = {
+            get_fetchsize_bytes = function()
+                return FETCH_SIZE_BYTES
+            end
+        }
     end)
 
     after_each(function()
@@ -67,20 +76,26 @@ describe("CursorData", function()
 
     describe("create()", function()
         it("fails for missing connection properties", function()
-            assert.has_error(function() CursorData:create(nil, {}, {}) end, "connection_properties missing")
+            assert.has_error(function()
+                CursorData:create(nil, {}, {})
+            end, "connection_properties missing")
         end)
 
         it("fails for missing numRows", function()
-            assert.has_error(function() CursorData:create({}, {}, {}) end, "numRows missing in result set")
+            assert.has_error(function()
+                CursorData:create({}, {}, {})
+            end, "numRows missing in result set")
         end)
 
         it("fails for missing numRowsInMessage", function()
-            assert.has_error(function() CursorData:create({}, {}, {numRows = 5}) end,
-                             "numRowsInMessage missing in result set")
+            assert.has_error(function()
+                CursorData:create({}, {}, {numRows = 5})
+            end, "numRowsInMessage missing in result set")
         end)
 
-        it("returns non-nil value",
-           function() assert.is_not_nil(CursorData:create({}, {}, {numRows = 5, numRowsInMessage = 2})) end)
+        it("returns non-nil value", function()
+            assert.is_not_nil(CursorData:create({}, {}, {numRows = 5, numRowsInMessage = 2}))
+        end)
     end)
 
     describe("next_row()", function()
@@ -127,18 +142,21 @@ describe("CursorData", function()
         describe("with small result set", function()
             it("fails for empty result set", function()
                 data = create_cursor_data(create_resultset({"c1"}, {}))
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "E%-EDL%-30: Row 1 out of bound, must be between 1 and 0.*")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "E%-EDL%-30: Row 1 out of bound, must be between 1 and 0.*")
             end)
             it("fails for result set without column", function()
                 data = create_cursor_data(create_resultset({}, {{c1 = 1}}))
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "E%-EDL%-29: Column index 1 out of bound, must be between 1 and 0.*")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "E%-EDL%-29: Column index 1 out of bound, must be between 1 and 0.*")
             end)
             it("fails for zero column index", function()
                 data = create_cursor_data(create_resultset({"c1"}, {{c1 = 1}}))
-                assert.error_matches(function() data:get_column_value(0) end,
-                                     "E%-EDL%-29: Column index 0 out of bound, must be between 1 and 1.*")
+                assert.error_matches(function()
+                    data:get_column_value(0)
+                end, "E%-EDL%-29: Column index 0 out of bound, must be between 1 and 1.*")
             end)
 
             describe("returns n-th column of first row", function()
@@ -175,49 +193,58 @@ describe("CursorData", function()
         describe("with batches", function()
             it("fails for missing result set handle", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, nil))
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "F%-EDL%-25: Neither data nor result set handle available.*")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "F%-EDL%-25: Neither data nor result set handle available.*")
             end)
 
             it("raises error for numRows in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {data = {}, numRows = nil})
-                assert.error(function() data:get_column_value(1) end, "missing numRows")
+                assert.error(function()
+                    data:get_column_value(1)
+                end, "missing numRows")
             end)
 
             it("raises error on missing data in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = nil})
-                assert.error(function() data:get_column_value(1) end, "missing data")
+                assert.error(function()
+                    data:get_column_value(1)
+                end, "missing data")
             end)
 
             it("raises error for empty data in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = {}})
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "E%-EDL%-29: Column index 1 out of bound, must be between 1 and 0")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "E%-EDL%-29: Column index 1 out of bound, must be between 1 and 0")
             end)
 
             it("raises error when fetching data from empty result set", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 0, RESULT_SET_HANDLE))
                 simulate_fetch(0, {numRows = 1, data = {}})
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "E%-EDL%-31: No more rows available in result set")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "E%-EDL%-31: No more rows available in result set")
             end)
 
             it("raises error for missing rows in fetch result", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 simulate_fetch(0, create_fetch_result({"c1", "c2", "c3"}, {}))
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "E%-EDL%-30: Row 1 out of bound, must be between 1 and 0.*")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "E%-EDL%-30: Row 1 out of bound, must be between 1 and 0.*")
             end)
 
             it("raises error when fetch returns errror", function()
                 data = create_cursor_data(create_batched_resultset({"c1", "c2", "c3"}, 1, RESULT_SET_HANDLE))
                 websocket_stub = simulate_fetch_error(websocket_stub, "mock error")
-                assert.error(function() data:get_column_value(1) end,
-                             "E-EDL-26: Error fetching result data for handle 1730798808850104320 with " ..
-                                     "start position 0 and fetch size 1024 bytes: 'mock error'")
+                assert.error(function()
+                    data:get_column_value(1)
+                end, "E-EDL-26: Error fetching result data for handle 1730798808850104320 with "
+                                     .. "start position 0 and fetch size 1024 bytes: 'mock error'")
             end)
 
             it("returns data for single row [utest -> dsn~luasql-cursor-fetch-resultsethandle~0]", function()
@@ -253,8 +280,9 @@ describe("CursorData", function()
                 assert_row({1, "a", true})
                 trap_unwanted_fetch()
                 data:next_row()
-                assert.error_matches(function() data:get_column_value(1) end,
-                                     "E%-EDL%-31: No more rows available in result set")
+                assert.error_matches(function()
+                    data:get_column_value(1)
+                end, "E%-EDL%-31: No more rows available in result set")
             end)
         end)
     end)
