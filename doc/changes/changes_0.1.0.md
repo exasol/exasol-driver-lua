@@ -20,6 +20,7 @@ Code name: Initial Release
 
 * #16: Fixed sporadic Websocket connection errors
 * #51: Fixed wrong error message for invalid TLS parameter values
+* #31: Upgraded integration tests to Exasol 7.1.10 to fix sporadic test failures
 
 ## Refactoring
 
