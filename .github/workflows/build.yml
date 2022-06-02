@@ -63,7 +63,7 @@ jobs:
       - name: Run smoketests without database
         run: |
           eval $(luarocks path)
-          EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test -- --run=smoketest
+          EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test --local -- --run=smoketest
       
       - name: Build API documentation
         run: ./tools/build-docs.sh
