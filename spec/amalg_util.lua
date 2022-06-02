@@ -1,4 +1,5 @@
 local constants = require("luasql.exasol.constants")
+local log = require("remotelog")
 
 local M = {}
 
@@ -7,6 +8,7 @@ local function get_rockspec_filename() --
 end
 
 local function load_rockspec(path)
+    path = path or get_rockspec_filename()
     local env = {}
     local rockspec_function = assert(loadfile(path, "t", env))
     rockspec_function()
@@ -14,18 +16,17 @@ local function load_rockspec(path)
 end
 
 local function get_driver_module_names()
-    local path = get_rockspec_filename()
-    local rockspec = load_rockspec(path)
+    local rockspec = load_rockspec()
     local modules = {}
     for module_name, _ in pairs(rockspec.build.modules) do table.insert(modules, module_name) end
     return modules
 end
 
---  amalg.lua --debug $script_arg --output "$output_file" $module_names
 local function amalgamate(lua_path, modules, script_path)
     local command = "LUA_PATH=" .. lua_path .. " amalg.lua --fallback"
     if script_path then command = command .. " --script=" .. script_path end
     command = command .. " " .. table.concat(modules, " ")
+    log.debug("Running amalg command: %s", command)
     local file = io.popen(command, "r")
     local output = file:read("*all")
     file:close()
