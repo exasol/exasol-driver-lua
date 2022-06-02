@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
--- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local exasol_driver = require("luasql.exasol")
 local sqlite3_driver = require("luasql.sqlite3")

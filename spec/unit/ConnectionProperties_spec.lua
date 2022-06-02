@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
--- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
 local config = require("config")

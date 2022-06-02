@@ -3,8 +3,6 @@ local log = require("remotelog")
 local exaerror = require("exaerror")
 local CursorData = require("luasql.exasol.CursorData")
 
--- luacheck: no unused args
-
 local FETCH_MODE_NUMERIC_INDICES = "n"
 local FETCH_MODE_ALPHANUMERIC_INDICES = "a" -- luacheck: ignore 211 # unused variable
 
