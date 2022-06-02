@@ -28,6 +28,14 @@ jobs:
           path: 'integration-test-docker-environment'
           ref: 'main'
 
+      - name: Cache local Luarocks repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.luarocks
+          key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
+          restore-keys: |
+            ${{ runner.os }}-luarocks-
+
       - name: Install Lua ${{ matrix.lua_version }}
         uses: leafo/gh-actions-lua@v8.0.0
         with:
