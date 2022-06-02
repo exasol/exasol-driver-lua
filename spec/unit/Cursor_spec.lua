@@ -144,6 +144,7 @@ Mitigations:
         end)
     end)
 
+    -- [utest -> dsn~luasql-cursor-getcoltypes~0]
     describe("getcoltypes()", function()
         it("returns empty list when no columns available", function()
             local cur = create_cursor(resultstub.create_empty_resultset_with_columns({}))
@@ -177,6 +178,7 @@ Mitigations:
         end)
     end)
 
+    -- [utest -> dsn~luasql-cursor-getcolnames~0]
     describe("getcolnames()", function()
         it("returns empty list when no columns available", function()
             local cur = create_cursor(create_resultset({}))

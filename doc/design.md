@@ -56,9 +56,9 @@ See [Diagram source](./model/diagrams/sequence/seq_connection_execute.plantuml).
 
 See [Diagram source](./model/diagrams/sequence/seq_connection_setautocommit.plantuml).
 
-### Commiting a Transaction for the Connection
+### Committing a Transaction for the Connection
 
-![Sequence Diagram: Commiting a Transaction](./images/generated/seq_connection_commit.svg)
+![Sequence Diagram: Committing a Transaction](./images/generated/seq_connection_commit.svg)
 
 See [Diagram source](./model/diagrams/sequence/seq_connection_commit.plantuml).
 

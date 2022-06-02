@@ -15,6 +15,7 @@ Code name: Initial Release
 * #7: Allow specifying TLS options for connecting to Exasol
 * #41: Implemented `connection:commit()`
 * #42: Implemented `connection:rollback()`
+* #6: Added tests to verify LuaSQL compatibility
 
 ## Bugfixes
 
