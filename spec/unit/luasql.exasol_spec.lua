@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
--- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local constants = require("luasql.exasol.constants")
 local config = require("config")
