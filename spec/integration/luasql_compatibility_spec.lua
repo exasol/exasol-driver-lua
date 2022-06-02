@@ -8,9 +8,11 @@ local config = require("config")
 config.configure_logging()
 
 --- LuaSQL compatibility tests
--- This verifies that the tests for luasql-exasol work as expected by running the same small test suite against both luasql-sqlite3 and luasql-exasol.
--- It's not possible to achieve a better test coverage because luasql-sqlite3 does not conform to the [LuaSQL API](https://keplerproject.github.io/luasql/manual.html).
--- The `Cursor:fetch()` method for sqlite3 e.g. returns the number of rows and stores the row data into the table passed as argument.
+-- This verifies that the tests for luasql-exasol work as expected by running the same small test suite against both
+-- luasql-sqlite3 and luasql-exasol. It's not possible to achieve a better test coverage because luasql-sqlite3
+-- does not conform to the [LuaSQL API](https://keplerproject.github.io/luasql/manual.html).
+-- The `Cursor:fetch()` method for sqlite3 e.g. returns the number of rows and stores the row data into the table
+-- passed as argument.
 -- That's why this serves as a smoke test to detect bugs like typos in method names.
 
 local function create_exasol_driver()
@@ -109,14 +111,16 @@ describe("LuaSQL compatibility", function()
                     end)
 
                     it("fetches results in index mode", function()
-                        -- For sqlite3, Cursor:fetch() always returns the number of results. So we can't use the return value here.
+                        -- For sqlite3, Cursor:fetch() always returns the number of results,
+                        -- so we can't use the return value here.
                         local row = {}
                         cur:fetch(row, "n")
                         assert.is_same({1, "foobar"}, row)
                     end)
 
                     it("fetches results in alphanumeric mode", function()
-                        -- For sqlite3, Cursor:fetch() always returns the number of results. So we can't use the return value here.
+                        -- For sqlite3, Cursor:fetch() always returns the number of results,
+                        -- so we can't use the return value here.
                         local row = {}
                         cur:fetch(row, "a")
                         assert.is_same({ID = 1, NAME = "foobar"}, row)
