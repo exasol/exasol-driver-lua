@@ -7,6 +7,12 @@ local log = require("remotelog")
 local config = require("config")
 config.configure_logging()
 
+--- LuaSQL compatibility tests
+-- This verifies that the tests for luasql-exasol work as expected by running the same small test suite against both luasql-sqlite3 and luasql-exasol.
+-- It's not possible to achieve a better test coverage because luasql-sqlite3 does not conform to the [LuaSQL API](https://keplerproject.github.io/luasql/manual.html).
+-- The `Cursor:fetch()` method for sqlite3 e.g. returns the number of rows and stores the row data into the table passed as argument.
+-- That's why this serves as a smoke test to detect bugs like typos in method names.
+
 local function create_exasol_driver()
     local connection_params = config.get_connection_params()
     local function teardown()
@@ -91,7 +97,7 @@ describe("LuaSQL compatibility", function()
                     local cur = nil
 
                     before_each(function()
-                        cur = assert(conn:execute([[select 1 as 'ID', 'foobar' as "NAME"]]))
+                        cur = assert(conn:execute([[select 1 as "ID", 'foobar' as "NAME"]]))
                     end)
 
                     after_each(function()
@@ -103,14 +109,14 @@ describe("LuaSQL compatibility", function()
                     end)
 
                     it("fetches results in index mode", function()
-                        -- sqlite3 driver does not conform to API, fetch() always returns the number of results.
+                        -- For sqlite3, Cursor:fetch() always returns the number of results. So we can't use the return value here.
                         local row = {}
                         cur:fetch(row, "n")
                         assert.is_same({1, "foobar"}, row)
                     end)
 
                     it("fetches results in alphanumeric mode", function()
-                        -- sqlite3 driver does not conform to API, fetch() always returns the number of results.
+                        -- For sqlite3, Cursor:fetch() always returns the number of results. So we can't use the return value here.
                         local row = {}
                         cur:fetch(row, "a")
                         assert.is_same({ID = 1, NAME = "foobar"}, row)
@@ -123,6 +129,7 @@ describe("LuaSQL compatibility", function()
                     it("gets column types", function()
                         local expected_column_types = {"DECIMAL", "CHAR"}
                         if driver.name == "sqlite3" then
+                            -- Sqlite3 always returns an empty table here.
                             expected_column_types = {}
                         end
                         assert.is_same(expected_column_types, cur:getcoltypes())
