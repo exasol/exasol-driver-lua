@@ -17,12 +17,8 @@ describe("Exasol data types", function()
     end)
 
     teardown(function()
-        if connection then
-            connection:close()
-        end
-        env:close()
-        env = nil
-        connection = nil
+        assert.is_true(connection:close())
+        assert.is_true(env:close())
     end)
 
     describe("converted to correct Lua type", function()
