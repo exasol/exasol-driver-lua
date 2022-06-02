@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
--- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
@@ -107,6 +105,7 @@ describe("Cursor", function()
         end)
     end)
 
+    -- [itest -> dsn~luasql-cursor-getcoltypes~0]
     describe("getcoltypes()", function()
         it("returns type of a single column", function()
             local cursor = assert(connection:execute("select 1"))
@@ -121,6 +120,7 @@ describe("Cursor", function()
         end)
     end)
 
+    -- [itest -> dsn~luasql-cursor-getcolnames~0]
     describe("getcolnames()", function()
         it("returns name of a single column", function()
             local cursor = assert(connection:execute("select 1 as col_name"))

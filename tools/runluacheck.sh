@@ -12,9 +12,6 @@ readonly test_module_path="$base_dir/spec"
 
 luacheck "$src_module_path" --max-line-length 120 --codes --exclude-files src/luasql/exasol/luws.lua
 
-# (W111) setting non-standard global variable TEST
-# (W112) mutating non-standard global variable TEST
-# (W212) unused argument self
-luacheck "$test_module_path" --max-line-length 120 --codes --ignore 111 --ignore 112
+luacheck "$test_module_path" --max-line-length 120 --codes
 
-luacheck "$base_dir/doc/user_guide/examples.lua" --max-line-length 75
+luacheck "$base_dir/doc/user_guide/examples.lua" --max-line-length 75 --codes

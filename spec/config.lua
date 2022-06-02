@@ -36,7 +36,6 @@ end
 local function enable_luws_trace_log()
     log.debug("Enable luws tracing")
     -- luacheck: globals debug_mode
-    ---@diagnostic disable-next-line: lowercase-global
     debug_mode = 1
 end
 

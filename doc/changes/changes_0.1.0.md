@@ -15,6 +15,7 @@ Code name: Initial Release
 * #7: Allow specifying TLS options for connecting to Exasol
 * #41: Implemented `connection:commit()`
 * #42: Implemented `connection:rollback()`
+* #6: Added tests to verify LuaSQL compatibility
 
 ## Bugfixes
 
@@ -29,6 +30,7 @@ Code name: Initial Release
 * #35: Added integration test for fetching large results with fetch size smaller than the row size
 * #33: Replaced `cjson.null` in returned row data with `luasql.exasol.NULL`
 * #39: Renamed entry module to `luasql.exasol`
+* #71: Removed unnecessary exceptions for luacheck
 
 ## Documentation
 

@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
--- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local connection = require("luasql.exasol.Connection")
 local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
@@ -157,6 +155,7 @@ Mitigations:
         end)
     end)
 
+    -- [utest -> dsn~luasql-connection-commit~0]
     describe("commit()", function()
         it("raises error when connection is closed", function()
             conn:close()
@@ -182,6 +181,7 @@ Mitigations:
         end)
     end)
 
+    -- [utest -> dsn~luasql-connection-rollback~0]
     describe("rollback()", function()
         it("raises error when connection is closed", function()
             conn:close()
@@ -207,6 +207,7 @@ Mitigations:
         end)
     end)
 
+    -- [utest -> dsn~luasql-connection-setautocommit~0]
     describe("setautocommit()", function()
         it("raises error when connection is closed", function()
             conn:close()
