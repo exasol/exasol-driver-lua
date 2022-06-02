@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
--- luacheck: globals describe it before_each after_each
 require("busted.runner")()
 local cjson = require("cjson")
 local match = require("luassert.match")

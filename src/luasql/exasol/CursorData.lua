@@ -4,8 +4,6 @@ local exaerror = require("exaerror")
 local constants = require("luasql.exasol.constants")
 local cjson = require("cjson")
 
--- luacheck: no unused args
-
 --- This internal class represents the result data of a cursor that allows retreiving rows from a result set.
 -- It handles large result sets by fetching new batches automatically.
 -- @classmod luasql.exasol.CursorData
