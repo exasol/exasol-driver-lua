@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 1
           repository: 'exasol/integration-test-docker-environment'
           path: 'integration-test-docker-environment'
-          ref: 'feature/#221-add-support-for-exasol-7.1.10'
+          ref: 'main'
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v3
