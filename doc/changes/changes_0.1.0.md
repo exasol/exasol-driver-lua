@@ -32,6 +32,7 @@ Code name: Initial Release
 * #33: Replaced `cjson.null` in returned row data with `luasql.exasol.NULL`
 * #39: Renamed entry module to `luasql.exasol`
 * #71: Removed unnecessary exceptions for luacheck
+* #15: Added integration tests for all Exasol data types
 
 ## Documentation
 
