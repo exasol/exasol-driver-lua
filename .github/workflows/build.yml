@@ -7,7 +7,7 @@ jobs:
        fail-fast: true
        matrix:
           lua_version: [5.4]
-          exasol_version: [7.1.9]
+          exasol_version: [7.1.10]
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
@@ -26,6 +26,7 @@ jobs:
           fetch-depth: 1
           repository: 'exasol/integration-test-docker-environment'
           path: 'integration-test-docker-environment'
+          ref: 'main'
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v3
@@ -62,7 +63,7 @@ jobs:
       - name: Run smoketests without database
         run: |
           eval $(luarocks path)
-          EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test -- --run=smoketest
+          EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test --local -- --run=smoketest
       
       - name: Build API documentation
         run: ./tools/build-docs.sh
@@ -117,16 +118,15 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
-# Repeated tests take a long time. This will be fixed in https://github.com/exasol/exasol-driver-lua/issues/56
-#      - name: Run repeated tests
-#        run: |
-#          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
-#          eval $(luarocks path)
-#          LOG_LEVEL=ERROR \
-#            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
-#            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
-#            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
-#            luarocks test -- --run=ci_repeated
+      - name: Run repeated integration tests
+        run: |
+          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          eval $(luarocks path)
+          LOG_LEVEL=ERROR \
+            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
+            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            luarocks test -- --run=ci_repeated_itest
 
 
 ## Deactivated until requirements and coverage are added

@@ -5,6 +5,11 @@ local config = require("config")
 config.configure_logging()
 local connection_params = config.get_connection_params()
 
+--- Check if a string starts with a given prefix.
+local function string_starts_with(string, prefix)
+    return string.sub(string, 1, string.len(prefix)) == prefix
+end
+
 describe("Environment", function()
     local env = nil
 
@@ -32,10 +37,20 @@ describe("Environment", function()
     end)
 
     it("returns an error when connecting with wrong credendials", function()
-        local conn, err = env:connect(connection_params.source_name, "user", "password")
+        local conn, err = env:connect(connection_params.source_name, "wrong-user", "password")
         assert.is_nil(conn)
-        assert.matches("E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: "
-                               .. "'Connection exception %- authentication failed.''.*", tostring(err))
+        assert.is_not_nil(err)
+        local error_message = tostring(err)
+        if string_starts_with(error_message, "E-EDL-16") then
+            assert.matches("E%-EDL%-16: Login failed: 'E%-EDL%-10: Received DB status 'error' with code 08004: "
+                                   .. "'Connection exception %- authentication failed.''.*", error_message)
+        else
+            -- This alternative error occurs sporadically when the database closes the Websocket
+            -- before we can read the response.
+            assert.matches("E%-EDL%-19: Login failed because socket is closed%. Probably credentials are wrong: "
+                                   .. "'E%-EDL%-4: Error receiving data while waiting for response for .*s: 'closed'.*",
+                           error_message)
+        end
     end)
 
     -- [itest -> dsn~luasql-environment-connect~0]

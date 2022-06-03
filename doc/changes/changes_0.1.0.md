@@ -21,6 +21,7 @@ Code name: Initial Release
 
 * #16: Fixed sporadic Websocket connection errors
 * #51: Fixed wrong error message for invalid TLS parameter values
+* #31: Upgraded integration tests to Exasol 7.1.10 to fix sporadic test failures
 
 ## Refactoring
 
@@ -31,6 +32,7 @@ Code name: Initial Release
 * #33: Replaced `cjson.null` in returned row data with `luasql.exasol.NULL`
 * #39: Renamed entry module to `luasql.exasol`
 * #71: Removed unnecessary exceptions for luacheck
+* #15: Added integration tests for all Exasol data types
 
 ## Documentation
 
