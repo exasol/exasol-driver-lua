@@ -46,10 +46,17 @@ describe("Exasol data types", function()
             {expression = "'äöüÄÖÜßèé'", expected_value = "äöüÄÖÜßèé", expected_type = "CHAR"},
             {expression = "'😀👍'", expected_value = "😀👍", expected_type = "CHAR"},
             {expression = cast("'abc'", "CHAR(5)"), expected_value = "abc  ", expected_type = "CHAR"},
-            {expression = cast("'äöüÄÖÜßèé'", "CHAR(10)"), expected_value = "äöüÄÖÜßèé ", expected_type = "CHAR"},
-            {expression = cast("'😀👍'", "CHAR(5)"), expected_value = "😀👍   ", expected_type = "CHAR"},
+            {
+                expression = cast("'äöüÄÖÜßèé'", "CHAR(10)"),
+                expected_value = "äöüÄÖÜßèé ",
+                expected_type = "CHAR"
+            }, {expression = cast("'😀👍'", "CHAR(5)"), expected_value = "😀👍   ", expected_type = "CHAR"},
             {expression = cast("'abc'", "VARCHAR(5)"), expected_value = "abc", expected_type = "VARCHAR"}, --
-            {expression = cast("'äöüÄÖÜßèé'", "VARCHAR(20)"), expected_value = "äöüÄÖÜßèé", expected_type = "VARCHAR"}, --
+            {
+                expression = cast("'äöüÄÖÜßèé'", "VARCHAR(20)"),
+                expected_value = "äöüÄÖÜßèé",
+                expected_type = "VARCHAR"
+            }, --
             {expression = cast("'😀👍'", "VARCHAR(5)"), expected_value = "😀👍", expected_type = "VARCHAR"}, --
             --
             -- Date/time types
