@@ -131,13 +131,13 @@ jobs:
 
 ## Deactivated until requirements and coverage are added
 
-#      - name: "Set up JDK"
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '11'
-#          distribution: 'temurin'
-#      - name: Trace requirements
-#        run: ./tools/trace-requirements.sh
+      - name: "Set up JDK"
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Trace requirements
+        run: ./tools/trace-requirements.sh
 
   ## This is a separate job because it requires running apt-get which takes > 40s.
   ## When to other job also uses apt-get this can be moved back.

@@ -8,7 +8,8 @@ local amalg = require("amalg_util")
 config.configure_logging()
 local connection_params = config.get_connection_params()
 
-describe("driver works inside an UDF", function()
+-- [itest -> dsn~use-available-exasol-udf-libraries-only~1]
+describe("Exasol driver works inside an UDF", function()
     local env = nil
     local conn = nil
 
@@ -28,14 +29,17 @@ describe("driver works inside an UDF", function()
         local schema_name = string.format("CONNECTION_TEST_%d", os.time())
         assert(conn:execute(string.format("drop schema if exists %s cascade", schema_name)))
         assert(conn:execute(string.format("create schema %s", schema_name)))
-        finally(function() assert(conn:execute(string.format("drop schema %s cascade", schema_name))) end)
+        finally(function()
+            assert(conn:execute(string.format("drop schema %s cascade", schema_name)))
+        end)
         return schema_name
     end
 
     local function create_script_with_driver(schema_name, script_content)
         local content = amalg.amalgamate_with_script(script_content)
-        local statement = "CREATE OR REPLACE LUA SCALAR SCRIPT " .. schema_name ..
-                                  ".RUN_TEST(lua_script VARCHAR(2000)) RETURNS VARCHAR(2000) AS\n" .. content .. "\n/"
+        local statement = string.format(
+                "CREATE LUA SCALAR SCRIPT %s.RUN_TEST(lua_script VARCHAR(2000)) RETURNS VARCHAR(2000) AS\n%s\n/",
+                schema_name, content)
         assert(conn:execute(statement))
     end
 

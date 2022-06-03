@@ -130,6 +130,29 @@ Covers:
 
 Needs: impl, utest
 
+## Restrict Libraries to the Ones Available to Exasol UDFs
+
+`dsn~use-available-exasol-udf-libraries-only~1`
+
+EDL uses the following Lua modules that are available to Exasol UDFs:
+* luasocket
+* luasec
+* luaossl
+* lua-cjson
+* base64
+
+EDL uses the following Lua modules that can be amalgamated into a single package:
+* exaerror
+* remotelog
+
+EDL does not use other modules not listed here.
+
+Covers:
+
+* [req~use-available-exasol-udf-libraries-only~1](./system_requirements.md#restrict-libraries-to-the-ones-available-to-exasol-udfs)
+
+Needs: itest
+
 # Design Decisions
 
 # Quality Scenarios
