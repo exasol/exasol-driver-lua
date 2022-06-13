@@ -21,11 +21,10 @@ describe("Exasol data types", function()
         assert.is_true(env:close())
     end)
 
-    local function cast(expression, type)
-        return string.format("cast(%s as %s)", expression, type)
-    end
-
     describe("converted to correct Lua type", function()
+        local function cast(expression, type)
+            return string.format("cast(%s as %s)", expression, type)
+        end
         -- See [list of all Exasol data types]
         -- (https://docs.exasol.com/db/latest/sql_references/data_types/datatypesoverview.htm)
         local test_cases = {
@@ -114,7 +113,7 @@ describe("Exasol data types", function()
         end
     end)
 
-    describe("Timestamp and timezone", function()
+    describe("timestamps", function()
         local schema_name
         before_each(function()
             schema_name = string.format("TIMESTAMP_TEST_%d", os.time())
@@ -192,7 +191,7 @@ describe("Exasol data types", function()
         }
 
         for _, test in ipairs(test_cases) do
-            it(string.format("Timestamp %q in session timezone %q and column type %q has value %q", test.value,
+            it(string.format("converts timestamp %q in session timezone %q and column type %q to value %q", test.value,
                              test.session_timezone, test.column_type, test.expected_value), function()
                 local table_name = create_table(test.column_type)
                 insert_value_utc(table_name, test.value)
