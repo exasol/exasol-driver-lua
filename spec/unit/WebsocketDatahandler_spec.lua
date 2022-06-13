@@ -1,6 +1,7 @@
 require("busted.runner")()
-
 local datahandler = require("luasql.exasol.WebsocketDatahandler")
+local config = require("config")
+config.configure_logging()
 
 describe("WebsocketDatahandler", function()
     local connection_stub = {}

@@ -1,5 +1,7 @@
 require("busted.runner")()
 local constants = require("luasql.exasol.constants")
+local config = require("config")
+config.configure_logging()
 
 describe("Build setup", function()
     local function load_rockspec(path)
@@ -10,7 +12,7 @@ describe("Build setup", function()
     end
 
     local function get_rockspec_filename() --
-        return string.format("exasol-driver-lua-%s.rockspec", constants.VERSION)
+        return string.format("luasql-exasol-%s.rockspec", constants.VERSION)
     end
 
     describe("Rockspec file", function()
