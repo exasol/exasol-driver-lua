@@ -1,6 +1,7 @@
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
+local log = require("remotelog")
 
 config.configure_logging()
 
@@ -108,6 +109,98 @@ describe("Exasol data types", function()
                 end)
                 assert.is_same(test.expected_value, cur:fetch()[1])
                 assert.is_same(test.expected_type, cur:getcoltypes()[1])
+            end)
+        end
+    end)
+
+    describe("timestamps", function()
+        local schema_name
+        before_each(function()
+            schema_name = string.format("TIMESTAMP_TEST_%d", os.time())
+            log.debug("Creating schema %s", schema_name)
+            assert(connection:execute(string.format("DROP SCHEMA IF EXISTS %s CASCADE", schema_name)))
+            assert(connection:execute(string.format("CREATE SCHEMA %s", schema_name)))
+        end)
+
+        after_each(function()
+            log.debug("Dropping schema %s", schema_name)
+            assert(connection:execute(string.format("drop schema %s cascade", schema_name)))
+            schema_name = nil
+        end)
+
+        local function create_table(column_type)
+            local table_name = string.format("%s.tab", schema_name)
+            assert(connection:execute(string.format("CREATE TABLE %s (col %s)", table_name, column_type)))
+            return table_name
+        end
+
+        local function get_session_timezone()
+            local cur = assert(connection:execute("select sessiontimezone"))
+            local timezone = cur:fetch()[1]
+            cur:close()
+            return timezone
+        end
+
+        local function set_session_timezone(timezone)
+            if timezone then
+                local timezone_before = get_session_timezone()
+                assert(connection:execute(string.format("ALTER SESSION SET TIME_ZONE = '%s'", timezone)))
+                local timezone_after = get_session_timezone()
+                log.debug("Timezone before: %s, afterwards: %s", timezone_before, timezone_after)
+                assert.is_same(timezone, timezone_after, "Setting session timezone failed")
+            end
+        end
+
+        local function insert_value_utc(table_name, value)
+            set_session_timezone("UTC")
+            assert(connection:execute(string.format("INSERT INTO %s (col) VALUES ('%s')", table_name, value)))
+        end
+
+        local test_cases = {
+            {
+                value = "2021-12-31 23:59:59.999",
+                column_type = "TIMESTAMP",
+                session_timezone = nil,
+                expected_value = "2021-12-31 23:59:59.999000"
+            }, {
+                value = "2021-12-31 23:59:59.999",
+                column_type = "TIMESTAMP WITH LOCAL TIME ZONE",
+                session_timezone = nil,
+                expected_value = "2021-12-31 23:59:59.999000"
+            }, {
+                value = "2021-12-31 23:59:59.999",
+                column_type = "TIMESTAMP",
+                session_timezone = "EUROPE/BERLIN",
+                expected_value = "2021-12-31 23:59:59.999000"
+            }, {
+                value = "2021-12-31 23:59:59.999",
+                column_type = "TIMESTAMP WITH LOCAL TIME ZONE",
+                session_timezone = "EUROPE/BERLIN",
+                expected_value = "2022-01-01 00:59:59.999000"
+            }, {
+                value = "2021-12-31 23:59:59.999",
+                column_type = "TIMESTAMP",
+                session_timezone = "ASIA/SHANGHAI",
+                expected_value = "2021-12-31 23:59:59.999000"
+            }, {
+                value = "2021-12-31 23:59:59.999",
+                column_type = "TIMESTAMP WITH LOCAL TIME ZONE",
+                session_timezone = "ASIA/SHANGHAI",
+                expected_value = "2022-01-01 07:59:59.999000"
+            }
+        }
+
+        for _, test in ipairs(test_cases) do
+            it(string.format("converts timestamp %q in session timezone %q and column type %q to value %q", test.value,
+                             test.session_timezone, test.column_type, test.expected_value), function()
+                local table_name = create_table(test.column_type)
+                insert_value_utc(table_name, test.value)
+                set_session_timezone(test.session_timezone)
+                local cur = assert(connection:execute("select col from " .. table_name))
+                finally(function()
+                    assert.is_true(cur:close())
+                end)
+                assert.is_same(test.expected_value, cur:fetch()[1])
             end)
         end
     end)

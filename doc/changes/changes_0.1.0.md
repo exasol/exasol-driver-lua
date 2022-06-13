@@ -34,6 +34,7 @@ Code name: Initial Release
 * #71: Removed unnecessary exceptions for luacheck
 * #15: Added integration tests for all Exasol data types
 * #9: Prepared publishing to luarocks
+* #10: Added integration tests for timestamps with and without local timezone
 
 ## Documentation
 
