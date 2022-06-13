@@ -129,7 +129,7 @@ describe("Exasol data types", function()
         end)
 
         local function create_table(column_type)
-            local table_name = string.format("%s.%s", schema_name, "tab")
+            local table_name = string.format("%s.tab", schema_name)
             assert(connection:execute(string.format("CREATE TABLE %s (col %s)", table_name, column_type)))
             return table_name
         end
