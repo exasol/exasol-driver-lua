@@ -1,4 +1,4 @@
-# exasol-driver-lua 0.1.0, released 2022-05-??
+# exasol-driver-lua 0.1.0, released 2022-06-13
 
 Code name: Initial Release
 
