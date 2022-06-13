@@ -4,6 +4,8 @@ Code name: Initial Release
 
 ## Summary
 
+This is the initial release of the Lua driver for Exasol. It is fully compatible with the [LuaSQL](https://keplerproject.github.io/luasql/) API and allows you to connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements. You can find more information in the [readme](../../README.md) and the [user guide](../user_guide/user_guide.md).
+
 ## Features
 
 * #1: Setup initial project
