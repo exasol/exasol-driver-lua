@@ -2,7 +2,7 @@ rockspec_format = "3.0"
 
 local tag = "0.1.0"
 
-package = "exasol-driver-lua"
+package = "luasql-exasol"
 version = tag .. "-1"
 
 source = {

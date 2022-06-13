@@ -1,8 +1,10 @@
-# exasol-driver-lua 0.1.0, released 2022-05-??
+# exasol-driver-lua 0.1.0, released 2022-06-13
 
 Code name: Initial Release
 
 ## Summary
+
+This is the initial release of the Lua driver for Exasol. It is fully compatible with the [LuaSQL](https://keplerproject.github.io/luasql/) API and allows you to connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements. You can find more information in the [readme](../../README.md) and the [user guide](../user_guide/user_guide.md).
 
 ## Features
 
@@ -33,6 +35,8 @@ Code name: Initial Release
 * #39: Renamed entry module to `luasql.exasol`
 * #71: Removed unnecessary exceptions for luacheck
 * #15: Added integration tests for all Exasol data types
+* #9: Prepared publishing to luarocks
+* #10: Added integration tests for timestamps with and without local timezone
 
 ## Documentation
 
