@@ -1,5 +1,7 @@
 require("busted.runner")()
 local constants = require("luasql.exasol.constants")
+local config = require("config")
+config.configure_logging()
 
 describe("Build setup", function()
     local function load_rockspec(path)
