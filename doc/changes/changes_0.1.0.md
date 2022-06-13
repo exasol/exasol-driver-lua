@@ -33,6 +33,7 @@ Code name: Initial Release
 * #39: Renamed entry module to `luasql.exasol`
 * #71: Removed unnecessary exceptions for luacheck
 * #15: Added integration tests for all Exasol data types
+* #9: Prepared publishing to luarocks
 
 ## Documentation
 
