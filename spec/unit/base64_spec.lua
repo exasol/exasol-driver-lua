@@ -5,12 +5,12 @@ local base64 = require("luasql.exasol.base64")
 describe("base64", function()
     local function test(s, b64)
         it("encode / decode '" .. s .. "'", function()
-            assert(base64.encode(s) == b64)
-            assert(base64.decode(b64) == s)
-            assert(base64.decode(base64.encode(s)) == s)
-            assert(base64.encode(s, nil, true) == b64)
-            assert(base64.decode(b64, nil, true) == s)
-            assert(base64.decode(base64.encode(s, nil, true), nil, true) == s)
+            assert.is_same(b64, base64.encode(s))
+            assert.is_same(s, base64.decode(b64))
+            assert.is_same(s, base64.decode(base64.encode(s)))
+            assert.is_same(b64, base64.encode(s, nil, true))
+            assert.is_same(s, base64.decode(b64, nil, true))
+            assert.is_same(s, base64.decode(base64.encode(s, nil, true), nil, true))
         end)
     end
 
@@ -56,10 +56,10 @@ describe("base64", function()
         end)
 
         it("ignores whitespace in base64 encoded text", function()
-        assert(base64.decode(
-                'wйqеvнQсуkкiеDнRгhш9щCзwх0ъфYыnвQаsпNрGоFллIдNжGэOё0яLчPQsCDQttC40Lsg0LHRiyDRhtC'
-                        .. '40YLRgNGD0YE/INсCмUи0тLьAбsюIЙКNЕG\n\n\n\n\r\rE0LDQu9GM0YjQuNCy0YvQuSDRjdC60LfQtdC80L/Qu9GP0YAhwrs=')
-                       == '«В чащах юга жил бы цитрус? Да, фальшивый экземпляр!»')
+            assert(base64.decode(
+                    'wйqеvнQсуkкiеDнRгhш9щCзwх0ъфYыnвQаsпNрGоFллIдNжGэOё0яLчPQsCDQttC40Lsg0LHRiyDRhtC'
+                            .. '40YLRgNGD0YE/INсCмUи0тLьAбsюIЙКNЕG\n\n\n\n\r\rE0LDQu9GM0YjQuNCy0YvQuSDRjdC60LfQtdC80L/Qu9GP0YAhwrs=')
+                           == '«В чащах юга жил бы цитрус? Да, фальшивый экземпляр!»')
         end)
     end)
 end)
