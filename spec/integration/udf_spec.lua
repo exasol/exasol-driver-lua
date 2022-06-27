@@ -49,12 +49,12 @@ describe("Exasol driver works inside an UDF", function()
     it("creating udf works", function()
         local script = [[
 local driver = require("luasql.exasol")
-function run(ctx)
-    local env = driver.exasol()
-    local conn = assert(env:connect(ctx.source_name, ctx.user_name, ctx.password))
-    local cur = assert(conn:execute(ctx.query))
-    local index = 1
+
+local function print_result(cur)
     local result = ""
+    result = string.format("%sColumn names: [%s]\n", result, table.concat(cur:getcolnames(), ", "))
+    result = string.format("%sColumn types: [%s]\n", result, table.concat(cur:getcoltypes(), ", "))
+    local index = 1
     local row = {}
     row = assert(cur:fetch(row, "n"))
     while row ~= nil do
@@ -62,6 +62,14 @@ function run(ctx)
         row = cur:fetch(row, "n")
         index = index + 1
     end
+    return result
+end
+
+function run(ctx)
+    local env = driver.exasol()
+    local conn = assert(env:connect(ctx.source_name, ctx.user_name, ctx.password))
+    local cur = assert(conn:execute(ctx.query))
+    local result = print_result(cur)
     cur:close()
     conn:close()
     env:close()
@@ -78,7 +86,9 @@ end
                                                          connection_params.password, query)))
         local result = cursor:fetch()[1]
         cursor:close()
-        assert.is_same([[Row 1: [1, a]
+        assert.is_same([[Column names: [NUM, TXT]
+Column types: [DECIMAL, VARCHAR]
+Row 1: [1, a]
 Row 2: [2, b]
 Row 3: [3, c]
 ]], result)
