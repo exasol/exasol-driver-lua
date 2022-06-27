@@ -35,28 +35,53 @@ describe("Exasol driver works inside an UDF", function()
         return schema_name
     end
 
-    local function create_script_with_driver(schema_name, script_content)
+    local function create_script_with_driver(schema_name, script_arguments, script_content)
         local content = amalg.amalgamate_with_script(script_content)
-        local statement = string.format(
-                "CREATE LUA SCALAR SCRIPT %s.RUN_TEST(lua_script VARCHAR(2000)) RETURNS VARCHAR(2000) AS\n%s\n/",
-                schema_name, content)
+        local statement = string.format("CREATE LUA SCALAR SCRIPT %s.RUN_TEST(%s) RETURNS VARCHAR(2000) AS\n%s\n/",
+                                        schema_name, script_arguments, content)
         assert(conn:execute(statement))
+    end
+
+    local function escape_string(string)
+        return string:gsub("'", "''")
     end
 
     it("creating udf works", function()
         local script = [[
 local driver = require("luasql.exasol")
 function run(ctx)
-    return "Loaded driver: "..tostring(driver)
+    local env = driver.exasol()
+    local conn = assert(env:connect(ctx.source_name, ctx.user_name, ctx.password))
+    local cur = assert(conn:execute(ctx.query))
+    local index = 1
+    local result = ""
+    local row = {}
+    row = assert(cur:fetch(row, "n"))
+    while row ~= nil do
+        result = string.format("%sRow %d: [%s]\n", result, index, table.concat(row, ", "))
+        row = cur:fetch(row, "n")
+        index = index + 1
+    end
+    cur:close()
+    conn:close()
+    env:close()
+    return result
 end
 ]]
+        local script_arguments =
+                "source_name VARCHAR(100), user_name VARCHAR(100), password VARCHAR(100), query VARCHAR(2000)"
         local schema_name = create_schema()
-        create_script_with_driver(schema_name, script)
-
-        local cursor = assert(conn:execute("select " .. schema_name .. ".RUN_TEST('blah')"))
-        local result = cursor:fetch()
+        create_script_with_driver(schema_name, script_arguments, script)
+        local query = escape_string("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)")
+        local cursor = assert(conn:execute(string.format("select %s.RUN_TEST('%s', '%s', '%s', '%s')", schema_name,
+                                                         connection_params.source_name, connection_params.user,
+                                                         connection_params.password, query)))
+        local result = cursor:fetch()[1]
         cursor:close()
-        print("result: " .. result[1])
+        assert.is_same([[Row 1: [1, a]
+Row 2: [2, b]
+Row 3: [3, c]
+]], result)
     end)
 end)
 
