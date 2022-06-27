@@ -61,4 +61,33 @@ function M.create_connection()
     return conn
 end
 
+function M.db_supports_openssl_module()
+    return M._is_exasol_8()
+end
+
+local function starts_with(text, prefix)
+    return text:find(prefix, 1, true) == 1
+end
+
+function M._is_exasol_8()
+    return starts_with(M._get_exasol_version(), "8.")
+end
+
+function M._get_exasol_version()
+    if not M._exasol_version then
+        M._exasol_version = M._read_exasol_version()
+    end
+    return M._exasol_version
+end
+
+function M._read_exasol_version()
+    local conn = M.create_connection()
+    local cur = assert(conn:execute("select param_value from exa_metadata where param_name = 'databaseProductVersion'"))
+    local version = cur:fetch()[1]
+    cur:close()
+    conn:close()
+    log.info("Found Exasol version '%s'", version)
+    return version
+end
+
 return M
