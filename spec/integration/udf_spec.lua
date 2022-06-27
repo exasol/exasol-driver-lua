@@ -29,7 +29,7 @@ describe("Exasol driver works inside an UDF", function()
         assert(conn:execute(string.format("drop schema if exists %s cascade", schema_name)))
         assert(conn:execute(string.format("create schema %s", schema_name)))
         finally(function()
-            assert(conn:execute(string.format("drop schema %s cascade", schema_name)))
+            assert(conn:execute(string.format("drop schema if exists %s cascade", schema_name)))
         end)
         return schema_name
     end

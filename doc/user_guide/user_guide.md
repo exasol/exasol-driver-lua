@@ -238,9 +238,9 @@ environment:close()
 
 Close the environment after you have closed all connections created with it. The `close()` method will return `false` if not all connections where closed or if the environment is already closed.
 
-## Using exasol-driver-lua in an Exasol UDF
+## Using `exasol-driver-lua` in an Exasol UDF
 
-The Exasol in version 8 or later allows running Lua code in [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm). The exasol-driver-lua uses only dependencies that are available to UDFs or that can be included into an package using amalgamation. This makes it possible to also use it in an Exasol UDF, e.g. for accessing another Exasol database.
+Exasol version 7.1 or later allows running Lua code in [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm). The exasol-driver-lua uses only dependencies that are available to UDFs or that can be included into an package using amalgamation. This makes it possible to also use it in an Exasol UDF, e.g. for accessing another Exasol database. Some required C-Lua-interface packages are shipped with Exasol 8 and later. So Exasol 8 is required to run the driver.
 
 To build such a package follow these steps:
 
@@ -267,7 +267,7 @@ To build such a package follow these steps:
       luasql.exasol.luws luasql.exasol.base64 \
       remotelog exaerror message_expander
     ```
-    This command adds all required modules of the driver as well as the third party modules `remotelog exaerror message_expander` to a single Lua file, using `udf.lua` as entry point.
+    This command bundles all required modules of the driver as well as the third party modules `remotelog exaerror message_expander` to a single Lua file, using `udf.lua` as entry point.
 
     **Note:** Do not add argument `--debug` because this will generate code that won't run in a UDF.
 5. Run the following statement in your Exasol database to create the UDF:
