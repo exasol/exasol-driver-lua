@@ -10,7 +10,7 @@ This section introduces technical system constraints.
 
 ## Restrict Libraries to the Ones Available to Exasol UDFs
 
-`const~use-available-exasol-udf-libraries-only~1`
+`dsn~use-available-exasol-udf-libraries-only~1`
 
 EDL uses the following external Lua modules that are available to Exasol UDFs:
 * luasocket
@@ -30,7 +30,7 @@ This will allow EDL to run inside an Exasol UDF.
 
 Covers:
 
-* [feat~run-in-exasol-udf~1](./system_requirements.md#run-inside-an-exasol-udf)
+* [const~use-available-exasol-udf-libraries-only~1](./system_requirements.md#restrict-libraries-to-the-ones-available-to-exasol-udfs)
 
 Needs: itest
 
@@ -160,7 +160,7 @@ Needs: impl, utest
 
 ## Included Third-Party Lua Modules
 
-We include the source code of some third party Lua modules in this repository.
+We include the source code of some third party Lua modules in this repository. This section explains the rationale.
 
 ### [luws.lua](../src/luasql/exasol/luws.lua)
 

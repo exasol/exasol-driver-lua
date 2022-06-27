@@ -81,7 +81,7 @@ EDL implements the [LuaSQL API](https://keplerproject.github.io/luasql/manual.ht
 #### Entry Point
 `req~luasql-entry-point~1`
 
-Client code can load EDL using a `require` statement and create an [Environment](#environment) object:
+Client code can load EDL using a `require` statement and create an [Environment](#environment-objects) object:
 
 ```lua
 local driver = require("luasql.exasol")
@@ -252,5 +252,25 @@ In an Exasol cluster, the console is not reachable for Lua UDFs, therefore the l
 Covers:
 
 * [feat~logging~1](#logging)
+
+Needs: dsn
+
+### Constraints
+
+#### Restrict Libraries to the Ones Available to Exasol UDFs
+
+`const~use-available-exasol-udf-libraries-only~1`
+
+EDL uses only libraries that are either 
+* available to Exasol UDFs or
+* that can be installed together with EDL.
+
+Rationale:
+
+This will allow EDL to run inside an Exasol UDF.
+
+Covers:
+
+* [feat~run-in-exasol-udf~1](#run-inside-an-exasol-udf)
 
 Needs: dsn
