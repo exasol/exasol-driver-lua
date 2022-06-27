@@ -33,7 +33,7 @@ dependencies = {
     "luaossl >= 20200709-0",
     "lua-cjson == 2.1.0", -- pinned to prevent "undefined symbol: lua_objlen" in 2.1.0.6 (https://github.com/mpx/lua-cjson/issues/56)
     "base64 >= 1.5-3",
-    "exaerror >= 1.2.2-1",
+    "exaerror == 1.2.2-1", -- pinned because of breaking changes in version 2, see https://github.com/exasol/exasol-driver-lua/issues/77
     "remotelog >= 1.1.1-1"
 }
 
