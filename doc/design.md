@@ -139,7 +139,6 @@ EDL uses the following Lua modules that are available to Exasol UDFs:
 * luasec
 * luaossl
 * lua-cjson
-* base64
 
 EDL uses the following Lua modules that can be amalgamated into a single package:
 * exaerror
