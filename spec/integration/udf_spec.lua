@@ -7,7 +7,7 @@ local amalg = require("amalg_util")
 config.configure_logging()
 local connection_params = config.get_connection_params()
 
--- [itest -> dsn~use-available-exasol-udf-libraries-only~1]
+-- [itest -> const~use-available-exasol-udf-libraries-only~1]
 describe("Exasol driver works inside an UDF", function()
     local env = nil
     local conn = nil

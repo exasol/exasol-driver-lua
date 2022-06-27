@@ -59,7 +59,7 @@ Rationale:
 
 The Virtual Schema Adapter for Exasol will be written in Lua and will need access to an Exasol database.
 
-Needs: req
+Needs: const
 
 ### Logging
 `feat~logging~1`
@@ -252,23 +252,5 @@ In an Exasol cluster, the console is not reachable for Lua UDFs, therefore the l
 Covers:
 
 * [feat~logging~1](#logging)
-
-Needs: dsn
-
-### Restrict Libraries to the Ones Available to Exasol UDFs
-
-`req~use-available-exasol-udf-libraries-only~1`
-
-EDL uses only libraries that are either 
-* available to Exasol UDFs or
-* that can be installed together with EDL.
-
-Rationale:
-
-This will allow EDL to run inside an Exasol UDF.
-
-Covers:
-
-* [feat~run-in-exasol-udf~1](#run-inside-an-exasol-udf)
 
 Needs: dsn
