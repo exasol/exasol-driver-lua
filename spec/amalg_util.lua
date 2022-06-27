@@ -4,7 +4,7 @@ local log = require("remotelog")
 local M = {}
 
 local function get_rockspec_filename() --
-    return string.format("exasol-driver-lua-%s.rockspec", constants.VERSION)
+    return string.format("luasql-exasol-%s.rockspec", constants.VERSION)
 end
 
 local function load_rockspec(path)
