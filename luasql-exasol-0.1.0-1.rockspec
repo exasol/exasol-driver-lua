@@ -63,11 +63,12 @@ build = {
         ["luasql.exasol.Cursor"] = "src/luasql/exasol/Cursor.lua",
         ["luasql.exasol.Environment"] = "src/luasql/exasol/Environment.lua",
         ["luasql.exasol.ExasolWebsocket"] = "src/luasql/exasol/ExasolWebsocket.lua",
-        ["luasql.exasol.luws"] = "src/luasql/exasol/luws.lua",
-        ["luasql.exasol.base64"] = "src/luasql/exasol/base64.lua",
         ["luasql.exasol.util"] = "src/luasql/exasol/util.lua",
         ["luasql.exasol.WebsocketDatahandler"] = "src/luasql/exasol/WebsocketDatahandler.lua",
         ["luasql.exasol.Websocket"] = "src/luasql/exasol/Websocket.lua",
+        -- Included third party libraries
+        ["luasql.exasol.luws"] = "src/luasql/exasol/luws.lua",
+        ["luasql.exasol.base64"] = "src/luasql/exasol/base64.lua",
     },
     copy_directories = { "doc" }
 }
