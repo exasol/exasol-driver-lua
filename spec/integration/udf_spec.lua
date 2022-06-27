@@ -79,10 +79,10 @@ end
                 "source_name VARCHAR(100), user_name VARCHAR(100), password VARCHAR(100), query VARCHAR(2000)"
         local schema_name = create_schema()
         create_script_with_driver(schema_name, script_arguments, script)
-        query = escape_string(query)
+        local escaped_query = escape_string(query)
         local cursor = assert(conn:execute(string.format("select %s.RUN_TEST('%s', '%s', '%s', '%s')", schema_name,
                                                          connection_params.source_name, connection_params.user,
-                                                         connection_params.password, query)))
+                                                         connection_params.password, escaped_query)))
         local result = cursor:fetch()[1]
         cursor:close()
         return result

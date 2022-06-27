@@ -3,12 +3,13 @@ local log = require("remotelog")
 
 local M = {}
 
+local THIRD_PARTY_MODULE_NAMES<const> = {"remotelog", "exaerror", "message_expander"}
+
 local function get_rockspec_filename() --
     return string.format("luasql-exasol-%s.rockspec", constants.VERSION)
 end
 
 local function load_rockspec(path)
-    path = path or get_rockspec_filename()
     local env = {}
     local rockspec_function = assert(loadfile(path, "t", env))
     rockspec_function()
@@ -16,7 +17,7 @@ local function load_rockspec(path)
 end
 
 local function get_driver_module_names()
-    local rockspec = load_rockspec()
+    local rockspec = load_rockspec(get_rockspec_filename())
     local modules = {}
     for module_name, _ in pairs(rockspec.build.modules) do
         table.insert(modules, module_name)
@@ -52,10 +53,6 @@ local function get_lua_path()
     return "src/?.lua"
 end
 
-local function get_third_party_module_names()
-    return {"remotelog", "exaerror", "message_expander"}
-end
-
 local function insert_all(target, list)
     for _, value in ipairs(list) do
         table.insert(target, value)
@@ -70,7 +67,7 @@ local function concat_tables(list1, list2)
 end
 
 function M.amalgamate_with_script(script_content)
-    local modules = concat_tables(get_driver_module_names(), get_third_party_module_names())
+    local modules = concat_tables(get_driver_module_names(), THIRD_PARTY_MODULE_NAMES)
     local script_path = write_temp_file(script_content)
     local lua_path = get_lua_path()
     local content = amalgamate(lua_path, modules, script_path)
