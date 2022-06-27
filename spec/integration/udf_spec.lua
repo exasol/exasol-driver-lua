@@ -46,7 +46,7 @@ describe("Exasol driver works inside an UDF", function()
         return string:gsub("'", "''")
     end
 
-    it("creating udf works", function()
+    local function execute_query_in_udf(query)
         local script = [[
 local driver = require("luasql.exasol")
 
@@ -80,12 +80,17 @@ end
                 "source_name VARCHAR(100), user_name VARCHAR(100), password VARCHAR(100), query VARCHAR(2000)"
         local schema_name = create_schema()
         create_script_with_driver(schema_name, script_arguments, script)
-        local query = escape_string("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)")
+        query = escape_string(query)
         local cursor = assert(conn:execute(string.format("select %s.RUN_TEST('%s', '%s', '%s', '%s')", schema_name,
                                                          connection_params.source_name, connection_params.user,
                                                          connection_params.password, query)))
         local result = cursor:fetch()[1]
         cursor:close()
+        return result
+    end
+
+    it("can execute query in UDF", function()
+        local result = execute_query_in_udf("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)")
         assert.is_same([[Column names: [NUM, TXT]
 Column types: [DECIMAL, VARCHAR]
 Row 1: [1, a]
