@@ -45,36 +45,15 @@ describe("Exasol driver works inside an UDF", function()
         return string:gsub("'", "''")
     end
 
-    local function execute_query_in_udf(query)
-        local script = [[
-local driver = require("luasql.exasol")
-
-local function print_result(cur)
-    local result = ""
-    result = string.format("%sColumn names: [%s]\n", result, table.concat(cur:getcolnames(), ", "))
-    result = string.format("%sColumn types: [%s]\n", result, table.concat(cur:getcoltypes(), ", "))
-    local index = 1
-    local row = {}
-    row = assert(cur:fetch(row, "n"))
-    while row ~= nil do
-        result = string.format("%sRow %d: [%s]\n", result, index, table.concat(row, ", "))
-        row = cur:fetch(row, "n")
-        index = index + 1
+    local function read_file(file)
+        local f = assert(io.open(file, "rb"))
+        local content = f:read("*all")
+        f:close()
+        return content
     end
-    return result
-end
 
-function run(ctx)
-    local env = driver.exasol()
-    local conn = assert(env:connect(ctx.source_name, ctx.user_name, ctx.password))
-    local cur = assert(conn:execute(ctx.query))
-    local result = print_result(cur)
-    cur:close()
-    conn:close()
-    env:close()
-    return result
-end
-]]
+    local function execute_query_in_udf(query)
+        local script = read_file("./spec/integration/udf_script.lua")
         local script_arguments =
                 "source_name VARCHAR(100), user_name VARCHAR(100), password VARCHAR(100), query VARCHAR(2000)"
         local schema_name = create_schema()

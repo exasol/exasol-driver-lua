@@ -80,13 +80,48 @@ function M._get_exasol_version()
     return M._exasol_version
 end
 
+local function try_finally(try, finally)
+    local ok, result = pcall(try)
+    finally()
+    if not ok then
+        log.warn("Error in try: %s", result)
+        error(result)
+    else
+        return result
+    end
+end
+
+local function try_with_closable(closable_creator, try)
+    local closeable = closable_creator()
+    return try_finally(function()
+        return try(closeable)
+    end, function()
+        closeable:close()
+    end)
+end
+
+function M._execute_query(query, fetchmode)
+    return try_with_closable(M.create_connection, function(conn)
+        return try_with_closable(function()
+            return assert(conn:execute(query))
+        end, function(cur)
+            local rows = {}
+            local row = assert(cur:fetch({}, fetchmode))
+            while row ~= nil do
+                table.insert(rows, row)
+                row = cur:fetch({}, fetchmode)
+            end
+            return rows
+        end)
+    end)
+end
+
 function M._read_exasol_version()
-    local conn = M.create_connection()
-    local cur = assert(conn:execute("select param_value from exa_metadata where param_name = 'databaseProductVersion'"))
-    local version = cur:fetch()[1]
-    cur:close()
-    conn:close()
+    local rows = M._execute_query("select param_value from exa_metadata where param_name = 'databaseProductVersion'",
+                                  "n")
+    local version = rows[1][1]
     log.info("Found Exasol version '%s'", version)
+    assert(version, "Error getting version")
     return version
 end
 
