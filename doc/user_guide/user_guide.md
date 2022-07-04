@@ -237,3 +237,49 @@ environment:close()
 ```
 
 Close the environment after you have closed all connections created with it. The `close()` method will return `false` if not all connections where closed or if the environment is already closed.
+
+## Using `exasol-driver-lua` in an Exasol UDF
+
+Exasol version 7.1 or later allows running Lua code in [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm). The exasol-driver-lua uses only dependencies that are available to UDFs or that can be included into an package using amalgamation. This makes it possible to also use it in an Exasol UDF, e.g. for accessing another Exasol database. Some required C-Lua-interface packages are shipped with Exasol 8 and later. So Exasol 8 is required to run the driver.
+
+To build such a package follow these steps:
+
+1. Install exasol-driver-lua as described [here](#installing-the-driver-and-dependencies).
+2. Install [amalg](https://github.com/siffiejoe/lua-amalg/):
+    ```sh
+    luarocks --local install amalg
+    ```
+3. Create a Lua script `udf.lua` for your UDF that uses the exasol driver, e.g.
+    ```lua
+    local driver = require("luasql.exasol")
+    function run(ctx)
+        return "Loaded driver: "..tostring(driver)
+    end
+    ```
+4. Run the following command to build the package:
+    ```sh
+    amalg.lua --fallback --script=udf.lua --output udf-amalg.lua \
+      luasql.exasol luasql.exasol.CursorData luasql.exasol.Environment \
+      luasql.exasol.Websocket luasql.exasol.WebsocketDatahandler \
+      luasql.exasol.Cursor luasql.exasol.util \
+      luasql.exasol.constants luasql.exasol.Connection \
+      luasql.exasol.ExasolWebsocket luasql.exasol.ConnectionProperties \
+      luasql.exasol.luws luasql.exasol.base64 \
+      remotelog exaerror message_expander
+    ```
+    This command bundles all required modules of the driver as well as the third party modules `remotelog exaerror message_expander` to a single Lua file, using `udf.lua` as entry point.
+
+    **Note:** Do not add argument `--debug` because this will generate code that won't run in a UDF.
+5. Run the following statement in your Exasol database to create the UDF:
+    ```sql
+    --/
+    CREATE OR REPLACE LUA SCALAR SCRIPT UDF_SCHEMA.RUN_UDF_TEST(argument VARCHAR(2000)) RETURNS VARCHAR(2000) AS
+        -- Insert content of udf-amalg.lua here
+    /;
+    ```
+6. Execute the UDF by running this statement:
+    ```sql
+    SELECT UDF_SCHEMA.RUN_UDF_TEST('argument')
+    ```
+
+See files [amalg_util.lua](../../spec/amalg_util.lua) and [udf_spec.lua](../../spec/integration/udf_spec.lua) as an example how to automate this process.

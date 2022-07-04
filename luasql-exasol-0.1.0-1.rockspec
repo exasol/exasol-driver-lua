@@ -33,7 +33,7 @@ dependencies = {
     "luaossl >= 20200709-0",
     "lua-cjson == 2.1.0", -- pinned to prevent "undefined symbol: lua_objlen" in 2.1.0.6 (https://github.com/mpx/lua-cjson/issues/56)
     "base64 >= 1.5-3",
-    "exaerror >= 1.2.2-1",
+    "exaerror == 1.2.2-1", -- pinned because of breaking changes in version 2, see https://github.com/exasol/exasol-driver-lua/issues/77
     "remotelog >= 1.1.1-1"
 }
 
@@ -44,6 +44,7 @@ test_dependencies = {
     "luacov-coveralls >= 0.2.3-1",
     "luacheck >= 0.25.0-1",
     "ldoc >= 1.4.6-2",
+    "amalg >= 0.8-1",
     "luasql-sqlite3 >= 2.6.0-1"
 }
 
@@ -62,10 +63,12 @@ build = {
         ["luasql.exasol.Cursor"] = "src/luasql/exasol/Cursor.lua",
         ["luasql.exasol.Environment"] = "src/luasql/exasol/Environment.lua",
         ["luasql.exasol.ExasolWebsocket"] = "src/luasql/exasol/ExasolWebsocket.lua",
-        ["luasql.exasol.luws"] = "src/luasql/exasol/luws.lua",
         ["luasql.exasol.util"] = "src/luasql/exasol/util.lua",
         ["luasql.exasol.WebsocketDatahandler"] = "src/luasql/exasol/WebsocketDatahandler.lua",
         ["luasql.exasol.Websocket"] = "src/luasql/exasol/Websocket.lua",
+        -- Included third party libraries
+        ["luasql.exasol.luws"] = "src/luasql/exasol/luws.lua",
+        ["luasql.exasol.base64"] = "src/luasql/exasol/base64.lua",
     },
     copy_directories = { "doc" }
 }

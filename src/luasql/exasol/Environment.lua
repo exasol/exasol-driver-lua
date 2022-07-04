@@ -4,14 +4,29 @@
 -- @field private connections table list of created connections
 local Environment = {}
 
-local connection = require("luasql.exasol.Connection")
-local pkey = require("openssl.pkey")
-local bignum = require("openssl.bignum")
-local base64 = require("base64")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
+local connection = require("luasql.exasol.Connection")
 local exaerror = require("exaerror")
 local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
+local base64 = require("luasql.exasol.base64")
+
+--- Load a Lua module like `require()` but with fallback to Exasol specific module names.
+-- @tparam string modname the name of the module to load
+-- @return any the loaded module
+local function require_udf_module(modname)
+    local success, result = pcall(require, modname)
+    if success then
+        return result
+    else
+        local alternative_modname = "_" .. modname
+        log.warn("Loading module '%s' failed with error '%s', try loading '%s'", modname, result, alternative_modname)
+        return require(alternative_modname)
+    end
+end
+
+local pkey = require_udf_module("openssl.pkey")
+local bignum = require_udf_module("openssl.bignum")
 
 local WEBSOCKET_PROTOCOL = "wss"
 

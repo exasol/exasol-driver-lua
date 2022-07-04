@@ -11,6 +11,7 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 1. Connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements
 1. Encrypted communication via TLS
 1. Compatible with the [LuaSQL](https://keplerproject.github.io/luasql/) API
+1. Runs inside an Exasol [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm), see the [user guide](./doc/user_guide/user_guide.md#using-exasol-driver-lua-in-an-exasol-udf) for details. Exasol 8 or later is required for this.
 
 ## Information for Users
 

@@ -11,7 +11,7 @@ readonly src_module_path="$base_dir/src"
 readonly test_module_path="$base_dir/spec"
 
 # Don't format third party code
-GLOBIGNORE="$src_module_path/luasql/exasol/luws.lua"
+GLOBIGNORE="$src_module_path/luasql/exasol/luws.lua:$src_module_path/luasql/exasol/base64.lua"
 
 lua-format --config="$base_dir/.lua-format" --verbose --in-place -- \
   "$src_module_path"/luasql/*.lua \

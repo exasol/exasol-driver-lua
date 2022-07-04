@@ -12,7 +12,7 @@ describe("Smoketest", function()
     end)
 
     after_each(function()
-        env:close()
+        assert.is_true(env:close())
         env = nil
     end)
 

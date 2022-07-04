@@ -8,6 +8,32 @@ This document's section structure is derived from the "[arc42](https://arc42.org
 
 This section introduces technical system constraints.
 
+## Restrict Libraries to the Ones Available to Exasol UDFs
+
+`dsn~use-available-exasol-udf-libraries-only~1`
+
+EDL uses the following external Lua modules that are available to Exasol UDFs:
+* luasocket
+* luasec
+* luaossl
+* lua-cjson
+
+EDL uses the following external Lua modules that can be amalgamated into a single package:
+* exaerror
+* remotelog
+
+EDL does not use other external modules not listed here.
+
+Rationale:
+
+This will allow EDL to run inside an Exasol UDF.
+
+Covers:
+
+* [const~use-available-exasol-udf-libraries-only~1](./system_requirements.md#restrict-libraries-to-the-ones-available-to-exasol-udfs)
+
+Needs: itest
+
 # Solution Strategy
 
 EDL uses Exasol's public [websocket-api](https://github.com/exasol/websocket-api) because it's a stable interface, well documented and does not require native libraries.
@@ -131,6 +157,24 @@ Covers:
 Needs: impl, utest
 
 # Design Decisions
+
+## Included Third-Party Lua Modules
+
+We include the source code of some third party Lua modules in this repository. This section explains the rationale.
+
+### [luws.lua](../src/luasql/exasol/luws.lua)
+
+This module from [github.com/toggledbits/LuWS](https://github.com/toggledbits/LuWS) implements the WebSocket protocol. We include it's source code for the following reasons:
+
+* The module is not published at [LuaRocks](https://luarocks.org/)
+* The module requires modifications to work with Lua 5.4 and the original author requires backwards compatibility. See discussion at [LuWS issue #3](https://github.com/toggledbits/LuWS/issues/3).
+
+### [base64.lua](../src/luasql/exasol/base64.lua)
+
+This module from [github.com/iskolbin/lbase64](https://github.com/iskolbin/lbase64) implements a base64 encoder and decoder. We include it's source code for the following reasons:
+
+* The module is not available in an Exasol UDF (see [list of auxiliary libraries](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/lua.htm#AuxiliaryLibraries) for UDFs).
+* The module uses the `load()` function for backwards compatibility with older Lua versions (see [the source code](https://github.com/iskolbin/lbase64/blob/master/base64.lua#L48-L50) for details). This `load()` function is not available in Exasol UDFs, so we had to modify the relevant code, breaking base64's backwards compatibility.
 
 # Quality Scenarios
 
