@@ -18,7 +18,7 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 | [exaerror](https://github.com/exasol/error-reporting-lua)           | [MIT](https://github.com/exasol/error-reporting-lua/blob/main/LICENSE)  |
 | [Lua 5.4][lua]                                                      | [MIT][mit]                                                              |
 | [lua-cjson](https://github.com/openresty/lua-cjson)                 | [MIT](https://github.com/openresty/lua-cjson/blob/master/LICENSE)       |
-| [luaossl](http://25thandclement.com/~william/projects/luaossl.html] | [MIT](http://25thandclement.com/~william/projects/luaossl.html#license) |
+| [luaossl](http://25thandclement.com/~william/projects/luaossl.html) | [MIT](http://25thandclement.com/~william/projects/luaossl.html#license) |
 | [luasec](https://github.com/brunoos/luasec)                         | [MIT](https://github.com/brunoos/luasec/blob/master/LICENSE)            |
 | [luasocket](https://lunarmodules.github.io/luasocket/)              | [MIT][mit]                                                              |
 | [remotelog](https://github.com/exasol/remotelog-lua)                | [MIT](https://github.com/exasol/remotelog-lua/blob/main/LICENSE)        |
@@ -27,7 +27,7 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 
 | Dependency                                                                   | License                                                                     |
 |------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| [busted](http://olivinelabs.com/busted/)                                     | [BSD License 3][https://github.com/Olivine-Labs/busted/blob/master/LICENSE] |
+| [busted](http://olivinelabs.com/busted/)                                     | [BSD License 3](https://github.com/Olivine-Labs/busted/blob/master/LICENSE) |
 | [mockagne](https://github.com/mockagne/mockagne)                             | [MIT](https://github.com/mockagne/mockagne/blob/master/LICENSE)             |
 | [LuaCheck][luacheck]                                                         | [MIT][mit]                                                                  |
 | [LuaCov][luacov]                                                             | [MIT][mit]                                                                  |
@@ -45,7 +45,7 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 
 [lua]: https://www.lua.org/
 [luacheck]: https://github.com/mpeterv/luacheck
-[luacov]: https://keplerproject.github.io/luacov/
+[luacov]: https://github.com/lunarmodules/luacov
 [luarocks]: https://luarocks.org/
 [luaunit]: https://github.com/bluebird75/luaunit
 [shellcheck]: https://www.shellcheck.net/
