@@ -77,7 +77,7 @@ You will need to adjust host, port and credentials. If everything is setup corre
 
 ## Usage
 
-`exasol-driver-lua` follows the API of [LuaSQL](https://keplerproject.github.io/luasql/), so the [LuaSQL manual](https://keplerproject.github.io/luasql/manual.html) is a good starting point.
+`exasol-driver-lua` follows the API of [LuaSQL](https://github.com/lunarmodules/luasql/), so the [LuaSQL manual](https://lunarmodules.github.io/luasql/manual.html) is a good starting point.
 
 The following describes the basic usage. See the [API documentation](https://exasol.github.io/exasol-driver-lua/api/) for a detailed description of each method.
 
