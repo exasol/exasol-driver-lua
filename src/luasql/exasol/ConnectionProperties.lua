@@ -1,6 +1,6 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 
 local DEFAULT_FETCHSIZE_KIB<const> = 128
 
@@ -63,7 +63,7 @@ end
 
 function ConnectionProperties:_validate()
     if self.properties.fetchsize_kib and self.properties.fetchsize_kib <= 0 then
-        exaerror.create("E-EDL-27", "Parameter 'fetchsize_kib' must be greater than 0"):add_mitigations(
+        ExaError:new("E-EDL-27", "Parameter 'fetchsize_kib' must be greater than 0"):add_mitigations(
                 "Use a value greater than 0"):raise()
     end
 end

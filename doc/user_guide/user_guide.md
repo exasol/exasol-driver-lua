@@ -265,9 +265,9 @@ To build such a package follow these steps:
       luasql.exasol.constants luasql.exasol.Connection \
       luasql.exasol.ExasolWebsocket luasql.exasol.ConnectionProperties \
       luasql.exasol.luws luasql.exasol.base64 \
-      remotelog exaerror message_expander
+      remotelog ExaError MessageExpander
     ```
-    This command bundles all required modules of the driver as well as the third party modules `remotelog exaerror message_expander` to a single Lua file, using `udf.lua` as entry point.
+    This command bundles all required modules of the driver as well as the third party modules `remotelog ExaError MessageExpander` to a single Lua file, using `udf.lua` as entry point.
 
     **Note:** Do not add argument `--debug` because this will generate code that won't run in a UDF.
 5. Run the following statement in your Exasol database to create the UDF:

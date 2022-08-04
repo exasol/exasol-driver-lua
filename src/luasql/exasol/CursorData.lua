@@ -1,6 +1,6 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 local constants = require("luasql.exasol.constants")
 local cjson = require("cjson")
 
@@ -89,14 +89,14 @@ function CursorData:get_column_value(column_index)
     log.trace("Fetching row %d of %d (%d of %d in current batch)", self.current_row, self.num_rows_total,
               self.current_row_in_batch, self.num_rows_in_message)
     if column_index <= 0 or #self.data < column_index then
-        exaerror.create("E-EDL-29",
+        ExaError:new("E-EDL-29",
                         "Column index {{column_index}} out of bound, must be between 1 and {{column_count}}",
                         {column_index = column_index, column_count = #self.data}):add_ticket_mitigation():raise()
     end
     if #self.data[column_index] < self.current_row_in_batch then
         local message = "Row {{row_index}} out of bound, must be between 1 and {{row_count}}"
         local args = {row_index = self.current_row_in_batch, row_count = #self.data[column_index]}
-        exaerror.create("E-EDL-30", message, args):add_ticket_mitigation():raise()
+        ExaError:new("E-EDL-30", message, args):add_ticket_mitigation():raise()
     end
     local value = self.data[column_index][self.current_row_in_batch]
     return convert_col_value(value)
@@ -106,14 +106,14 @@ end
 function CursorData:_fetch_data()
     -- [impl -> dsn~luasql-cursor-fetch-resultsethandle~0]
     if not self.result_set_handle and not self.data then
-        exaerror.create("F-EDL-25", "Neither data nor result set handle available"):add_ticket_mitigation():raise()
+        ExaError:new("F-EDL-25", "Neither data nor result set handle available"):add_ticket_mitigation():raise()
     end
     if not self.result_set_handle then
         -- Small result set, data already available
         return
     end
     if self:_end_of_result_set_reached() then
-        exaerror.create("E-EDL-31", "No more rows available in result set"):add_ticket_mitigation():raise()
+        ExaError:new("E-EDL-31", "No more rows available in result set"):add_ticket_mitigation():raise()
     end
     if not self:_more_data_available() then
         self:_fetch_next_data_batch()
@@ -138,7 +138,7 @@ function CursorData:_fetch_next_data_batch()
     local fetch_size = self.connection_properties:get_fetchsize_bytes()
     local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, fetch_size)
     if err then
-        exaerror.create("E-EDL-26", "Error fetching result data for handle {{result_set_handle}} with start position "
+        ExaError:new("E-EDL-26", "Error fetching result data for handle {{result_set_handle}} with start position "
                                 .. "{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}", {
             result_set_handle = self.result_set_handle,
             start_position = start_position,

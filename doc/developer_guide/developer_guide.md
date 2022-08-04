@@ -20,6 +20,10 @@ Install the build dependencies like this:
     ```sh
     sudo yum install plantuml cmake
     ```
+* Ubuntu:
+    ```sh
+    sudo apt install openssl libssl-dev sqllite3 libsqlite3-dev 
+    ```
 
 ### Install Runtime Dependencies
 

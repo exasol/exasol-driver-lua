@@ -1,6 +1,6 @@
 -- luacheck: globals wsopen wssend wsreceive wsclose
 require("luasql.exasol.luws")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local websocket_datahandler = require("luasql.exasol.WebsocketDatahandler")
@@ -48,10 +48,10 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
     end, websocket_options)
     if err ~= nil then
         if remaining_retries <= 0 or not recoverable_connection_error(err) then
-            exaerror.create("E-EDL-1", "Error connecting to {{url}}: {{error}}", {url = url, error = err}):raise()
+            ExaError:new("E-EDL-1", "Error connecting to {{url}}: {{error}}", {url = url, error = err}):raise()
         else
             remaining_retries = remaining_retries - 1
-            log.warn(tostring(exaerror.create("W-EDL-15",
+            log.warn(tostring(ExaError:new("W-EDL-15",
                                               "Websocket connection to {{url}} failed with error {{error}}, "
                                                       .. "remaining retries: {{remaining_retries}}",
                                               {url = url, error = err, remaining_retries = remaining_retries})))
@@ -91,7 +91,7 @@ function Websocket:_wait_for_response(timeout_seconds)
     while true do
         local result, err = wsreceive(self.websocket)
         if type(err) == "string" then
-            local wrapped_error = exaerror.create("E-EDL-4", "Error receiving data while waiting for response "
+            local wrapped_error = ExaError:new("E-EDL-4", "Error receiving data while waiting for response "
                                                           .. "for {{waiting_time}}s: {{error}}",
                                                   {error = err, waiting_time = os.clock() - start})
             wrapped_error.cause = err
@@ -104,7 +104,7 @@ function Websocket:_wait_for_response(timeout_seconds)
             return nil
         end
         if total_wait_time_seconds >= timeout_seconds then
-            return exaerror.create("E-EDL-18",
+            return ExaError:new("E-EDL-18",
                                    "Timeout after {{waiting_time}}s and {{try_count}} tries waiting for data, "
                                            .. " last result: {{result}}, last error: {{error}}", {
                 waiting_time = total_wait_time_seconds,
@@ -141,7 +141,7 @@ function Websocket:send_raw(payload, ignore_response)
         end
     else
         local args = {payload = payload, error = err}
-        exaerror.create("E-EDL-3", "Error sending payload {{payload}}: {{error}}", args):raise()
+        ExaError:new("E-EDL-3", "Error sending payload {{payload}}: {{error}}", args):raise()
     end
 end
 

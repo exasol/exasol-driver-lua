@@ -13,3 +13,7 @@ In this release we added support for using exasol-driver-lua inside an Exasol [u
 ## Documentation
 
 + #54: Added dependency list
+
+## Refactoring
+
+* #77: Upgrade to exaerror 2.0.1

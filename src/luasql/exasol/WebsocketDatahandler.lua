@@ -1,6 +1,6 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 
 --- This internal class is registered as a callback for incoming messages when connecting to a websocket.
 -- It collects incoming messages and logs warnings in case a websocket error occurs.
@@ -40,7 +40,7 @@ function WebsocketDatahandler:handle_data(conn, opcode, message)
         return
     end
     if not self.expecting_data then
-        local err = exaerror.create("E-EDL-5", "Not expecting data from websocket but received message "
+        local err = ExaError:new("E-EDL-5", "Not expecting data from websocket but received message "
                                             .. "with opcode {{opcode}} and data {{message}}",
                                     {opcode = tostring(opcode), message = message}):add_ticket_mitigation()
         log.warn(tostring(err))

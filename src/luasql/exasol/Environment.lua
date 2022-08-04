@@ -7,7 +7,7 @@ local Environment = {}
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
 local connection = require("luasql.exasol.Connection")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
 local base64 = require("luasql.exasol.base64")
 
@@ -90,7 +90,7 @@ end
 function Environment:connect(sourcename, username, password, properties)
     -- [impl -> dsn~luasql-environment-connect~0]
     if self.closed then
-        exaerror.create("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
+        ExaError:new("E-EDL-21", "Attempt to connect using an environment that is already closed"):raise(3)
     end
     local connection_properties = ConnectionProperties:create(properties)
     local socket = self.exasol_websocket.connect(WEBSOCKET_PROTOCOL .. "://" .. sourcename, connection_properties)
@@ -98,11 +98,11 @@ function Environment:connect(sourcename, username, password, properties)
     if err then
         socket:close()
         if err["cause"] == "closed" then
-            err = exaerror.create("E-EDL-19",
+            err = ExaError:new("E-EDL-19",
                                   "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
                                   {error = tostring(err)})
         else
-            err = exaerror.create("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
+            err = ExaError:new("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
         end
         err:add_mitigations("Check the credentials you provided.")
         return nil, err
@@ -120,14 +120,14 @@ end
 function Environment:close()
     -- [impl -> dsn~luasql-environment-close~0]
     if self.closed then
-        log.warn(tostring(exaerror.create("W-EDL-20", "Attempted to close an already closed environment")))
+        log.warn(tostring(ExaError:new("W-EDL-20", "Attempted to close an already closed environment")))
         return false
     end
 
     log.trace("Closing environment: check if all %d connections are closed", #self.connections)
     for _, conn in pairs(self.connections) do
         if not conn.closed then
-            log.warn(tostring(exaerror.create("W-EDL-38",
+            log.warn(tostring(ExaError:new("W-EDL-38",
                                               "Cannot close environment because not all connections are closed")))
             return false
         end
