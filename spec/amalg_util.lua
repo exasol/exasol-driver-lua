@@ -3,7 +3,7 @@ local log = require("remotelog")
 
 local M = {}
 
-local THIRD_PARTY_MODULE_NAMES<const> = {"remotelog", "exaerror", "message_expander"}
+local THIRD_PARTY_MODULE_NAMES<const> = {"remotelog", "ExaError", "MessageExpander"}
 
 local function get_rockspec_filename() --
     return string.format("luasql-exasol-%s.rockspec", constants.VERSION)

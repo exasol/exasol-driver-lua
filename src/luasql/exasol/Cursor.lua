@@ -1,6 +1,6 @@
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 local CursorData = require("luasql.exasol.CursorData")
 
 local FETCH_MODE_NUMERIC_INDICES = "n"
@@ -43,7 +43,7 @@ end
 local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
-        exaerror.create("E-EDL-24", "Result set reports {{expected_col_count}} but only "
+        ExaError:new("E-EDL-24", "Result set reports {{expected_col_count}} but only "
                                 .. "{{actual_col_count}} columns are available", args):add_ticket_mitigation():raise()
     end
     local names = {}
@@ -114,7 +114,7 @@ function Cursor:_fill_row(table, modestring)
         local col_name = col_name_provider(col)
         if not col_name then
             local args = {index = col}
-            exaerror.create("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
+            ExaError:new("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
                     :raise()
         end
         table[col_name] = self.data:get_column_value(col)
@@ -148,7 +148,7 @@ end
 function Cursor:fetch(table, modestring)
     -- [impl -> dsn~luasql-cursor-fetch~0]
     if self.closed then
-        exaerror.create("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
+        ExaError:new("E-EDL-13", "Cursor closed while trying to fetch datasets from cursor"):raise()
     end
     if not self.data:has_more_rows() then
         log.trace("End of result set reached, no more rows after %d", self.num_rows)
@@ -183,7 +183,7 @@ end
 function Cursor:close()
     -- [impl -> dsn~luasql-cursor-close~0]
     if self.closed then
-        log.warn(tostring(exaerror.create("W-EDL-33", "Attempted to close an already closed cursor")))
+        log.warn(tostring(ExaError:new("W-EDL-33", "Attempted to close an already closed cursor")))
         return false
     end
     if self.result_set_handle == nil then
@@ -194,7 +194,7 @@ function Cursor:close()
 
     local err = self.websocket:send_close_result_set(self.result_set_handle)
     if err then
-        exaerror.create("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
+        ExaError:new("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
                         {result_set_handle = self.result_set_handle, error = err}):raise()
         return false
     else
