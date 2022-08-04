@@ -9,3 +9,7 @@ In this release we added support for using exasol-driver-lua inside an Exasol [u
 ## Features
 
 * #23: Added support for running inside an Exasol UDF
+
+## Documentation
+
++ #54: Added dependency list

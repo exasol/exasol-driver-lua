@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "0.1.0"
+local tag = "0.2.0"
 
 package = "luasql-exasol"
 version = tag .. "-1"
