@@ -8,7 +8,7 @@ config.configure_logging()
 --- LuaSQL compatibility tests
 -- This verifies that the tests for luasql-exasol work as expected by running the same small test suite against both
 -- luasql-sqlite3 and luasql-exasol. It's not possible to achieve a better test coverage because luasql-sqlite3
--- does not conform to the [LuaSQL API](https://keplerproject.github.io/luasql/manual.html).
+-- does not conform to the [LuaSQL API](https://github.com/lunarmodules/luasql/).
 -- The `Cursor:fetch()` method for sqlite3 e.g. returns the number of rows and stores the row data into the table
 -- passed as argument.
 -- That's why this serves as a smoke test to detect bugs like typos in method names.

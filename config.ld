@@ -10,7 +10,7 @@ Check out the [user guide](https://github.com/exasol/exasol-driver-lua/blob/main
 
 1. Connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements
 1. Encrypted communication via TLS
-1. Compatible with the [LuaSQL](https://keplerproject.github.io/luasql/) API
+1. Compatible with the [LuaSQL](https://github.com/lunarmodules/luasql) API
 
 ## Information for Users
 
