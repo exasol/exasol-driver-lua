@@ -189,8 +189,8 @@ local cursor = ...
 -- Get the first row:
 local first_row = cursor:fetch()
 -- Get column values from the first row (index starts with 1):
-let first_col = first_row[1]
-let second_col = first_row[2]
+local first_col = first_row[1]
+local second_col = first_row[2]
 
 -- Close cursor
 if not cursor:close() then
@@ -200,7 +200,7 @@ end
 
 #### Iterating Over All Rows
 
-This reads all rows using alphanumeric indices.
+This reads all rows using alphanumeric indices with `fetch(row, "a")`.
 
 ```lua
 -- Define reusable table for storing row data
