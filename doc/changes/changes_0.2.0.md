@@ -1,4 +1,4 @@
-# exasol-driver-lua 0.2.0, released 2022-10-20
+# exasol-driver-lua 0.2.0, released 2022-10-21
 
 Code name: Run inside an Exasol UDF
 
