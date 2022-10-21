@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 1
           repository: 'exasol/integration-test-docker-environment'
           path: 'integration-test-docker-environment'
-          ref: 'main'
+          ref: '1.1.0'
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v3
@@ -79,8 +79,7 @@ jobs:
         run: |
           ./start-test-env spawn-test-environment --environment-name test \
             --docker-db-image-version ${{ matrix.exasol_version }} \
-            --database-port-forward 8563 \
-            --deactivate-database-setup
+            --database-port-forward 8563
         working-directory: integration-test-docker-environment
 
       - name: Run example code

@@ -27,7 +27,7 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 
 | Dependency                                                                   | License                                                                     |
 |------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| [busted](http://olivinelabs.com/busted/)                                     | [BSD License 3](https://github.com/Olivine-Labs/busted/blob/master/LICENSE) |
+| [busted](https://lunarmodules.github.io/busted/)                             | [BSD License 3](https://github.com/Olivine-Labs/busted/blob/master/LICENSE) |
 | [mockagne](https://github.com/mockagne/mockagne)                             | [MIT](https://github.com/mockagne/mockagne/blob/master/LICENSE)             |
 | [LuaCheck][luacheck]                                                         | [MIT][mit]                                                                  |
 | [LuaCov][luacov]                                                             | [MIT][mit]                                                                  |
