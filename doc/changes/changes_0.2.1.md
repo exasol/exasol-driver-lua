@@ -11,6 +11,8 @@ If you run local tests, the Exasol DB is most likely set up to forward the defau
 
 Additionally, coverage checks are now restricted to selected busted configurations. For example, it does not make sense to run with coverage on repeated tests.
 
+Integration test now succeeds with TLS 1.3 in addition to TLS 1.2 (version 8.18.0)
+
 ## Bugfixes
 
 * #56: Sped up repeated CI tests

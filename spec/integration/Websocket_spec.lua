@@ -15,7 +15,7 @@ local function get_ssl_socket_creation_error(error_details)
     return get_connection_error(string.format("Failed to create SSL socket: '%s'", error_details))
 end
 
-local ssl_negotion_failed_error<const> = get_connection_error("Failed SSL negotation")
+local ssl_negotiation_failed_error<const> = get_connection_error("Failed SSL negotation")
 
 local function connect(properties, url)
     url = url or local_websocket_url
@@ -55,7 +55,7 @@ describe("Websocket", function()
         describe("fails SSL negotiation for valid value", function()
             for _, tls_verify_option in ipairs({"peer", "client_once", "fail_if_no_peer_cert"}) do
                 it(string.format("%q", tls_verify_option), function()
-                    assert_connect_fails({tls_verify = tls_verify_option}, ssl_negotion_failed_error)
+                    assert_connect_fails({tls_verify = tls_verify_option}, ssl_negotiation_failed_error)
                 end)
             end
         end)
@@ -71,18 +71,18 @@ describe("Websocket", function()
     end)
 
     describe("with tls_protocol option", function()
-        describe("connects successfully for value", function()
-            for _, tls_protocol_option in ipairs({"any", "tlsv1_2"}) do
-                it(string.format("value %q", tls_protocol_option), function()
+        describe("connects successfully for Exasol-supported protocol version:", function()
+            for _, tls_protocol_option in ipairs({"any", "tlsv1_2", "tlsv1_3"}) do
+                it(tls_protocol_option, function()
                     assert_connect_successful({tls_protocol = tls_protocol_option})
                 end)
             end
         end)
 
-        describe("fails SSL negotiation for valid value", function()
-            for _, tls_protocol_option in ipairs({"tlsv1", "tlsv1_1", "tlsv1_3"}) do
-                it(string.format("%q", tls_protocol_option), function()
-                    assert_connect_fails({tls_protocol = tls_protocol_option}, ssl_negotion_failed_error)
+        describe("fails SSL negotiation for TLS protocol version that is not supported by Exasol: ", function()
+            for _, tls_protocol_option in ipairs({"tlsv1", "tlsv1_1"}) do
+                it(tls_protocol_option, function()
+                    assert_connect_fails({tls_protocol = tls_protocol_option}, ssl_negotiation_failed_error)
                 end)
             end
         end)
@@ -111,7 +111,7 @@ describe("Websocket", function()
         describe("fails SSL negotiation for valid value", function()
             for _, tls_options in ipairs({"no_tlsv1_2", "no_tlsv1_2,all", "no_tlsv1_2,all"}) do
                 it(string.format("%q", tls_options), function()
-                    assert_connect_fails({tls_options = tls_options}, ssl_negotion_failed_error)
+                    assert_connect_fails({tls_options = tls_options}, ssl_negotiation_failed_error)
                 end)
             end
         end)
