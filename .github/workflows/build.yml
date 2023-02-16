@@ -107,6 +107,16 @@ jobs:
           name: luacov-report
           path: target/luacov-reports/*
 
+      - name: Run repeated tests
+        run: |
+          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          eval $(luarocks path)
+          LOG_LEVEL=ERROR \
+            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
+            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            luarocks test -- --run=ci_repeated
+
       - name: Validate tools
         if: ${{ always() }}
         run: shellcheck --check-sourced --severity=style tools/*.sh
