@@ -29,6 +29,6 @@ See the [dependencies list](dependencies.md) for build and test dependencies and
 
 Requirement, design documents and coverage tags are written in [OpenFastTrace](https://github.com/itsallcode/openfasttrace) format.
 
-* [Developers Guide](doc/developer_guide/developer_guide.md)
+* [Developer Guide](doc/developer_guide/developer_guide.md)
 * [System Requirements](doc/system_requirements.md)
 * [Design](doc/design.md)
