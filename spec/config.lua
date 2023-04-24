@@ -21,7 +21,7 @@ end
 
 function M.get_connection_params(override)
     override = override or {}
-    local host = override.host or get_system_env("EXASOL_HOST")
+    local host = override.host or get_optional_system_env("EXASOL_HOST", "localhost")
     local port = override.port or get_system_env("EXASOL_PORT", "8563")
     return {
         host = host,
