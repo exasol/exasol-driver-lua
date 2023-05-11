@@ -72,7 +72,11 @@ describe("Websocket", function()
 
     describe("with tls_protocol option", function()
         describe("connects successfully for value", function()
-            for _, tls_protocol_option in ipairs({"any", "tlsv1_2"}) do
+            local supported_protocols = {"any", "tlsv1_2"}
+            if config.db_supports_tlsv1_3() then
+                table.insert(supported_protocols, "tlsv1_3")
+            end
+            for _, tls_protocol_option in ipairs(supported_protocols) do
                 it(string.format("value %q", tls_protocol_option), function()
                     assert_connect_successful({tls_protocol = tls_protocol_option})
                 end)
@@ -80,7 +84,11 @@ describe("Websocket", function()
         end)
 
         describe("fails SSL negotiation for valid value", function()
-            for _, tls_protocol_option in ipairs({"tlsv1", "tlsv1_1", "tlsv1_3"}) do
+            local unsupported_protocols = {"tlsv1", "tlsv1_1"}
+            if not config.db_supports_tlsv1_3() then
+                table.insert(unsupported_protocols, "tlsv1_3")
+            end
+            for _, tls_protocol_option in ipairs(unsupported_protocols) do
                 it(string.format("%q", tls_protocol_option), function()
                     assert_connect_fails({tls_protocol = tls_protocol_option}, ssl_negotion_failed_error)
                 end)
