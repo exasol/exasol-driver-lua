@@ -113,11 +113,11 @@ jobs:
           path: target/luacov-reports/*
 
       - name: Validate tools
-        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
+        if: ${{ always() && env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: shellcheck --check-sourced --severity=style tools/*.sh
 
       - name: Run static code analysis
-        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
+        if: ${{ always() && env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: |
           eval $(luarocks path)
           tools/runluacheck.sh
@@ -129,6 +129,7 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: Trace requirements
+        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
 
   ## This is a separate job because it requires running apt-get which takes > 40s.
