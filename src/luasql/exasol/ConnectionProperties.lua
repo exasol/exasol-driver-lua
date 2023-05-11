@@ -32,8 +32,8 @@ local ConnectionProperties = {}
 --
 -- * `tlsv1`
 -- * `tlsv1_1`
--- * `tlsv1_2`
--- * `tlsv1_3`
+-- * `tlsv1_2` (default)
+-- * `tlsv1_3` (only supported with Exasol v8 and later)
 --
 -- Run the following command to find out which TLS version your Exasol server supports:
 --

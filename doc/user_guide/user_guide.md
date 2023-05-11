@@ -147,7 +147,7 @@ When creating a new connection you can specify the following properties:
   * `tlsv1`
   * `tlsv1_1`
   * `tlsv1_2` (default)
-  * `tlsv1_3`
+  * `tlsv1_3` (only supported with Exasol v8 and later)
 * `tls_options` specifies additional options for OpenSSL, e.g. `no_tlsv1`. The default value is `all`. You can get a complete list of supported options by executing the following Lua code:
     ```lua
     require("ssl").config.options
