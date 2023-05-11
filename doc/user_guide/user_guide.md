@@ -1,6 +1,6 @@
 # exasol-driver-lua – User Guide
 
-The Exasol Driver for Lua allows you to execute queries on an Exasol database and retrieve the results. This user-guide shows how to use the driver.
+The Exasol Driver for Lua (EDL) allows you to execute queries on an Exasol database and retrieve the results. This user-guide shows how to use the driver.
 
 ## Installing the Driver and Dependencies
 
@@ -283,3 +283,13 @@ To build such a package follow these steps:
     ```
 
 See files [amalg_util.lua](../../spec/amalg_util.lua) and [udf_spec.lua](../../spec/integration/udf_spec.lua) as an example how to automate this process.
+
+## Compatibility
+
+EDL is tested with the following Exasol versions:
+
+| EDL version | Exasol version    | Note                                    |
+|-------------|-------------------|-----------------------------------------|
+| 0.2.0       | 7.1.10            |                                         |
+| 0.2.1       | 7.1.19            |                                         |
+| 0.2.1       | prerelease-8.17.0 | supports TLS 1.3 and running EDL as UDF |
