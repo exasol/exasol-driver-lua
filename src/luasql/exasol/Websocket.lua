@@ -47,6 +47,7 @@ local function connect_with_retry(url, websocket_options, remaining_retries)
         connection.data_handler:handle_data(conn, opcode, message)
     end, websocket_options)
     if err ~= nil then
+        wsclose(websocket)
         if remaining_retries <= 0 or not recoverable_connection_error(err) then
             ExaError:new("E-EDL-1", "Error connecting to {{url}}: {{error}}", {url = url, error = err}):raise()
         else
