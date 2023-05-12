@@ -1,6 +1,6 @@
 # exasol-driver-lua – User Guide
 
-The Exasol Driver for Lua allows you to execute queries on an Exasol database and retrieve the results. This user-guide shows how to use the driver.
+The Exasol Driver for Lua (EDL) allows you to execute queries on an Exasol database and retrieve the results. This user-guide shows how to use the driver.
 
 ## Installing the Driver and Dependencies
 
@@ -147,7 +147,7 @@ When creating a new connection you can specify the following properties:
   * `tlsv1`
   * `tlsv1_1`
   * `tlsv1_2` (default)
-  * `tlsv1_3`
+  * `tlsv1_3` (only supported with Exasol v8 and later)
 * `tls_options` specifies additional options for OpenSSL, e.g. `no_tlsv1`. The default value is `all`. You can get a complete list of supported options by executing the following Lua code:
     ```lua
     require("ssl").config.options
@@ -283,3 +283,13 @@ To build such a package follow these steps:
     ```
 
 See files [amalg_util.lua](../../spec/amalg_util.lua) and [udf_spec.lua](../../spec/integration/udf_spec.lua) as an example how to automate this process.
+
+## Compatibility
+
+EDL is tested with the following Exasol versions:
+
+| EDL version | Exasol version    | Note                                    |
+|-------------|-------------------|-----------------------------------------|
+| 0.2.0       | 7.1.10            |                                         |
+| 0.2.1       | 7.1.17            |                                         |
+| 0.2.1       | prerelease-8.17.0 | supports TLS 1.3 and running EDL as UDF |

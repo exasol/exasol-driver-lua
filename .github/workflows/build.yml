@@ -4,10 +4,12 @@ jobs:
 
   build:
     strategy:
-       fail-fast: true
-       matrix:
-          lua_version: [5.4]
-          exasol_version: [7.1.10]
+      fail-fast: true
+      matrix:
+        lua_version: ["5.4"]
+        exasol_version: ["7.1.17"] # Exasol v8 ("prerelease-8.17.0") will be added in https://github.com/exasol/exasol-driver-lua/issues/78
+    env:
+      DEFAULT_DB_VERSION: "7.1.17"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
@@ -24,9 +26,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-          repository: 'exasol/integration-test-docker-environment'
-          path: 'integration-test-docker-environment'
-          ref: '1.1.0'
+          repository: "exasol/integration-test-docker-environment"
+          path: "integration-test-docker-environment"
+          ref: "1.5.0"
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v3
@@ -64,11 +66,13 @@ jobs:
         run: |
           eval $(luarocks path)
           EXASOL_HOST=dummy LOG_LEVEL=TRACE luarocks test --local -- --run=smoketest
-      
+
       - name: Build API documentation
+        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/build-docs.sh
 
       - name: Upload API documentation
+        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         uses: actions/upload-artifact@v3
         with:
           name: api-documentation
@@ -102,34 +106,37 @@ jobs:
             tools/runtests.sh --run=ci
 
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
+        uses: actions/upload-artifact@v3
         with:
           name: luacov-report
           path: target/luacov-reports/*
 
       - name: Validate tools
-        if: ${{ always() }}
+        if: ${{ always() && env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: shellcheck --check-sourced --severity=style tools/*.sh
 
       - name: Run static code analysis
-        if: ${{ always() }}
+        if: ${{ always() && env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: |
           eval $(luarocks path)
           tools/runluacheck.sh
 
       - name: "Set up JDK"
+        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'temurin'
+          java-version: "11"
+          distribution: "temurin"
       - name: Trace requirements
+        if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
 
   ## This is a separate job because it requires running apt-get which takes > 40s.
   ## When the other job also uses apt-get this can be moved back.
   plantuml:
     strategy:
-       fail-fast: true
+      fail-fast: true
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true

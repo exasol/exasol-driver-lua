@@ -25,7 +25,7 @@ return {
     ["repeat"] = 20
   },
   smoketest = {
-    tags = {"smoketest"}
+    ROOT = {"spec/integration/smoketest_spec.lua"},
   },
   utest = {
     ROOT = {"spec/unit"},

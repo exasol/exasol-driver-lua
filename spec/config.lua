@@ -65,6 +65,10 @@ function M.db_supports_openssl_module()
     return M._is_exasol_8()
 end
 
+function M.db_supports_tlsv1_3()
+    return M._is_exasol_8()
+end
+
 local function starts_with(text, prefix)
     return text:find(prefix, 1, true) == 1
 end
