@@ -7,7 +7,7 @@ jobs:
       fail-fast: true
       matrix:
         lua_version: ["5.4"]
-        exasol_version: ["7.1.17"] # Exasol v8 ("prerelease-8.17.0") will be added in https://github.com/exasol/exasol-driver-lua/issues/78
+        exasol_version: ["7.1.17", "8.18.1"]
     env:
       DEFAULT_DB_VERSION: "7.1.17"
     concurrency:
@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 1
           repository: "exasol/integration-test-docker-environment"
           path: "integration-test-docker-environment"
-          ref: "1.5.0"
+          ref: "1.7.0"
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v3
