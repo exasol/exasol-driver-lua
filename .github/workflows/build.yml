@@ -7,9 +7,9 @@ jobs:
       fail-fast: true
       matrix:
         lua_version: ["5.4"]
-        exasol_version: ["7.1.17", "8.18.1"]
+        exasol_version: ["7.1.21", "8.18.1"]
     env:
-      DEFAULT_DB_VERSION: "7.1.17"
+      DEFAULT_DB_VERSION: "7.1.21"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true

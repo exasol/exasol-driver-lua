@@ -1,4 +1,4 @@
-# exasol-driver-lua 0.2.0, released 2023-06-21
+# exasol-driver-lua 0.2.1, released 2023-06-21
 
 Code name: Upgrade to Exasol 8
 
