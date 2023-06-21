@@ -291,5 +291,5 @@ EDL is tested with the following Exasol versions:
 | EDL version | Exasol version | Note                                    |
 |-------------|----------------|-----------------------------------------|
 | 0.2.0       | 7.1.10         |                                         |
-| 0.2.1       | 7.1.21         |                                         |
+| 0.2.1       | 7.1.17         |                                         |
 | 0.2.1       | 8.18.1         | supports TLS 1.3 and running EDL as UDF |
