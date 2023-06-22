@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><a href="../source/Connection.lua.html">Connection.lua</a></li>
+  <li><a href="../source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></li>
+  <li><strong>Cursor.lua</strong></li>
+  <li><a href="../source/CursorData.lua.html">CursorData.lua</a></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><a href="../source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></li>
+  <li><a href="../source/Websocket.lua.html">Websocket.lua</a></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><a href="../source/examples.lua.html">examples.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>Cursor.lua</h2>
+<pre>
+<span class="comment">-- [impl-&gt;dsn~logging-with-remotelog~1]
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="keyword">local</span> CursorData = <span class="global">require</span>(<span class="string">"luasql.exasol.CursorData"</span>)
+
+<span class="keyword">local</span> FETCH_MODE_NUMERIC_INDICES = <span class="string">"n"</span>
+<span class="keyword">local</span> FETCH_MODE_ALPHANUMERIC_INDICES = <span class="string">"a"</span> <span class="comment">-- luacheck: ignore 211 # unused variable
+</span>
+<span class="comment">--- This class represents a cursor that allows retrieving rows from a result set.
+</span><span class="comment">-- @classmod luasql.exasol.Cursor
+</span><span class="comment">-- @field private col_name_provider function
+</span><span class="comment">-- @field private num_columns number
+</span><span class="comment">-- @field private num_rows number
+</span><span class="comment">-- @field private data CursorData
+</span><span class="comment">-- @field private websocket ExasolWebsocket
+</span><span class="comment">-- @field private result_set_handle string|nil
+</span><span class="keyword">local</span> Cursor = {}
+
+<span class="comment">--- This result table index provider returns the column index.
+</span><span class="comment">-- This is used for fetch mode "n" (numeric indices in the result table).
+</span><span class="comment">-- To avoid creating a new function for each row we create this only once and re-use it.
+</span><span class="comment">-- @tparam number col_index the column index
+</span><a id="24"></a><span class="comment">-- @treturn number the column index
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">col_index_provider</span>(col_index)
+    <span class="keyword">return</span> col_index
+<span class="keyword">end</span>
+
+<span class="comment">--- This function creates a result table index provider that returns the column name.
+</span><span class="comment">-- This is used for fetch mode "a" (alphanumeric indices in the result table).
+</span><span class="comment">-- To avoid creating a new function for each row we create this only once in the constructor and re-use it.
+</span><span class="comment">-- @tparam table column_names a list of column names
+</span><a id="33"></a><span class="comment">-- @treturn function result table index provider that maps the column index to column names
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">create_col_name_provider</span>(column_names)
+    <span class="keyword">return</span> <span class="keyword">function</span>(col_index)
+        <span class="keyword">return</span> column_names[col_index]
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- This function extracts the column names from a result set.
+</span><span class="comment">-- @tparam table result_set the result set
+</span><span class="comment">-- @treturn table a list of column names
+</span><a id="43"></a><span class="comment">-- @raise an error if the number of columns is not equal to the number reported by the result set
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">get_column_names</span>(result_set)
+    <span class="keyword">if</span> #result_set.columns ~= result_set.numColumns <span class="keyword">then</span>
+        <span class="keyword">local</span> args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-24"</span>, <span class="string">"Result set reports {{expected_col_count}} but only "</span>
+                                .. <span class="string">"{{actual_col_count}} columns are available"</span>, args):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> names = {}
+    <span class="keyword">for</span> _, column <span class="keyword">in</span> <span class="global">ipairs</span>(result_set.columns) <span class="keyword">do</span>
+        <span class="global">table</span>.<span class="function-name">insert</span>(names, column.name)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> names
+<span class="keyword">end</span>
+
+<span class="comment">--- Extracts the column types from a result set.
+</span><span class="comment">-- @tparam table result_set the result set
+</span><a id="59"></a><span class="comment">-- @treturn table a list of column types
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">get_column_types</span>(result_set)
+    <span class="keyword">local</span> types = {}
+    <span class="keyword">local</span> E&lt;const&gt; = {}
+    <span class="keyword">for</span> _, column <span class="keyword">in</span> <span class="global">ipairs</span>(result_set.columns) <span class="keyword">do</span>
+        <span class="global">table</span>.<span class="function-name">insert</span>(types, (column.dataType <span class="keyword">or</span> E).<span class="global">type</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> types
+<span class="keyword">end</span>
+
+<span class="comment">--- Create a new instance of the Cursor class.
+</span><span class="comment">-- @tparam luasql.exasol.ConnectionProperties connection_properties connection properties
+</span><span class="comment">-- @tparam luasql.exasol.ExasolWebsocket websocket the websocket connection to the database
+</span><span class="comment">-- @tparam string session_id the session ID of the current database connection
+</span><span class="comment">-- @tparam table result_set the result set returned by the database
+</span><span class="comment">-- @treturn luasql.exasol.Cursor a new Cursor instance
+</span><a id="75"></a><span class="comment">-- @raise an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
+</span><span class="keyword">function</span> Cursor:<span class="function-name">create</span>(connection_properties, websocket, session_id, result_set)
+    <span class="keyword">local</span> column_names = <span class="function-name">get_column_names</span>(result_set)
+    <span class="keyword">local</span> column_types = <span class="function-name">get_column_types</span>(result_set)
+    <span class="keyword">local</span> object = {
+        websocket = websocket,
+        session_id = session_id,
+        result_set_handle = result_set.resultSetHandle,
+        num_columns = result_set.numColumns,
+        num_rows = result_set.numRows,
+        column_names = column_names,
+        column_types = column_types,
+        col_name_provider = <span class="function-name">create_col_name_provider</span>(column_names),
+        data = CursorData:<span class="function-name">create</span>(connection_properties, websocket, result_set),
+        closed = <span class="keyword">false</span>
+    }
+    self.__index = self
+    <span class="global">setmetatable</span>(object, self)
+    <span class="keyword">return</span> object
+<span class="keyword">end</span>
+
+<span class="comment">--- Gets a result table index provider for the given fetch mode.
+</span><span class="comment">-- @tparam "a"|"n" modestring the fetch mode: `"a"` for alphanumeric indices, `"n"` for numeric indices
+</span><span class="comment">-- @treturn function a function that maps column indices to a table index
+</span><a id="99"></a><span class="comment">--   in the result table
+</span><span class="keyword">function</span> Cursor:<span class="function-name">_get_result_table_index_provider</span>(modestring)
+    <span class="keyword">if</span> modestring ~= FETCH_MODE_NUMERIC_INDICES <span class="keyword">then</span>
+        <span class="keyword">return</span> self.col_name_provider
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> col_index_provider
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Fills the given table with the values of the current row.
+</span><span class="comment">-- @tparam table table the table to fill
+</span><span class="comment">-- @tparam "a"|"n" modestring determines which indices are used when filling the table:
+</span><a id="111"></a><span class="comment">--   `"a"` for alphanumeric indices, `"n"` for numeric indices
+</span><span class="keyword">function</span> Cursor:<span class="function-name">_fill_row</span>(<span class="global">table</span>, modestring)
+    <span class="keyword">local</span> col_name_provider = self:<span class="function-name">_get_result_table_index_provider</span>(modestring)
+    <span class="keyword">for</span> col = <span class="number">1</span>, self.num_columns <span class="keyword">do</span>
+        <span class="keyword">local</span> col_name = <span class="function-name">col_name_provider</span>(col)
+        <span class="keyword">if</span> <span class="keyword">not</span> col_name <span class="keyword">then</span>
+            <span class="keyword">local</span> args = {index = col}
+            ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-23"</span>, <span class="string">"No column name found for index {{index}}"</span>, args):<span class="function-name">add_ticket_mitigation</span>()
+                    :<span class="function-name">raise</span>()
+        <span class="keyword">end</span>
+        <span class="global">table</span>[col_name] = self.data:<span class="function-name">get_column_value</span>(col)
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Retrieves the next row of results.
+</span><span class="comment">-- If fetch is called without parameters, the results will be returned directly to the caller.
+</span><span class="comment">-- If fetch is called with a table, the results will be copied into the table and the changed table will be returned.
+</span><span class="comment">-- In this case, an optional modestring parameter can be used. It is a string indicating how the resulting table
+</span><span class="comment">-- should be constructed. The mode string can contain:
+</span><span class="comment">--
+</span><span class="comment">-- * `"n"`: the resulting table will have numerical indices (default)
+</span><span class="comment">-- * `"a"`: the resulting table will have alphanumerical indices
+</span><span class="comment">--
+</span><span class="comment">-- The numerical indices are the positions of the result columns in the `SELECT` statement;
+</span><span class="comment">-- the alphanumerical indices are the names of the fields.
+</span><span class="comment">--
+</span><span class="comment">-- The optional table parameter is a table that should be used to store the next row. This allows
+</span><span class="comment">-- the use of a single table for many fetches, which can improve the overall performance.
+</span><span class="comment">--
+</span><span class="comment">-- A call to fetch after the last row has already being returned, will close the corresponding cursor.
+</span><span class="comment">-- The result values are converted to Lua types, i.e. `nil`, number and string.
+</span><span class="comment">--
+</span><span class="comment">-- Null values from the database are converted `luasql.exasol.NULL`.
+</span><span class="comment">-- You can test for it with `value == luasql.exasol.NULL`.
+</span><span class="comment">--
+</span><span class="comment">-- @tparam table|nil table the table to which the result will be copied or `nil` to return a new table
+</span><span class="comment">-- @tparam nil|"a"|"n" modestring the mode as described above
+</span><a id="148"></a><span class="comment">-- @treturn table|nil row data as described above or `nil` if there are no more rows
+</span><span class="keyword">function</span> Cursor:<span class="function-name">fetch</span>(<span class="global">table</span>, modestring)
+    <span class="comment">-- [impl -&gt; dsn~luasql-cursor-fetch~0]
+</span>    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-13"</span>, <span class="string">"Cursor closed while trying to fetch datasets from cursor"</span>):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> self.data:<span class="function-name">has_more_rows</span>() <span class="keyword">then</span>
+        log.<span class="function-name">trace</span>(<span class="string">"End of result set reached, no more rows after %d"</span>, self.num_rows)
+        <span class="keyword">if</span> <span class="keyword">not</span> self.closed <span class="keyword">then</span>
+            self:<span class="function-name">close</span>()
+        <span class="keyword">end</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>
+    <span class="keyword">end</span>
+    <span class="global">table</span> = <span class="global">table</span> <span class="keyword">or</span> {}
+    modestring = modestring <span class="keyword">or</span> FETCH_MODE_NUMERIC_INDICES
+    self:<span class="function-name">_fill_row</span>(<span class="global">table</span>, modestring)
+    self.data:<span class="function-name">next_row</span>()
+    <span class="keyword">return</span> <span class="global">table</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Gets the list of column names.
+</span><a id="169"></a><span class="comment">-- @treturn table the list of column names
+</span><span class="keyword">function</span> Cursor:<span class="function-name">getcolnames</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-cursor-getcolnames~0]
+</span>    <span class="keyword">return</span> self.column_names
+<span class="keyword">end</span>
+
+<span class="comment">--- Gets the list of column types.
+</span><a id="176"></a><span class="comment">-- @treturn table the list of column types
+</span><span class="keyword">function</span> Cursor:<span class="function-name">getcoltypes</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-cursor-getcoltypes~0]
+</span>    <span class="keyword">return</span> self.column_types
+<span class="keyword">end</span>
+
+<span class="comment">--- Closes this cursor.
+</span><a id="183"></a><span class="comment">-- @treturn boolean `true` in case of success and `false` when the cursor is already closed
+</span><span class="keyword">function</span> Cursor:<span class="function-name">close</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-cursor-close~0]
+</span>    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        log.<span class="global">warn</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"W-EDL-33"</span>, <span class="string">"Attempted to close an already closed cursor"</span>)))
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> self.result_set_handle == <span class="keyword">nil</span> <span class="keyword">then</span>
+        log.<span class="function-name">trace</span>(<span class="string">"Cursor without result set handle: no need to close"</span>)
+        self.closed = <span class="keyword">true</span>
+        <span class="keyword">return</span> <span class="keyword">true</span>
+    <span class="keyword">end</span>
+
+    <span class="keyword">local</span> err = self.websocket:<span class="function-name">send_close_result_set</span>(self.result_set_handle)
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-28"</span>, <span class="string">"Failed to close result set {{result_set_handle}}: {{error}}"</span>,
+                        {result_set_handle = self.result_set_handle, <span class="global">error</span> = err}):<span class="function-name">raise</span>()
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">else</span>
+        log.<span class="function-name">trace</span>(<span class="string">"Successfully closed result set %d"</span>, self.result_set_handle)
+        self.closed = <span class="keyword">true</span>
+        <span class="keyword">return</span> <span class="keyword">true</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> Cursor</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

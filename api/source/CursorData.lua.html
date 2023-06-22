@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><a href="../source/Connection.lua.html">Connection.lua</a></li>
+  <li><a href="../source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></li>
+  <li><a href="../source/Cursor.lua.html">Cursor.lua</a></li>
+  <li><strong>CursorData.lua</strong></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><a href="../source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></li>
+  <li><a href="../source/Websocket.lua.html">Websocket.lua</a></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><a href="../source/examples.lua.html">examples.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>CursorData.lua</h2>
+<pre>
+<span class="comment">-- [impl-&gt;dsn~logging-with-remotelog~1]
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="keyword">local</span> constants = <span class="global">require</span>(<span class="string">"luasql.exasol.constants"</span>)
+<span class="keyword">local</span> cjson = <span class="global">require</span>(<span class="string">"cjson"</span>)
+
+<span class="comment">--- This internal class represents the result data of a cursor that allows retreiving rows from a result set.
+</span><span class="comment">-- It handles large result sets by fetching new batches automatically.
+</span><span class="comment">-- @classmod luasql.exasol.CursorData
+</span><span class="comment">-- @field private data table|nil the data received from the server. May be `nil` in case of
+</span><span class="comment">--   a large result set that requires fetching batches.
+</span><span class="comment">-- @field private current_row number the current row number (starting with 1) of the complete result set
+</span><span class="comment">-- @field private current_row_in_batch number the current row number (starting with 1) in the current batch
+</span><span class="comment">-- @field private num_rows_total number the total row count in the result set
+</span><span class="comment">-- @field private num_rows_in_message number the number of rows in the current batch
+</span><span class="comment">-- @field private num_rows_fetched_total number the number of rows in all batches fetched until now
+</span><span class="comment">-- @field private result_set_handle number|nil the result set handle or `nil` in case of
+</span><span class="comment">--   a small result set
+</span><span class="comment">-- @field private websocket ExasolWebsocket the websocket connection to the database
+</span><span class="comment">-- @field private connection_properties ConnectionProperties the user defined connection settings,
+</span><span class="comment">--   containing e.g. fetch size
+</span><span class="keyword">local</span> CursorData = {}
+
+<span class="comment">--- Create a new instance of the CursorData class.
+</span><span class="comment">-- @tparam luasql.exasol.ConnectionProperties connection_properties the user defined connection settings,
+</span><span class="comment">--   containing e.g. fetch size
+</span><span class="comment">-- @tparam luasql.exasol.ExasolWebsocket websocket the websocket connection to the database
+</span><span class="comment">-- @tparam table result_set the result set received when executing a query
+</span><span class="comment">-- @treturn luasql.exasol.CursorData a new CursorData instance
+</span><a id="31"></a><span class="comment">-- @raise an error in case the result set is invalid
+</span><span class="keyword">function</span> CursorData:<span class="function-name">create</span>(connection_properties, websocket, result_set)
+    <span class="keyword">local</span> object = {
+        websocket = websocket,
+        connection_properties = <span class="global">assert</span>(connection_properties, <span class="string">"connection_properties missing"</span>),
+        result_set_handle = result_set.resultSetHandle,
+        data = result_set.data,
+        num_rows_total = <span class="global">assert</span>(result_set.numRows, <span class="string">"numRows missing in result set"</span>),
+        num_rows_in_message = <span class="global">assert</span>(result_set.numRowsInMessage, <span class="string">"numRowsInMessage missing in result set"</span>),
+        num_rows_fetched_total = result_set.numRowsInMessage,
+        current_row = <span class="number">1</span>,
+        current_row_in_batch = <span class="number">1</span>
+    }
+    <span class="keyword">if</span> object.result_set_handle <span class="keyword">then</span>
+        log.<span class="global">debug</span>(<span class="string">"Creating cursor data for result set %d with %d rows in total and %d rows in message"</span>,
+                  object.result_set_handle, object.num_rows_total, object.num_rows_in_message)
+    <span class="keyword">else</span>
+        log.<span class="global">debug</span>(<span class="string">"Creating cursor data without result set handle with %d rows"</span>, object.num_rows_total)
+    <span class="keyword">end</span>
+    self.__index = self
+    <span class="global">setmetatable</span>(object, self)
+    <span class="keyword">return</span> object
+<span class="keyword">end</span>
+
+<a id="55"></a><span class="comment">--- Advances the cursor data to the next row.
+</span><span class="keyword">function</span> CursorData:<span class="function-name">next_row</span>()
+    self.current_row = self.current_row + <span class="number">1</span>
+    self.current_row_in_batch = self.current_row_in_batch + <span class="number">1</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the current row number.
+</span><a id="62"></a><span class="comment">-- @treturn number the current row number (starting with 1) of the complete result set
+</span><span class="keyword">function</span> CursorData:<span class="function-name">get_current_row</span>()
+    <span class="keyword">return</span> self.current_row
+<span class="keyword">end</span>
+
+<span class="comment">--- Check if there are more rows available in the result set.
+</span><a id="68"></a><span class="comment">-- @treturn boolean `true` if there are more rows available
+</span><span class="keyword">function</span> CursorData:<span class="function-name">has_more_rows</span>()
+    <span class="keyword">return</span> self.current_row &lt;= self.num_rows_total
+<span class="keyword">end</span>
+
+<span class="comment">--- Convert a column value if necessary before returining it.
+</span><span class="comment">-- We need to replace `cjson.null` with `luasql.exasol.NULL` to hide the implementation
+</span><a id="75"></a><span class="comment">-- detail that we are using cjson for JSON parsing.
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">convert_col_value</span>(col_value)
+    <span class="keyword">if</span> col_value == cjson.null <span class="keyword">then</span>
+        <span class="keyword">return</span> constants.NULL
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> col_value
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get a column value from the current row.
+</span><span class="comment">-- Fetches the next batch in case not enough data is available.
+</span><span class="comment">-- @tparam number column_index the column index starting with 1
+</span><a id="87"></a><span class="comment">-- @treturn any the value of the given column
+</span><span class="keyword">function</span> CursorData:<span class="function-name">get_column_value</span>(column_index)
+    self:<span class="function-name">_fetch_data</span>()
+    log.<span class="function-name">trace</span>(<span class="string">"Fetching row %d of %d (%d of %d in current batch)"</span>, self.current_row, self.num_rows_total,
+              self.current_row_in_batch, self.num_rows_in_message)
+    <span class="keyword">if</span> column_index &lt;= <span class="number">0</span> <span class="keyword">or</span> #self.data &lt; column_index <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-29"</span>,
+                        <span class="string">"Column index {{column_index}} out of bound, must be between 1 and {{column_count}}"</span>,
+                        {column_index = column_index, column_count = #self.data}):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> #self.data[column_index] &lt; self.current_row_in_batch <span class="keyword">then</span>
+        <span class="keyword">local</span> message = <span class="string">"Row {{row_index}} out of bound, must be between 1 and {{row_count}}"</span>
+        <span class="keyword">local</span> args = {row_index = self.current_row_in_batch, row_count = #self.data[column_index]}
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-30"</span>, message, args):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> value = self.data[column_index][self.current_row_in_batch]
+    <span class="keyword">return</span> <span class="function-name">convert_col_value</span>(value)
+<span class="keyword">end</span>
+
+<a id="106"></a><span class="comment">--- Fetch the next batch of data if no more rows are available locally.
+</span><span class="keyword">function</span> CursorData:<span class="function-name">_fetch_data</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-cursor-fetch-resultsethandle~0]
+</span>    <span class="keyword">if</span> <span class="keyword">not</span> self.result_set_handle <span class="keyword">and</span> <span class="keyword">not</span> self.data <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"F-EDL-25"</span>, <span class="string">"Neither data nor result set handle available"</span>):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> self.result_set_handle <span class="keyword">then</span>
+        <span class="comment">-- Small result set, data already available
+</span>        <span class="keyword">return</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> self:<span class="function-name">_end_of_result_set_reached</span>() <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-31"</span>, <span class="string">"No more rows available in result set"</span>):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> self:<span class="function-name">_more_data_available</span>() <span class="keyword">then</span>
+        self:<span class="function-name">_fetch_next_data_batch</span>()
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<a id="124"></a><span class="comment">--- Check if the cursor has reached the last row of the complete result set.
+</span><span class="keyword">function</span> CursorData:<span class="function-name">_end_of_result_set_reached</span>()
+    <span class="keyword">return</span> self.current_row &gt; self.num_rows_total
+<span class="keyword">end</span>
+
+<a id="129"></a><span class="comment">--- Check if more rows are available in the current batch or if the next batch must be fetched.
+</span><span class="keyword">function</span> CursorData:<span class="function-name">_more_data_available</span>()
+    <span class="keyword">return</span> self.current_row_in_batch &lt;= self.num_rows_in_message
+<span class="keyword">end</span>
+
+<a id="134"></a><span class="comment">--- Fetches the next batch of the result set from the database.
+</span><span class="keyword">function</span> CursorData:<span class="function-name">_fetch_next_data_batch</span>()
+    log.<span class="function-name">trace</span>(<span class="string">"Fetching next data batch. Current row in batch: %d, rows in message: %d"</span>, self.current_row_in_batch,
+              self.num_rows_in_message)
+    <span class="keyword">local</span> start_position = self.current_row - <span class="number">1</span>
+    <span class="keyword">local</span> fetch_size = self.connection_properties:<span class="function-name">get_fetchsize_bytes</span>()
+    <span class="keyword">local</span> response, err = self.websocket:<span class="function-name">send_fetch</span>(self.result_set_handle, start_position, fetch_size)
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-26"</span>, <span class="string">"Error fetching result data for handle {{result_set_handle}} with start position "</span>
+                                .. <span class="string">"{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}"</span>, {
+            result_set_handle = self.result_set_handle,
+            start_position = start_position,
+            fetch_size_bytes = fetch_size,
+            <span class="global">error</span> = err
+        }):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    self.data = <span class="global">assert</span>(response.data, <span class="string">"missing data"</span>)
+    self.num_rows_in_message = <span class="global">assert</span>(response.numRows, <span class="string">"missing numRows"</span>)
+    self.num_rows_fetched_total = self.num_rows_fetched_total + self.num_rows_in_message
+    self.current_row_in_batch = <span class="number">1</span>
+    log.<span class="global">debug</span>(<span class="string">"Received batch with %d rows (#%d..%d of %d) with start pos %d and fetch size %d bytes"</span>,
+              self.num_rows_in_message, self.current_row, self.num_rows_fetched_total, self.num_rows_total,
+              start_position, fetch_size)
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> CursorData</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

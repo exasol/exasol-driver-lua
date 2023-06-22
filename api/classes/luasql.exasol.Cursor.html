@@ -1,0 +1,480 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><strong>luasql.exasol.Cursor</strong></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.Cursor</code></h1>
+<p>This class represents a cursor that allows retrieving rows from a result set.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor.col_index_provider">luasql.exasol.cursor.col_index_provider(col_index)</a></td>
+	<td class="summary">This result table index provider returns the column index.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor.create_col_name_provider">luasql.exasol.cursor.create_col_name_provider(column_names)</a></td>
+	<td class="summary">This function creates a result table index provider that returns the column name.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor.get_column_names">luasql.exasol.cursor.get_column_names(result_set)</a></td>
+	<td class="summary">This function extracts the column names from a result set.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor.get_column_types">luasql.exasol.cursor.get_column_types(result_set)</a></td>
+	<td class="summary">Extracts the column types from a result set.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:create">luasql.exasol.cursor:create(connection_properties, websocket, session_id, result_set)</a></td>
+	<td class="summary">Create a new instance of the Cursor class.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:_get_result_table_index_provider">luasql.exasol.cursor:_get_result_table_index_provider(modestring)</a></td>
+	<td class="summary">Gets a result table index provider for the given fetch mode.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:_fill_row">luasql.exasol.cursor:_fill_row(table, modestring)</a></td>
+	<td class="summary">Fills the given table with the values of the current row.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:fetch">luasql.exasol.cursor:fetch(table, modestring)</a></td>
+	<td class="summary">Retrieves the next row of results.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:getcolnames">luasql.exasol.cursor:getcolnames()</a></td>
+	<td class="summary">Gets the list of column names.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:getcoltypes">luasql.exasol.cursor:getcoltypes()</a></td>
+	<td class="summary">Gets the list of column types.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursor:close">luasql.exasol.cursor:close()</a></td>
+	<td class="summary">Closes this cursor.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.cursor.col_index_provider"></a>
+    <strong>luasql.exasol.cursor.col_index_provider(col_index)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#24">line 24</a>
+    </dt>
+    <dd>
+    This result table index provider returns the column index.
+ This is used for fetch mode "n" (numeric indices in the result table).
+ To avoid creating a new function for each row we create this only once and re-use it.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">col_index</span>
+            <span class="types"><span class="type">number</span></span>
+         the column index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the column index
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor.create_col_name_provider"></a>
+    <strong>luasql.exasol.cursor.create_col_name_provider(column_names)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#33">line 33</a>
+    </dt>
+    <dd>
+    This function creates a result table index provider that returns the column name.
+ This is used for fetch mode "a" (alphanumeric indices in the result table).
+ To avoid creating a new function for each row we create this only once in the constructor and re-use it.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">column_names</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         a list of column names
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">function</span></span>
+        result table index provider that maps the column index to column names
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor.get_column_names"></a>
+    <strong>luasql.exasol.cursor.get_column_names(result_set)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#43">line 43</a>
+    </dt>
+    <dd>
+    This function extracts the column names from a result set.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">result_set</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the result set
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        a list of column names
+    </ol>
+
+    <h3>Raises:</h3>
+    an error if the number of columns is not equal to the number reported by the result set
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor.get_column_types"></a>
+    <strong>luasql.exasol.cursor.get_column_types(result_set)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#59">line 59</a>
+    </dt>
+    <dd>
+    Extracts the column types from a result set.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">result_set</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the result set
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        a list of column types
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.cursor:create"></a>
+    <strong>luasql.exasol.cursor:create(connection_properties, websocket, session_id, result_set)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#75">line 75</a>
+    </dt>
+    <dd>
+    Create a new instance of the Cursor class.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">connection_properties</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ConnectionProperties.html#">luasql.exasol.ConnectionProperties</a></span>
+         connection properties
+        </li>
+        <li><span class="parameter">websocket</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ExasolWebsocket.html#">luasql.exasol.ExasolWebsocket</a></span>
+         the websocket connection to the database
+        </li>
+        <li><span class="parameter">session_id</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the session ID of the current database connection
+        </li>
+        <li><span class="parameter">result_set</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the result set returned by the database
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Cursor.html#">luasql.exasol.Cursor</a></span>
+        a new Cursor instance
+    </ol>
+
+    <h3>Raises:</h3>
+    an error in case the result set is invalid, e.g. the number of columns or rows is inconsistent
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor:_get_result_table_index_provider"></a>
+    <strong>luasql.exasol.cursor:_get_result_table_index_provider(modestring)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#99">line 99</a>
+    </dt>
+    <dd>
+    Gets a result table index provider for the given fetch mode.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">modestring</span>
+            <span class="types"><span class="type">"a"</span> or <span class="type">"n"</span></span>
+         the fetch mode: <code>"a"</code> for alphanumeric indices, <code>"n"</code> for numeric indices
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">function</span></span>
+        a function that maps column indices to a table index
+   in the result table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor:_fill_row"></a>
+    <strong>luasql.exasol.cursor:_fill_row(table, modestring)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#111">line 111</a>
+    </dt>
+    <dd>
+    Fills the given table with the values of the current row.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">table</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the table to fill
+        </li>
+        <li><span class="parameter">modestring</span>
+            <span class="types"><span class="type">"a"</span> or <span class="type">"n"</span></span>
+         determines which indices are used when filling the table:
+   <code>"a"</code> for alphanumeric indices, <code>"n"</code> for numeric indices
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor:fetch"></a>
+    <strong>luasql.exasol.cursor:fetch(table, modestring)</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#148">line 148</a>
+    </dt>
+    <dd>
+    Retrieves the next row of results.
+ If fetch is called without parameters, the results will be returned directly to the caller.
+ If fetch is called with a table, the results will be copied into the table and the changed table will be returned.
+ In this case, an optional modestring parameter can be used. It is a string indicating how the resulting table
+ should be constructed. The mode string can contain:</p>
+
+<ul>
+    <li><code>"n"</code>: the resulting table will have numerical indices (default)</li>
+    <li><code>"a"</code>: the resulting table will have alphanumerical indices</li>
+</ul>
+
+<p> The numerical indices are the positions of the result columns in the <code>SELECT</code> statement;
+ the alphanumerical indices are the names of the fields.</p>
+
+<p> The optional table parameter is a table that should be used to store the next row. This allows
+ the use of a single table for many fetches, which can improve the overall performance.</p>
+
+<p> A call to fetch after the last row has already being returned, will close the corresponding cursor.
+ The result values are converted to Lua types, i.e. <code>nil</code>, number and string.</p>
+
+<p> Null values from the database are converted <code>luasql.exasol.NULL</code>.
+ You can test for it with <code>value == luasql.exasol.NULL</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">table</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+         the table to which the result will be copied or <code>nil</code> to return a new table
+        </li>
+        <li><span class="parameter">modestring</span>
+            <span class="types"><span class="type">nil</span>, <span class="type">"a"</span> or <span class="type">"n"</span></span>
+         the mode as described above
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        row data as described above or <code>nil</code> if there are no more rows
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor:getcolnames"></a>
+    <strong>luasql.exasol.cursor:getcolnames()</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#169">line 169</a>
+    </dt>
+    <dd>
+    Gets the list of column names.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        the list of column names
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor:getcoltypes"></a>
+    <strong>luasql.exasol.cursor:getcoltypes()</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#176">line 176</a>
+    </dt>
+    <dd>
+    Gets the list of column types.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        the list of column types
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursor:close"></a>
+    <strong>luasql.exasol.cursor:close()</strong>
+    <a style="float:right;" href="../source/Cursor.lua.html#183">line 183</a>
+    </dt>
+    <dd>
+    Closes this cursor.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> in case of success and <code>false</code> when the cursor is already closed
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

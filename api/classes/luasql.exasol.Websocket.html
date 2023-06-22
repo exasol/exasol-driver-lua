@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><strong>luasql.exasol.Websocket</strong></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.Websocket</code></h1>
+<p>This internal class represents a websocket connection that allows sending and receiving messages.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket.create">luasql.exasol.websocket.create()</a></td>
+	<td class="summary">Creates a new instance of this class that is not yet opened/connected.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket.recoverable_connection_error">luasql.exasol.websocket.recoverable_connection_error(err)</a></td>
+	<td class="summary">Check if the given error received during connection is recoverable, i.e.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket.connect_with_retry">luasql.exasol.websocket.connect_with_retry(url, websocket_options, remaining_retries)</a></td>
+	<td class="summary">Create a connection to a websocket url with the given number of retries.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket:connect">luasql.exasol.websocket:connect(url, connection_properties)</a></td>
+	<td class="summary">Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket:_wait_for_response">luasql.exasol.websocket:_wait_for_response(timeout_seconds)</a></td>
+	<td class="summary">Wait until we receive a response.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket:send_raw">luasql.exasol.websocket:send_raw(payload, ignore_response)</a></td>
+	<td class="summary">Send the given payload and optionally wait for the response and return the response.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocket:close">luasql.exasol.websocket:close()</a></td>
+	<td class="summary">Disconnect from the server and close this websocket.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.websocket.create"></a>
+    <strong>luasql.exasol.websocket.create()</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#20">line 20</a>
+    </dt>
+    <dd>
+    Creates a new instance of this class that is not yet opened/connected.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Websocket.html#">luasql.exasol.Websocket</a></span>
+        the new websocket.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocket.recoverable_connection_error"></a>
+    <strong>luasql.exasol.websocket.recoverable_connection_error(err)</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#32">line 32</a>
+    </dt>
+    <dd>
+    Check if the given error received during connection is recoverable, i.e.  we can try to connect again later.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">err</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the received error
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if we can retry the connection, <code>false</code> if this is a permanent error
+   that does not disappear
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocket.connect_with_retry"></a>
+    <strong>luasql.exasol.websocket.connect_with_retry(url, websocket_options, remaining_retries)</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#43">line 43</a>
+    </dt>
+    <dd>
+    Create a connection to a websocket url with the given number of retries.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">url</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the websocket url to connect to, e.g. "wss://host:1234"
+        </li>
+        <li><span class="parameter">websocket_options</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the options passed to LuWS when opening a socket,
+   see <a href="https://github.com/toggledbits/LuWS#options">LuWS documentation</a> for details.
+        </li>
+        <li><span class="parameter">remaining_retries</span>
+            <span class="types"><span class="type">number</span></span>
+         the remaining number of retries. If this is 0, there will be no retry.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Websocket.html#">luasql.exasol.Websocket</a></span>
+        the open websocket connection
+    </ol>
+
+    <h3>Raises:</h3>
+    an error if connection does not succeed after the given number of retries
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.websocket:connect"></a>
+    <strong>luasql.exasol.websocket:connect(url, connection_properties)</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#72">line 72</a>
+    </dt>
+    <dd>
+    Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">url</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the websocket url to connect to, e.g. "wss://host:1234"
+        </li>
+        <li><span class="parameter">connection_properties</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ConnectionProperties.html#">luasql.exasol.ConnectionProperties</a></span>
+         the connection properties
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Websocket.html#">luasql.exasol.Websocket</a></span>
+        the open websocket connection
+    </ol>
+
+    <h3>Raises:</h3>
+    an error if connection does not succeed after the given number of retries
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocket:_wait_for_response"></a>
+    <strong>luasql.exasol.websocket:_wait_for_response(timeout_seconds)</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#88">line 88</a>
+    </dt>
+    <dd>
+    Wait until we receive a response.
+ This is implemented with busy waiting until wsreceive indicates that data was received.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">timeout_seconds</span>
+            <span class="types"><span class="type">number</span></span>
+         the number of seconds to wait for a response
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">nil</span> or <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        <code>nil</code> if a response was received within the timeout or an error if the response
+   did not arrive within the timeout or an error occured while waiting
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocket:send_raw"></a>
+    <strong>luasql.exasol.websocket:send_raw(payload, ignore_response)</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#126">line 126</a>
+    </dt>
+    <dd>
+    Send the given payload and optionally wait for the response and return the response.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">payload</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the payload to send
+        </li>
+        <li><span class="parameter">ignore_response</span>
+            <span class="types"><span class="type">boolean</span></span>
+         <code>false</code> if we expect a response.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        the received response or <code>nil</code> if ignore_response was <code>true</code> or an error occurred.</li>
+        <li>
+           <span class="types"><span class="type">nil</span> or <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocket:close"></a>
+    <strong>luasql.exasol.websocket:close()</strong>
+    <a style="float:right;" href="../source/Websocket.lua.html#150">line 150</a>
+    </dt>
+    <dd>
+    Disconnect from the server and close this websocket.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

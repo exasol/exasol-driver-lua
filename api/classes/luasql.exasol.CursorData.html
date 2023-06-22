@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><strong>luasql.exasol.CursorData</strong></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.CursorData</code></h1>
+<p>This internal class represents the result data of a cursor that allows retreiving rows from a result set.</p>
+<p> It handles large result sets by fetching new batches automatically.</p>
+
+
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata.convert_col_value">luasql.exasol.cursordata.convert_col_value(col_value)</a></td>
+	<td class="summary">Convert a column value if necessary before returining it.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:create">luasql.exasol.cursordata:create(connection_properties, websocket, result_set)</a></td>
+	<td class="summary">Create a new instance of the CursorData class.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:next_row">luasql.exasol.cursordata:next_row()</a></td>
+	<td class="summary">Advances the cursor data to the next row.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:get_current_row">luasql.exasol.cursordata:get_current_row()</a></td>
+	<td class="summary">Get the current row number.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:has_more_rows">luasql.exasol.cursordata:has_more_rows()</a></td>
+	<td class="summary">Check if there are more rows available in the result set.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:get_column_value">luasql.exasol.cursordata:get_column_value(column_index)</a></td>
+	<td class="summary">Get a column value from the current row.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:_fetch_data">luasql.exasol.cursordata:_fetch_data()</a></td>
+	<td class="summary">Fetch the next batch of data if no more rows are available locally.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:_end_of_result_set_reached">luasql.exasol.cursordata:_end_of_result_set_reached()</a></td>
+	<td class="summary">Check if the cursor has reached the last row of the complete result set.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:_more_data_available">luasql.exasol.cursordata:_more_data_available()</a></td>
+	<td class="summary">Check if more rows are available in the current batch or if the next batch must be fetched.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.cursordata:_fetch_next_data_batch">luasql.exasol.cursordata:_fetch_next_data_batch()</a></td>
+	<td class="summary">Fetches the next batch of the result set from the database.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.cursordata.convert_col_value"></a>
+    <strong>luasql.exasol.cursordata.convert_col_value(col_value)</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#75">line 75</a>
+    </dt>
+    <dd>
+    Convert a column value if necessary before returining it.
+ We need to replace <code>cjson.null</code> with <code>luasql.exasol.NULL</code> to hide the implementation
+ detail that we are using cjson for JSON parsing.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">col_value</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.cursordata:create"></a>
+    <strong>luasql.exasol.cursordata:create(connection_properties, websocket, result_set)</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#31">line 31</a>
+    </dt>
+    <dd>
+    Create a new instance of the CursorData class.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">connection_properties</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ConnectionProperties.html#">luasql.exasol.ConnectionProperties</a></span>
+         the user defined connection settings,
+   containing e.g. fetch size
+        </li>
+        <li><span class="parameter">websocket</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ExasolWebsocket.html#">luasql.exasol.ExasolWebsocket</a></span>
+         the websocket connection to the database
+        </li>
+        <li><span class="parameter">result_set</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the result set received when executing a query
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.CursorData.html#">luasql.exasol.CursorData</a></span>
+        a new CursorData instance
+    </ol>
+
+    <h3>Raises:</h3>
+    an error in case the result set is invalid
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:next_row"></a>
+    <strong>luasql.exasol.cursordata:next_row()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#55">line 55</a>
+    </dt>
+    <dd>
+    Advances the cursor data to the next row.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:get_current_row"></a>
+    <strong>luasql.exasol.cursordata:get_current_row()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#62">line 62</a>
+    </dt>
+    <dd>
+    Get the current row number.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the current row number (starting with 1) of the complete result set
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:has_more_rows"></a>
+    <strong>luasql.exasol.cursordata:has_more_rows()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#68">line 68</a>
+    </dt>
+    <dd>
+    Check if there are more rows available in the result set.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if there are more rows available
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:get_column_value"></a>
+    <strong>luasql.exasol.cursordata:get_column_value(column_index)</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#87">line 87</a>
+    </dt>
+    <dd>
+    Get a column value from the current row.
+ Fetches the next batch in case not enough data is available.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">column_index</span>
+            <span class="types"><span class="type">number</span></span>
+         the column index starting with 1
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">any</span></span>
+        the value of the given column
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:_fetch_data"></a>
+    <strong>luasql.exasol.cursordata:_fetch_data()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#106">line 106</a>
+    </dt>
+    <dd>
+    Fetch the next batch of data if no more rows are available locally.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:_end_of_result_set_reached"></a>
+    <strong>luasql.exasol.cursordata:_end_of_result_set_reached()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#124">line 124</a>
+    </dt>
+    <dd>
+    Check if the cursor has reached the last row of the complete result set.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:_more_data_available"></a>
+    <strong>luasql.exasol.cursordata:_more_data_available()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#129">line 129</a>
+    </dt>
+    <dd>
+    Check if more rows are available in the current batch or if the next batch must be fetched.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.cursordata:_fetch_next_data_batch"></a>
+    <strong>luasql.exasol.cursordata:_fetch_next_data_batch()</strong>
+    <a style="float:right;" href="../source/CursorData.lua.html#134">line 134</a>
+    </dt>
+    <dd>
+    Fetches the next batch of the result set from the database.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

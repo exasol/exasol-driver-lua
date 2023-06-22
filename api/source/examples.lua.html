@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><a href="../source/Connection.lua.html">Connection.lua</a></li>
+  <li><a href="../source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></li>
+  <li><a href="../source/Cursor.lua.html">Cursor.lua</a></li>
+  <li><a href="../source/CursorData.lua.html">CursorData.lua</a></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><a href="../source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></li>
+  <li><a href="../source/Websocket.lua.html">Websocket.lua</a></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><strong>examples.lua</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><strong>examples.lua</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>examples.lua</h2>
+<pre>
+<span class="comment">--- Example usage of the LuaSQL driver for Exasol
+</span><span class="comment">-- @script examples.lua
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+
+<span class="comment">-- This function reads the connection configuration
+</span><span class="comment">-- from system environment variables
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">get_config</span>()
+    <span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">get_system_env</span>(varname, default)
+        <span class="keyword">local</span> value = <span class="global">os</span>.<span class="function-name">getenv</span>(varname) <span class="keyword">or</span> default
+        <span class="keyword">if</span> value == <span class="keyword">nil</span> <span class="keyword">then</span>
+            <span class="global">error</span>(<span class="string">"Environment variable '"</span> .. varname
+                          .. <span class="string">"' is required but is not defined"</span>)
+        <span class="keyword">end</span>
+        <span class="keyword">return</span> value
+    <span class="keyword">end</span>
+
+    <span class="keyword">return</span> {
+        host = <span class="function-name">get_system_env</span>(<span class="string">"EXASOL_HOST"</span>),
+        port = <span class="function-name">get_system_env</span>(<span class="string">"EXASOL_PORT"</span>, <span class="number">8563</span>),
+        user = <span class="function-name">get_system_env</span>(<span class="string">"EXASOL_USER"</span>, <span class="string">"sys"</span>),
+        password = <span class="function-name">get_system_env</span>(<span class="string">"EXASOL_PASSWORD"</span>, <span class="string">"exasol"</span>)
+    }
+<span class="keyword">end</span>
+
+<span class="comment">-- Set log level to INFO
+</span>log.<span class="function-name">set_level</span>(<span class="string">"INFO"</span>)
+
+<span class="comment">-- Get connection configuration
+</span><span class="keyword">local</span> config = <span class="function-name">get_config</span>()
+<span class="keyword">local</span> source_name = config.host .. <span class="string">":"</span> .. config.port
+
+<span class="comment">-- Import the library
+</span><span class="keyword">local</span> driver = <span class="global">require</span>(<span class="string">"luasql.exasol"</span>)
+
+<span class="comment">-- Create a new environment
+</span><span class="keyword">local</span> environment = driver.<span class="function-name">exasol</span>()
+
+<span class="comment">-- Define optional connection properties
+</span><span class="keyword">local</span> properties = {
+    tls_verify = <span class="string">"none"</span>,
+    tls_protocol = <span class="string">"tlsv1_2"</span>,
+    tls_options = <span class="string">"no_tlsv1"</span>
+}
+
+<span class="comment">-- Create the connection
+</span><span class="keyword">local</span> connection, err = environment:<span class="function-name">connect</span>(source_name, config.user,
+                                            config.password, properties)
+<span class="comment">-- Handle connection error
+</span><span class="keyword">if</span> err == <span class="keyword">nil</span> <span class="keyword">then</span>
+    log.<span class="function-name">info</span>(
+            <span class="string">"Successfully connected to Exasol database at %s with user %s"</span>,
+            source_name, config.user)
+<span class="keyword">else</span>
+    <span class="global">error</span>(<span class="string">"Connection failed: "</span> .. err)
+<span class="keyword">end</span>
+
+<span class="comment">--
+</span><span class="comment">-- Execute a query and read a single row
+</span><span class="comment">--
+</span><span class="keyword">local</span> cursor
+cursor, err = connection:<span class="function-name">execute</span>(<span class="string">"SELECT ROUND(RANDOM(1, 6)) AS DICE_ROLL"</span>)
+<span class="comment">-- Handle query error
+</span><span class="keyword">if</span> err == <span class="keyword">nil</span> <span class="keyword">then</span>
+    log.<span class="function-name">info</span>(<span class="string">"Successfully executed query"</span>)
+<span class="keyword">else</span>
+    <span class="global">error</span>(<span class="string">"Query failed: "</span> .. err)
+<span class="keyword">end</span>
+
+<span class="comment">-- Fetch query result
+</span><span class="keyword">local</span> first_row = cursor:<span class="function-name">fetch</span>()
+log.<span class="function-name">info</span>(<span class="string">"Dice roll result: %d"</span>, first_row[<span class="number">1</span>])
+
+<span class="comment">-- Close cursor and check if it was closed successfully
+</span><span class="keyword">if</span> cursor:<span class="function-name">close</span>() <span class="keyword">then</span>
+    log.<span class="function-name">info</span>(<span class="string">"Cursor closed successfully"</span>)
+<span class="keyword">else</span>
+    <span class="global">error</span>(<span class="string">"Failed to close cursor"</span>)
+<span class="keyword">end</span>
+
+<span class="comment">--
+</span><span class="comment">-- Execute a query and iterate over the result using alphanumeric indices
+</span><span class="comment">--
+</span>log.<span class="function-name">info</span>(<span class="string">"Reading EXA_METADATA"</span>)
+<span class="comment">-- Execute query and get cursor
+</span>cursor = <span class="global">assert</span>(connection:<span class="function-name">execute</span>(<span class="string">[[
+    SELECT PARAM_NAME, PARAM_VALUE
+    FROM EXA_METADATA
+    WHERE PARAM_NAME LIKE 'max%'
+    ORDER BY PARAM_NAME ASC
+    LIMIT 5]]</span>))
+
+<span class="comment">-- Define reusable table for storing row data
+</span><span class="keyword">local</span> row = {}
+<span class="comment">-- Fetch first row
+</span>row = cursor:<span class="function-name">fetch</span>(row, <span class="string">"a"</span>)
+<span class="keyword">local</span> index = <span class="number">1</span>
+<span class="comment">-- Iterate over rows
+</span><span class="keyword">while</span> row ~= <span class="keyword">nil</span> <span class="keyword">do</span>
+    log.<span class="function-name">info</span>(<span class="string">"  - row %d: %s = '%s'"</span>, index, row[<span class="string">'PARAM_NAME'</span>],
+             row[<span class="string">'PARAM_VALUE'</span>])
+    row = cursor:<span class="function-name">fetch</span>(row, <span class="string">"a"</span>)
+    index = index + <span class="number">1</span>
+<span class="keyword">end</span>
+
+<span class="comment">-- Cursor is closed automatically at this point by last call to fetch()
+</span>
+<span class="comment">--
+</span><span class="comment">-- Close the connection
+</span><span class="comment">--
+</span><span class="keyword">if</span> connection:<span class="function-name">close</span>() <span class="keyword">then</span>
+    log.<span class="function-name">info</span>(<span class="string">"Connection closed successfully"</span>)
+<span class="keyword">else</span>
+    <span class="global">error</span>(<span class="string">"Failed to close connection"</span>)
+<span class="keyword">end</span>
+
+<span class="comment">--
+</span><span class="comment">-- Close the environment
+</span><span class="comment">--
+</span><span class="keyword">if</span> environment:<span class="function-name">close</span>() <span class="keyword">then</span>
+    log.<span class="function-name">info</span>(<span class="string">"Environment closed successfully"</span>)
+<span class="keyword">else</span>
+    <span class="global">error</span>(<span class="string">"Failed to close environment"</span>)
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

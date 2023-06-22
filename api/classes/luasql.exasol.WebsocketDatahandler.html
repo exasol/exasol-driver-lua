@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><strong>luasql.exasol.WebsocketDatahandler</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.WebsocketDatahandler</code></h1>
+<p>This internal class is registered as a callback for incoming messages when connecting to a websocket.</p>
+<p> It collects incoming messages and logs warnings in case a websocket error occurs.</p>
+
+
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler.is_websocket_error">luasql.exasol.websocketdatahandler.is_websocket_error(opcode)</a></td>
+	<td class="summary">Checks if the given websocket opcode represents an error or not.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler:create">luasql.exasol.websocketdatahandler:create()</a></td>
+	<td class="summary">Create a new instance of the WebsocketDatahandler class.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler:handle_data">luasql.exasol.websocketdatahandler:handle_data(conn, opcode, message)</a></td>
+	<td class="summary">Callback function for handling data received from a websocket.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler:expect_data">luasql.exasol.websocketdatahandler:expect_data()</a></td>
+	<td class="summary">Tell this handler that we are expecting incoming data,
+ e.g.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler:expected_data_received">luasql.exasol.websocketdatahandler:expected_data_received()</a></td>
+	<td class="summary">Tell this handler hat we have received the expected data,
+ e.g.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler:get_data">luasql.exasol.websocketdatahandler:get_data()</a></td>
+	<td class="summary">Get all message data collected by this handler.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.websocketdatahandler:has_received_data">luasql.exasol.websocketdatahandler:has_received_data()</a></td>
+	<td class="summary">Check if this handler has received any data.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler.is_websocket_error"></a>
+    <strong>luasql.exasol.websocketdatahandler.is_websocket_error(opcode)</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#24">line 24</a>
+    </dt>
+    <dd>
+    Checks if the given websocket opcode represents an error or not.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">opcode</span>
+            <span class="types"><span class="type">boolean</span> or <span class="type">number</span></span>
+         the received websocket opcode
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if the opcode represents an error that should be logged
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler:create"></a>
+    <strong>luasql.exasol.websocketdatahandler:create()</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#14">line 14</a>
+    </dt>
+    <dd>
+    Create a new instance of the WebsocketDatahandler class.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.WebsocketDatahandler.html#">luasql.exasol.WebsocketDatahandler</a></span>
+        a new instance
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler:handle_data"></a>
+    <strong>luasql.exasol.websocketdatahandler:handle_data(conn, opcode, message)</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#37">line 37</a>
+    </dt>
+    <dd>
+    Callback function for handling data received from a websocket.  This method collects valid
+ data in a list and logs and logs a warning in case an error was received.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">conn</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the websocket connection
+        </li>
+        <li><span class="parameter">opcode</span>
+            <span class="types"><span class="type">boolean</span> or <span class="type">number</span></span>
+         the websocket opcode. See
+ <a href="https://datatracker.ietf.org/doc/html/rfc6455#section-11.8">RFC 6455</a>
+ for details about opcodes
+        </li>
+        <li><span class="parameter">message</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the received message
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    an error in case we where not expecting to receive any data
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler:expect_data"></a>
+    <strong>luasql.exasol.websocketdatahandler:expect_data()</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#56">line 56</a>
+    </dt>
+    <dd>
+    Tell this handler that we are expecting incoming data,
+ e.g.  if we are waiting for a response after sending a request.
+ This also resets the collected data to start a fresh collection.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler:expected_data_received"></a>
+    <strong>luasql.exasol.websocketdatahandler:expected_data_received()</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#64">line 64</a>
+    </dt>
+    <dd>
+    Tell this handler hat we have received the expected data,
+ e.g.  when the response for a request has been received.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler:get_data"></a>
+    <strong>luasql.exasol.websocketdatahandler:get_data()</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#71">line 71</a>
+    </dt>
+    <dd>
+    Get all message data collected by this handler.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a> or <span class="type">nil</span></span>
+        the concatenated received messages or <code>nil</code> if no message was received
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.websocketdatahandler:has_received_data"></a>
+    <strong>luasql.exasol.websocketdatahandler:has_received_data()</strong>
+    <a style="float:right;" href="../source/WebsocketDatahandler.lua.html#82">line 82</a>
+    </dt>
+    <dd>
+    Check if this handler has received any data.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if at least one message was received
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

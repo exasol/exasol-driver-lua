@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><strong>luasql.exasol.ExasolWebsocket</strong></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.ExasolWebsocket</code></h1>
+<p>This internal class represents a websocket connection to an Exasol database that
+ provides convenient functions for sending commands and evaluating the result.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket.get_response_error">luasql.exasol.exasolwebsocket.get_response_error(response)</a></td>
+	<td class="summary">Extract the error from the given database response.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:_create">luasql.exasol.exasolwebsocket:_create(websocket)</a></td>
+	<td class="summary">Creates a new Exasol websocket.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:connect">luasql.exasol.exasolwebsocket:connect(url, connection_properties)</a></td>
+	<td class="summary">Connects to an Exasol database.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_login_command">luasql.exasol.exasolwebsocket:send_login_command()</a></td>
+	<td class="summary">Sends the login command.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_login_credentials">luasql.exasol.exasolwebsocket:send_login_credentials(username, encrypted_password)</a></td>
+	<td class="summary">Sends the login credentials.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_disconnect">luasql.exasol.exasolwebsocket:send_disconnect()</a></td>
+	<td class="summary">Sends the disconnect command.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_execute">luasql.exasol.exasolwebsocket:send_execute(statement)</a></td>
+	<td class="summary">Sends the execute command.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_set_attribute">luasql.exasol.exasolwebsocket:send_set_attribute(attribute_name, attribute_value)</a></td>
+	<td class="summary">Sends the setAttribute command with a given attribute name and value.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_fetch">luasql.exasol.exasolwebsocket:send_fetch(result_set_handle, start_position, num_bytes)</a></td>
+	<td class="summary">Sends the fetch command.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:send_close_result_set">luasql.exasol.exasolwebsocket:send_close_result_set(result_set_handle)</a></td>
+	<td class="summary">Sends the closeResultSet command.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:_send_json">luasql.exasol.exasolwebsocket:_send_json(payload, ignore_response)</a></td>
+	<td class="summary">Send the given payload serialized to JSON to the database and optionally wait for the response
+ and deserialize it from JSON.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.exasolwebsocket:close">luasql.exasol.exasolwebsocket:close()</a></td>
+	<td class="summary">Closes the websocket.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket.get_response_error"></a>
+    <strong>luasql.exasol.exasolwebsocket.get_response_error(response)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#129">line 129</a>
+    </dt>
+    <dd>
+    Extract the error from the given database response.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">response</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the response from the database
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">nil</span> or <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        <code>nil</code> the error that occured or <code>nil</code> if the response was successful
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:_create"></a>
+    <strong>luasql.exasol.exasolwebsocket:_create(websocket)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#17">line 17</a>
+    </dt>
+    <dd>
+    Creates a new Exasol websocket.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">websocket</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.Websocket.html#">luasql.exasol.Websocket</a></span>
+         the websocket to wrap
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.ExasolWebsocket.html#">luasql.exasol.ExasolWebsocket</a></span>
+        the new websocket
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:connect"></a>
+    <strong>luasql.exasol.exasolwebsocket:connect(url, connection_properties)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#29">line 29</a>
+    </dt>
+    <dd>
+    Connects to an Exasol database.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">url</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the websocket URL, e.g. <code>wss://exasoldb.example.com:8563</code>
+        </li>
+        <li><span class="parameter">connection_properties</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ConnectionProperties.html#">luasql.exasol.ConnectionProperties</a></span>
+         the connection properties
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.ExasolWebsocket.html#">luasql.exasol.ExasolWebsocket</a></span>
+        the new websocket
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_login_command"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_login_command()</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#41">line 41</a>
+    </dt>
+    <dd>
+    Sends the login command.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md"><code>login</code> command</a>.
+ This returns a public RSA key used for encrypting the password before sending it with the
+ <a href="../classes/luasql.exasol.ExasolWebsocket.html#luasql.exasol.exasolwebsocket:send_login_credentials">luasql.exasol.ExasolWebsocket:send_login_credentials</a> method.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        the public RSA key or <code>nil</code> if an error occurred</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_login_credentials"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_login_credentials(username, encrypted_password)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#54">line 54</a>
+    </dt>
+    <dd>
+    Sends the login credentials.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md"><code>login</code> command</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">username</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the username
+        </li>
+        <li><span class="parameter">encrypted_password</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the password encrypted with the public key returned by
+   <a href="../classes/luasql.exasol.ExasolWebsocket.html#luasql.exasol.exasolwebsocket:send_login_command">luasql.exasol.ExasolWebsocket:send_login_command</a>
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        response data from the database or <code>nil</code> if an error occurred</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_disconnect"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_disconnect()</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#63">line 63</a>
+    </dt>
+    <dd>
+    Sends the disconnect command.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md"><code>disconnect</code> command</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_execute"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_execute(statement)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#75">line 75</a>
+    </dt>
+    <dd>
+    Sends the execute command.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md"><code>execute</code> command</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">statement</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the SQL statement to execute
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        the result set response data from the database or <code>nil</code> if an error occurred</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_set_attribute"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_set_attribute(attribute_name, attribute_value)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#88">line 88</a>
+    </dt>
+    <dd>
+    Sends the setAttribute command with a given attribute name and value.
+ To set the <code>null</code> value for an attribute, use <code>constants.NULL</code> or <code>nil</code>.
+ Both will be translated to <code>null</code> in the JSON command.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/setAttributesV1.md"><code>setAttributes</code> command</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">attribute_name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the name of the attribute to set, e.g. <code>"autocommit"</code>
+        </li>
+        <li><span class="parameter">attribute_value</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a>, <span class="type">number</span>, <span class="type">boolean</span> or <span class="type">nil</span></span>
+         the value of the attribute to set, e.g. <code>false</code>
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_fetch"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_fetch(result_set_handle, start_position, num_bytes)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#104">line 104</a>
+    </dt>
+    <dd>
+    Sends the fetch command.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/fetchV1.md"><code>fetch</code> command</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">result_set_handle</span>
+            <span class="types"><span class="type">number</span></span>
+         result set handle
+        </li>
+        <li><span class="parameter">start_position</span>
+            <span class="types"><span class="type">number</span></span>
+         row offset (0-based) from which to begin data retrieval
+        </li>
+        <li><span class="parameter">num_bytes</span>
+            <span class="types"><span class="type">number</span></span>
+         number of bytes to retrieve (max: 64MiB)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        result set from the database or <code>nil</code> if an error occurred</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:send_close_result_set"></a>
+    <strong>luasql.exasol.exasolwebsocket:send_close_result_set(result_set_handle)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#120">line 120</a>
+    </dt>
+    <dd>
+    Sends the closeResultSet command.
+ See Exasol API documentation for the
+ <a href="https://github.com/exasol/websocket-api/blob/master/docs/commands/closeResultSetV1.md"><code>closeResultSet</code> command</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">result_set_handle</span>
+            <span class="types"><span class="type">number</span></span>
+         result set handle to close
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:_send_json"></a>
+    <strong>luasql.exasol.exasolwebsocket:_send_json(payload, ignore_response)</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#151">line 151</a>
+    </dt>
+    <dd>
+    Send the given payload serialized to JSON to the database and optionally wait for the response
+ and deserialize it from JSON.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">payload</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the payload to send
+        </li>
+        <li><span class="parameter">ignore_response</span>
+            <span class="types"><span class="type">boolean</span> or <span class="type">nil</span></span>
+         <code>false</code> if we expect a response, else <code>true</code>.
+   Default is <code>false</code>.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        the received response or nil if ignore_response was <code>true</code> or an error occurred</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.exasolwebsocket:close"></a>
+    <strong>luasql.exasol.exasolwebsocket:close()</strong>
+    <a style="float:right;" href="../source/ExasolWebsocket.lua.html#185">line 185</a>
+    </dt>
+    <dd>
+    Closes the websocket.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if the operation was successful
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

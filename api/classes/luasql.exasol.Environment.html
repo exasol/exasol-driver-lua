@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Local_Functions">Local Functions</a></li>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><strong>luasql.exasol.Environment</strong></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.Environment</code></h1>
+<p>This class provides methods for connecting to an Exasol database and closing all connections.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.environment.require_udf_module">luasql.exasol.environment.require_udf_module(modname)</a></td>
+	<td class="summary">Load a Lua module like <code>require()</code> but with fallback to Exasol specific module names.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.environment.encrypt_password">luasql.exasol.environment.encrypt_password(publicKeyModulus, publicKeyExponent, password)</a></td>
+	<td class="summary">Encrypts a password using the given public key modulus and exponent.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.environment.login">luasql.exasol.environment.login(socket, username, password)</a></td>
+	<td class="summary">Login to the database.</td>
+	</tr>
+</table>
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.environment:new">luasql.exasol.environment:new(args)</a></td>
+	<td class="summary">Create a new instance of the Environment class</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.environment:connect">luasql.exasol.environment:connect(sourcename, username, password, properties)</a></td>
+	<td class="summary">Connect to an Exasol database.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.environment:close">luasql.exasol.environment:close()</a></td>
+	<td class="summary">Closes the environment and all connections created using it.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.environment.require_udf_module"></a>
+    <strong>luasql.exasol.environment.require_udf_module(modname)</strong>
+    <a style="float:right;" href="../source/Environment.lua.html#17">line 17</a>
+    </dt>
+    <dd>
+    Load a Lua module like <code>require()</code> but with fallback to Exasol specific module names.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">modname</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the name of the module to load
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        any the loaded module
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.environment.encrypt_password"></a>
+    <strong>luasql.exasol.environment.encrypt_password(publicKeyModulus, publicKeyExponent, password)</strong>
+    <a style="float:right;" href="../source/Environment.lua.html#58">line 58</a>
+    </dt>
+    <dd>
+    Encrypts a password using the given public key modulus and exponent.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">publicKeyModulus</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the hex encoded modulus of the public key
+        </li>
+        <li><span class="parameter">publicKeyExponent</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the hex encoded exponent of the public key
+        </li>
+        <li><span class="parameter">password</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the password to encrypt
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        the encrypted password
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.environment.login"></a>
+    <strong>luasql.exasol.environment.login(socket, username, password)</strong>
+    <a style="float:right;" href="../source/Environment.lua.html#72">line 72</a>
+    </dt>
+    <dd>
+    Login to the database.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">socket</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ExasolWebsocket.html#">luasql.exasol.ExasolWebsocket</a></span>
+         the connection to the database
+        </li>
+        <li><span class="parameter">username</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the username
+        </li>
+        <li><span class="parameter">password</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the unencrypted password
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        connection metadata in case login was successful</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.environment:new"></a>
+    <strong>luasql.exasol.environment:new(args)</strong>
+    <a style="float:right;" href="../source/Environment.lua.html#45">line 45</a>
+    </dt>
+    <dd>
+    Create a new instance of the Environment class
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">args</span>
+            <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         allows injecting a websocket module. This is only useful in unit tests and
+   should be <code>nil</code> in production code.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Environment.html#">luasql.exasol.Environment</a></span>
+        a new instance
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.environment:connect"></a>
+    <strong>luasql.exasol.environment:connect(sourcename, username, password, properties)</strong>
+    <a style="float:right;" href="../source/Environment.lua.html#90">line 90</a>
+    </dt>
+    <dd>
+    Connect to an Exasol database.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sourcename</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         hostname and port of the Exasol database, separated with a colon, e.g.:
+   <code>exasoldb.example.com:8563</code>. Note that the port is mandatory.
+        </li>
+        <li><span class="parameter">username</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the username for logging in to the Exasol database
+        </li>
+        <li><span class="parameter">password</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the password for logging in to the Exasol database
+        </li>
+        <li><span class="parameter">properties</span>
+            <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         optional connection properties, see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties.properties">luasql.exasol.ConnectionProperties:properties</a>
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Connection.html#">luasql.exasol.Connection</a> or <span class="type">nil</span></span>
+        a new Connection or <code>nil</code> if the connection failed</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        <code>nil</code> if the operation was successful, otherwise the error that occured</li>
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties:create">ConnectionProperties:create</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.environment:close"></a>
+    <strong>luasql.exasol.environment:close()</strong>
+    <a style="float:right;" href="../source/Environment.lua.html#120">line 120</a>
+    </dt>
+    <dd>
+    Closes the environment and all connections created using it.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if all connections where closed successfully
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

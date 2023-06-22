@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><strong>Connection.lua</strong></li>
+  <li><a href="../source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></li>
+  <li><a href="../source/Cursor.lua.html">Cursor.lua</a></li>
+  <li><a href="../source/CursorData.lua.html">CursorData.lua</a></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><a href="../source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></li>
+  <li><a href="../source/Websocket.lua.html">Websocket.lua</a></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><a href="../source/examples.lua.html">examples.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>Connection.lua</h2>
+<pre>
+<span class="comment">-- [impl-&gt;dsn~logging-with-remotelog~1]
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="keyword">local</span> cursor = <span class="global">require</span>(<span class="string">"luasql.exasol.Cursor"</span>)
+
+<span class="comment">--- This class represents a database connection.
+</span><span class="comment">-- It provides methods for interacting with the database, e.g. executing queries.
+</span><span class="comment">-- @classmod luasql.exasol.Connection
+</span><span class="comment">-- @field private websocket ExasolWebsocket the websocket
+</span><span class="comment">-- @field private session_id string the session ID for this connection
+</span><span class="comment">-- @field private closed boolean specifies if this connection is closed
+</span><span class="keyword">local</span> Connection = {}
+
+<span class="comment">--- Create a new instance of the Connection class.
+</span><span class="comment">-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+</span><span class="comment">-- @tparam luasql.exasol.ExasolWebsocket websocket websocket connection to the database
+</span><span class="comment">-- @tparam string session_id session ID of the current database connection
+</span><a id="19"></a><span class="comment">-- @treturn luasql.exasol.Connection the new instance
+</span><span class="keyword">function</span> Connection:<span class="function-name">create</span>(connection_properties, websocket, session_id)
+    log.<span class="function-name">trace</span>(<span class="string">"Created new connection with session ID %d"</span>, session_id)
+    <span class="keyword">local</span> object = {
+        connection_properties = <span class="global">assert</span>(connection_properties, <span class="string">"connection_properties missing"</span>),
+        websocket = <span class="global">assert</span>(websocket, <span class="string">"websocket missing"</span>),
+        session_id = <span class="global">assert</span>(session_id, <span class="string">"session_id missing"</span>),
+        closed = <span class="keyword">false</span>,
+        cursors = {}
+    }
+    self.__index = self
+    <span class="global">setmetatable</span>(object, self)
+    <span class="keyword">return</span> object
+<span class="keyword">end</span>
+
+<span class="comment">--- Verify that this connection is open before executing an operation
+</span><span class="comment">-- @tparam string operation the operation to be executed (used in the potential error message)
+</span><a id="36"></a><span class="comment">-- @raise an error if this connection is closed
+</span><span class="keyword">function</span> Connection:<span class="function-name">_verify_connection_open</span>(operation)
+    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-12"</span>, <span class="string">"Connection already closed when trying to call {{operation}}"</span>,
+                        {operation = operation}):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Executes the given SQL statement.
+</span><span class="comment">-- @tparam string statement the SQL statement to execute
+</span><span class="comment">-- @treturn luasql.exasol.Cursor|number|nil a Cursor object if there are results,
+</span><span class="comment">--   the number of rows affected by the command
+</span><span class="comment">--   or `nil` in case there was an error executing the statement
+</span><span class="comment">-- @treturn table|nil in case there was an error executing the statement or `nil` if the statement
+</span><a id="50"></a><span class="comment">--   was executed successfully
+</span><span class="keyword">function</span> Connection:<span class="function-name">execute</span>(statement)
+    <span class="comment">-- [impl -&gt; dsn~luasql-connection-execute~0]
+</span>    self:<span class="function-name">_verify_connection_open</span>(<span class="string">"execute"</span>)
+    log.<span class="function-name">trace</span>(<span class="string">"Executing statement '%s'"</span>, statement)
+    <span class="keyword">local</span> result, err = self.websocket:<span class="function-name">send_execute</span>(statement)
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>, ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-6"</span>, <span class="string">"Error executing statement {{statement}}: {{error|uq}}"</span>,
+                                    {statement = statement, <span class="global">error</span> = <span class="global">tostring</span>(err)})
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> num_results = result.numResults
+    <span class="keyword">if</span> num_results == <span class="number">0</span> <span class="keyword">then</span>
+        <span class="keyword">local</span> args = {statement = statement}
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-7"</span>, <span class="string">"Got no results for statement {{statement}}"</span>, args):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> num_results &gt; <span class="number">1</span> <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>,
+               ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-8"</span>,
+                               <span class="string">"Got {{numResults}} results for statement {{statement}} but at most one is supported"</span>,
+                               {numResults = num_results, statement = statement}):<span class="function-name">add_mitigations</span>(
+                <span class="string">"Use only statements that return a single result"</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> first_result = result.results[<span class="number">1</span>]
+    <span class="keyword">local</span> result_type = first_result.resultType
+    <span class="keyword">if</span> result_type == <span class="string">"rowCount"</span> <span class="keyword">then</span>
+        <span class="keyword">return</span> first_result.rowCount, <span class="keyword">nil</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> result_type ~= <span class="string">"resultSet"</span> <span class="keyword">then</span>
+        <span class="keyword">local</span> args = {result_type = result_type <span class="keyword">or</span> <span class="string">"nil"</span>}
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-9"</span>, <span class="string">"Got unexpected result type {{result_type}}"</span>, args):<span class="function-name">add_ticket_mitigation</span>():<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> cur = cursor:<span class="function-name">create</span>(self.connection_properties, self.websocket, self.session_id, first_result.resultSet)
+    <span class="global">table</span>.<span class="function-name">insert</span>(self.cursors, cur)
+    <span class="keyword">return</span> cur, <span class="keyword">nil</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Commits the current transaction.
+</span><a id="87"></a><span class="comment">-- @treturn boolean `true` in case of success
+</span><span class="keyword">function</span> Connection:<span class="function-name">commit</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-connection-commit~0]
+</span>    self:<span class="function-name">_verify_connection_open</span>(<span class="string">"commit"</span>)
+    <span class="keyword">local</span> _, err = self:<span class="function-name">execute</span>(<span class="string">"commit"</span>)
+    <span class="keyword">if</span> err == <span class="keyword">nil</span> <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">true</span>
+    <span class="keyword">else</span>
+        log.<span class="global">error</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-39"</span>, <span class="string">"Failed to commit: {{error}}"</span>, {<span class="global">error</span> = <span class="global">tostring</span>(err)})))
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Rolls back the current transaction.
+</span><a id="101"></a><span class="comment">-- @treturn boolean `true` in case of success
+</span><span class="keyword">function</span> Connection:<span class="function-name">rollback</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-connection-rollback~0]
+</span>    self:<span class="function-name">_verify_connection_open</span>(<span class="string">"rollback"</span>)
+    <span class="keyword">local</span> _, err = self:<span class="function-name">execute</span>(<span class="string">"rollback"</span>)
+    <span class="keyword">if</span> err == <span class="keyword">nil</span> <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">true</span>
+    <span class="keyword">else</span>
+        log.<span class="global">error</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-40"</span>, <span class="string">"Failed to rollback: {{error}}"</span>, {<span class="global">error</span> = <span class="global">tostring</span>(err)})))
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Turns on or off the "auto commit" mode.
+</span><span class="comment">-- Auto commit is on by default. If auto commit is off, you must explicitly execute the `COMMIT` command
+</span><span class="comment">-- to commit the transaction.
+</span><span class="comment">-- @tparam boolean autocommit `true` to enable auto commit, `false` to disable auto commit
+</span><a id="118"></a><span class="comment">-- @treturn boolean `true` in case of success
+</span><span class="keyword">function</span> Connection:<span class="function-name">setautocommit</span>(autocommit)
+    <span class="comment">-- [impl -&gt; dsn~luasql-connection-setautocommit~0]
+</span>    self:<span class="function-name">_verify_connection_open</span>(<span class="string">"setautocommit"</span>)
+    <span class="keyword">local</span> err = self.websocket:<span class="function-name">send_set_attribute</span>(<span class="string">"autocommit"</span>, autocommit)
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        log.<span class="global">error</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-32"</span>, <span class="string">"Failed to set autocommit to {{autocommit}}: {{error}}"</span>,
+                                           {autocommit = <span class="global">tostring</span>(autocommit), <span class="global">error</span> = err})))
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> <span class="keyword">true</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Closes this connection and all cursors created using this connection.
+</span><span class="comment">-- @treturn boolean `true` in case of success
+</span><a id="134"></a><span class="comment">-- @raise an error in case disconnecting fails
+</span><span class="keyword">function</span> Connection:<span class="function-name">close</span>()
+    <span class="comment">-- [impl -&gt; dsn~luasql-connection-close~0]
+</span>    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        log.<span class="global">warn</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"W-EDL-35"</span>, <span class="string">"Connection with session ID {{session_id}} already closed"</span>,
+                                          {session_id = self.session_id})))
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> cursors = self.cursors
+    log.<span class="global">debug</span>(<span class="string">"Closing Session session %d. Check if its %d cursors are closed"</span>, self.session_id, #cursors)
+    <span class="keyword">for</span> _, cur <span class="keyword">in</span> <span class="global">ipairs</span>(cursors) <span class="keyword">do</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> cur.closed <span class="keyword">then</span>
+            log.<span class="global">warn</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"W-EDL-34"</span>,
+                                              <span class="string">"Cannot close session {{session_id}} because not all cursors are closed"</span>,
+                                              {session_id = <span class="global">string</span>.<span class="function-name">format</span>(<span class="string">"%d"</span>, self.session_id)})))
+            <span class="keyword">return</span> <span class="keyword">false</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> err = self.websocket:<span class="function-name">send_disconnect</span>()
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-11"</span>, <span class="string">"Error closing session {{session_id}}: {{error}}"</span>,
+                        {session_id = self.session_id, <span class="global">error</span> = err}):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> success = self.websocket:<span class="function-name">close</span>()
+    self.closed = <span class="keyword">true</span>
+    <span class="keyword">return</span> success
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> Connection</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><a href="../source/Connection.lua.html">Connection.lua</a></li>
+  <li><a href="../source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></li>
+  <li><a href="../source/Cursor.lua.html">Cursor.lua</a></li>
+  <li><a href="../source/CursorData.lua.html">CursorData.lua</a></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><strong>ExasolWebsocket.lua</strong></li>
+  <li><a href="../source/Websocket.lua.html">Websocket.lua</a></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><a href="../source/examples.lua.html">examples.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>ExasolWebsocket.lua</h2>
+<pre>
+<span class="comment">--- This internal class represents a websocket connection to an Exasol database that
+</span><span class="comment">-- provides convenient functions for sending commands and evaluating the result.
+</span><span class="comment">-- @classmod luasql.exasol.ExasolWebsocket
+</span><span class="comment">-- @field private websocket Websocket the raw websocket
+</span><span class="keyword">local</span> ExasolWebsocket = {}
+
+<span class="keyword">local</span> cjson = <span class="global">require</span>(<span class="string">"cjson"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="comment">-- [impl-&gt;dsn~logging-with-remotelog~1]
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> raw_websocket = <span class="global">require</span>(<span class="string">"luasql.exasol.Websocket"</span>)
+<span class="keyword">local</span> constants = <span class="global">require</span>(<span class="string">"luasql.exasol.constants"</span>)
+
+<span class="comment">--- Creates a new Exasol websocket.
+</span><span class="comment">-- @tparam luasql.exasol.Websocket websocket the websocket to wrap
+</span><a id="17"></a><span class="comment">-- @treturn luasql.exasol.ExasolWebsocket the new websocket
+</span><span class="keyword">function</span> ExasolWebsocket.<span class="function-name">_create</span>(websocket)
+    <span class="keyword">local</span> object = {websocket = websocket, closed = <span class="keyword">false</span>}
+    object.closed = <span class="keyword">false</span>
+    ExasolWebsocket.__index = ExasolWebsocket
+    <span class="global">setmetatable</span>(object, ExasolWebsocket)
+    <span class="keyword">return</span> object
+<span class="keyword">end</span>
+
+<span class="comment">--- Connects to an Exasol database.
+</span><span class="comment">-- @tparam string url the websocket URL, e.g. `wss://exasoldb.example.com:8563`
+</span><span class="comment">-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+</span><a id="29"></a><span class="comment">-- @treturn luasql.exasol.ExasolWebsocket the new websocket
+</span><span class="keyword">function</span> ExasolWebsocket.<span class="function-name">connect</span>(url, connection_properties)
+    <span class="keyword">local</span> websocket&lt;const&gt; = raw_websocket.<span class="function-name">connect</span>(url, connection_properties)
+    <span class="keyword">return</span> ExasolWebsocket.<span class="function-name">_create</span>(websocket)
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the login command.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`login` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md).
+</span><span class="comment">-- This returns a public RSA key used for encrypting the password before sending it with the
+</span><span class="comment">-- <a href="../classes/luasql.exasol.ExasolWebsocket.html#luasql.exasol.exasolwebsocket:send_login_credentials">luasql.exasol.ExasolWebsocket:send_login_credentials</a> method.
+</span><span class="comment">-- @treturn table|nil the public RSA key or `nil` if an error occurred
+</span><a id="41"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_login_command</span>()
+    log.<span class="global">debug</span>(<span class="string">"Sending login command"</span>)
+    <span class="keyword">return</span> self:<span class="function-name">_send_json</span>({command = <span class="string">"login"</span>, protocolVersion = <span class="number">3</span>})
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the login credentials.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`login` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/loginV3.md).
+</span><span class="comment">-- @tparam string username the username
+</span><span class="comment">-- @tparam string encrypted_password the password encrypted with the public key returned by
+</span><span class="comment">--   <a href="../classes/luasql.exasol.ExasolWebsocket.html#luasql.exasol.exasolwebsocket:send_login_command">luasql.exasol.ExasolWebsocket:send_login_command</a>
+</span><span class="comment">-- @treturn table|nil response data from the database or `nil` if an error occurred
+</span><a id="54"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_login_credentials</span>(username, encrypted_password)
+    log.<span class="global">debug</span>(<span class="string">"Sending login credentials"</span>)
+    <span class="keyword">return</span> self:<span class="function-name">_send_json</span>({username = username, password = encrypted_password, useCompression = <span class="keyword">false</span>})
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the disconnect command.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`disconnect` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md).
+</span><a id="63"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_disconnect</span>()
+    log.<span class="global">debug</span>(<span class="string">"Sending disconnect command"</span>)
+    <span class="keyword">local</span> _, err = self:<span class="function-name">_send_json</span>({command = <span class="string">"disconnect"</span>}, <span class="keyword">true</span>)
+    <span class="keyword">return</span> err
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the execute command.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`execute` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md).
+</span><span class="comment">-- @tparam string statement the SQL statement to execute
+</span><span class="comment">-- @treturn table|nil the result set response data from the database or `nil` if an error occurred
+</span><a id="75"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_execute</span>(statement)
+    <span class="keyword">local</span> payload = {command = <span class="string">"execute"</span>, sqlText = statement, attributes = {}}
+    <span class="keyword">return</span> self:<span class="function-name">_send_json</span>(payload)
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the setAttribute command with a given attribute name and value.
+</span><span class="comment">-- To set the `null` value for an attribute, use `constants.NULL` or `nil`.
+</span><span class="comment">-- Both will be translated to `null` in the JSON command.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`setAttributes` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/setAttributesV1.md).
+</span><span class="comment">-- @tparam string attribute_name the name of the attribute to set, e.g. `"autocommit"`
+</span><span class="comment">-- @tparam string|number|boolean|nil attribute_value the value of the attribute to set, e.g. `false`
+</span><a id="88"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_set_attribute</span>(attribute_name, attribute_value)
+    <span class="keyword">if</span> attribute_value == <span class="keyword">nil</span> <span class="keyword">or</span> attribute_value == constants.NULL <span class="keyword">then</span>
+        attribute_value = cjson.null
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> _, err = self:<span class="function-name">_send_json</span>({command = <span class="string">"setAttributes"</span>, attributes = {[attribute_name] = attribute_value}})
+    <span class="keyword">return</span> err
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the fetch command.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`fetch` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/fetchV1.md).
+</span><span class="comment">-- @tparam number result_set_handle result set handle
+</span><span class="comment">-- @tparam number start_position row offset (0-based) from which to begin data retrieval
+</span><span class="comment">-- @tparam number num_bytes number of bytes to retrieve (max: 64MiB)
+</span><span class="comment">-- @treturn table|nil result set from the database or `nil` if an error occurred
+</span><a id="104"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_fetch</span>(result_set_handle, start_position, num_bytes)
+    <span class="keyword">local</span> payload = {
+        command = <span class="string">"fetch"</span>,
+        resultSetHandle = result_set_handle,
+        startPosition = start_position,
+        numBytes = num_bytes,
+        attributes = {}
+    }
+    <span class="keyword">return</span> self:<span class="function-name">_send_json</span>(payload)
+<span class="keyword">end</span>
+
+<span class="comment">--- Sends the closeResultSet command.
+</span><span class="comment">-- See Exasol API documentation for the
+</span><span class="comment">-- [`closeResultSet` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/closeResultSetV1.md).
+</span><span class="comment">-- @tparam number result_set_handle result set handle to close
+</span><a id="120"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">send_close_result_set</span>(result_set_handle)
+    <span class="keyword">local</span> payload = {command = <span class="string">"closeResultSet"</span>, resultSetHandles = {result_set_handle}, attributes = {}}
+    <span class="keyword">local</span> _, err = self:<span class="function-name">_send_json</span>(payload)
+    <span class="keyword">return</span> err
+<span class="keyword">end</span>
+
+<span class="comment">--- Extract the error from the given database response.
+</span><span class="comment">-- @tparam table response the response from the database
+</span><a id="129"></a><span class="comment">-- @treturn nil|table `nil` the error that occured or `nil` if the response was successful
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">get_response_error</span>(response)
+    <span class="keyword">if</span> response.status == <span class="string">"ok"</span> <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> response.exception <span class="keyword">then</span>
+        <span class="keyword">local</span> sqlCode = response.exception.sqlCode <span class="keyword">or</span> <span class="string">"nil"</span>
+        <span class="keyword">local</span> text = response.exception.text <span class="keyword">or</span> <span class="string">"nil"</span>
+        <span class="keyword">return</span> ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-10"</span>, <span class="string">"Received DB status {{status}} with code {{sqlCode|uq}}: {{text}}"</span>,
+                               {status = response.status, sqlCode = sqlCode, text = text})
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-17"</span>, <span class="string">"Received DB status {{status}} without exception details"</span>,
+                               {status = response.status})
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Send the given payload serialized to JSON to the database and optionally wait for the response
+</span><span class="comment">-- and deserialize it from JSON.
+</span><span class="comment">-- @tparam table payload the payload to send
+</span><span class="comment">-- @tparam boolean|nil ignore_response `false` if we expect a response, else `true`.
+</span><span class="comment">--   Default is `false`.
+</span><span class="comment">-- @treturn table|nil the received response or nil if ignore_response was `true` or an error occurred
+</span><a id="151"></a><span class="comment">-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">_send_json</span>(payload, ignore_response)
+    <span class="keyword">local</span> raw_payload = cjson.<span class="function-name">encode</span>(payload)
+    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-22"</span>, <span class="string">"Websocket already closed when trying to send payload {{payload}}"</span>,
+                        {payload = raw_payload}):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+
+    log.<span class="function-name">trace</span>(<span class="string">"Sending payload '%s', ignore response=%s"</span>, raw_payload, ignore_response)
+    <span class="keyword">local</span> raw_response, err = self.websocket:<span class="function-name">send_raw</span>(raw_payload, ignore_response)
+    <span class="keyword">if</span> ignore_response <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>, <span class="keyword">nil</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>, err
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> raw_response == <span class="keyword">nil</span> <span class="keyword">then</span>
+        err = ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-2"</span>, <span class="string">"Did not receive response for request payload {{payload}}."</span>,
+                              {payload = raw_payload})
+        log.<span class="global">error</span>(<span class="global">tostring</span>(err))
+        err:<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+
+    log.<span class="function-name">trace</span>(<span class="string">"Received response of %d bytes"</span>, #raw_response)
+    <span class="keyword">local</span> response = cjson.<span class="function-name">decode</span>(raw_response)
+    err = <span class="function-name">get_response_error</span>(response)
+    <span class="keyword">if</span> err <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>, err
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> response.responseData, <span class="keyword">nil</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Closes the websocket.
+</span><a id="185"></a><span class="comment">-- @treturn boolean `true` if the operation was successful
+</span><span class="keyword">function</span> ExasolWebsocket:<span class="function-name">close</span>()
+    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        log.<span class="global">warn</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"W-EDL-37"</span>, <span class="string">"Trying to close a Websocket that is already closed"</span>)))
+        <span class="keyword">return</span> <span class="keyword">false</span>
+    <span class="keyword">end</span>
+    self.closed = <span class="keyword">true</span>
+    self.websocket:<span class="function-name">close</span>()
+    self.websocket = <span class="keyword">nil</span>
+    <span class="keyword">return</span> <span class="keyword">true</span>
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> ExasolWebsocket</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

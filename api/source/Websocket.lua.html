@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><a href="../source/Connection.lua.html">Connection.lua</a></li>
+  <li><a href="../source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></li>
+  <li><a href="../source/Cursor.lua.html">Cursor.lua</a></li>
+  <li><a href="../source/CursorData.lua.html">CursorData.lua</a></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><a href="../source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></li>
+  <li><strong>Websocket.lua</strong></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><a href="../source/examples.lua.html">examples.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>Websocket.lua</h2>
+<pre>
+<span class="comment">-- luacheck: globals wsopen wssend wsreceive wsclose
+</span><span class="global">require</span>(<span class="string">"luasql.exasol.luws"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="comment">-- [impl-&gt;dsn~logging-with-remotelog~1]
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> websocket_datahandler = <span class="global">require</span>(<span class="string">"luasql.exasol.WebsocketDatahandler"</span>)
+
+<span class="comment">--- This internal class represents a websocket connection that allows sending and receiving messages.
+</span><span class="comment">-- @classmod luasql.exasol.Websocket
+</span><span class="comment">-- @field private data_handler WebsocketDatahandler the handler for receiving messages
+</span><span class="keyword">local</span> Websocket = {}
+
+<span class="comment">-- The number of retries when connection to the data fails.
+</span><span class="keyword">local</span> CONNECT_RETRY_COUNT&lt;const&gt; = <span class="number">3</span>
+<span class="comment">-- The maximum time in seconds to wait for a response after sending a request.
+</span><span class="keyword">local</span> RECEIVE_TIMEOUT_SECONDS&lt;const&gt; = <span class="number">5</span>
+
+<span class="comment">--- Creates a new instance of this class that is not yet opened/connected.
+</span><a id="20"></a><span class="comment">-- @treturn luasql.exasol.Websocket the new websocket.
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">create</span>()
+    <span class="keyword">local</span> object = {data_handler = websocket_datahandler:<span class="function-name">create</span>()}
+    object.closed = <span class="keyword">false</span>
+    Websocket.__index = Websocket
+    <span class="global">setmetatable</span>(object, Websocket)
+    <span class="keyword">return</span> object
+<span class="keyword">end</span>
+
+<span class="comment">--- Check if the given error received during connection is recoverable, i.e. we can try to connect again later.
+</span><span class="comment">-- @tparam string err the received error
+</span><span class="comment">-- @treturn boolean `true` if we can retry the connection, `false` if this is a permanent error
+</span><a id="32"></a><span class="comment">--   that does not disappear
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">recoverable_connection_error</span>(err)
+    <span class="keyword">return</span> <span class="global">string</span>.<span class="function-name">match</span>(err, <span class="string">".*failed: connection refused$"</span>)
+<span class="keyword">end</span>
+
+<span class="comment">--- Create a connection to a websocket url with the given number of retries.
+</span><span class="comment">-- @tparam string url the websocket url to connect to, e.g. "wss://host:1234"
+</span><span class="comment">-- @tparam table websocket_options the options passed to LuWS when opening a socket,
+</span><span class="comment">--   see [LuWS documentation](https://github.com/toggledbits/LuWS#options) for details.
+</span><span class="comment">-- @tparam number remaining_retries the remaining number of retries. If this is 0, there will be no retry.
+</span><span class="comment">-- @treturn luasql.exasol.Websocket the open websocket connection
+</span><a id="43"></a><span class="comment">-- @raise an error if connection does not succeed after the given number of retries
+</span><span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">connect_with_retry</span>(url, websocket_options, remaining_retries)
+    log.<span class="function-name">trace</span>(<span class="string">"Connecting to websocket url %s with %d remaining retries"</span>, url, remaining_retries)
+    <span class="keyword">local</span> connection = <span class="function-name">create</span>()
+    <span class="keyword">local</span> websocket, err = <span class="function-name">wsopen</span>(url, <span class="keyword">function</span>(conn, opcode, message)
+        connection.data_handler:<span class="function-name">handle_data</span>(conn, opcode, message)
+    <span class="keyword">end</span>, websocket_options)
+    <span class="keyword">if</span> err ~= <span class="keyword">nil</span> <span class="keyword">then</span>
+        <span class="function-name">wsclose</span>(websocket)
+        <span class="keyword">if</span> remaining_retries &lt;= <span class="number">0</span> <span class="keyword">or</span> <span class="keyword">not</span> <span class="function-name">recoverable_connection_error</span>(err) <span class="keyword">then</span>
+            ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-1"</span>, <span class="string">"Error connecting to {{url}}: {{error}}"</span>, {url = url, <span class="global">error</span> = err}):<span class="function-name">raise</span>()
+        <span class="keyword">else</span>
+            remaining_retries = remaining_retries - <span class="number">1</span>
+            log.<span class="global">warn</span>(<span class="global">tostring</span>(ExaError:<span class="function-name">new</span>(<span class="string">"W-EDL-15"</span>,
+                                              <span class="string">"Websocket connection to {{url}} failed with error {{error}}, "</span>
+                                                      .. <span class="string">"remaining retries: {{remaining_retries}}"</span>,
+                                              {url = url, <span class="global">error</span> = err, remaining_retries = remaining_retries})))
+            <span class="keyword">return</span> <span class="function-name">connect_with_retry</span>(url, websocket_options, remaining_retries)
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    log.<span class="function-name">trace</span>(<span class="string">"Connected to websocket with result %s"</span>, websocket)
+    connection.websocket = websocket
+    <span class="keyword">return</span> connection
+<span class="keyword">end</span>
+
+<span class="comment">--- Open a websocket connection to the given URL, using maximum 3 retries if a connection fails.
+</span><span class="comment">-- @tparam string url the websocket url to connect to, e.g. "wss://host:1234"
+</span><span class="comment">-- @tparam luasql.exasol.ConnectionProperties connection_properties the connection properties
+</span><span class="comment">-- @treturn luasql.exasol.Websocket the open websocket connection
+</span><a id="72"></a><span class="comment">-- @raise an error if connection does not succeed after the given number of retries
+</span><span class="keyword">function</span> Websocket.<span class="function-name">connect</span>(url, connection_properties)
+    <span class="keyword">local</span> websocket_options = {
+        receive_timeout = RECEIVE_TIMEOUT_SECONDS,
+        ssl_protocol = connection_properties:<span class="function-name">get_tls_protocol</span>(),
+        ssl_verify = connection_properties:<span class="function-name">get_tls_verify</span>(),
+        ssl_options = connection_properties:<span class="function-name">get_tls_options</span>()
+    }
+    log.<span class="global">debug</span>(<span class="string">"Connecting to '%s' with %d retries"</span>, url, CONNECT_RETRY_COUNT)
+    <span class="keyword">return</span> <span class="function-name">connect_with_retry</span>(url, websocket_options, CONNECT_RETRY_COUNT)
+<span class="keyword">end</span>
+
+<span class="comment">--- Wait until we receive a response.
+</span><span class="comment">-- This is implemented with busy waiting until wsreceive indicates that data was received.
+</span><span class="comment">-- @tparam number timeout_seconds the number of seconds to wait for a response
+</span><span class="comment">-- @treturn nil|table `nil` if a response was received within the timeout or an error if the response
+</span><a id="88"></a><span class="comment">--   did not arrive within the timeout or an error occured while waiting
+</span><span class="keyword">function</span> Websocket:<span class="function-name">_wait_for_response</span>(timeout_seconds)
+    log.<span class="function-name">trace</span>(<span class="string">"Waiting %ds for response"</span>, timeout_seconds)
+    <span class="keyword">local</span> start&lt;const&gt; = <span class="global">os</span>.<span class="function-name">clock</span>()
+    <span class="keyword">local</span> try_count = <span class="number">0</span>
+    <span class="keyword">while</span> <span class="keyword">true</span> <span class="keyword">do</span>
+        <span class="keyword">local</span> result, err = <span class="function-name">wsreceive</span>(self.websocket)
+        <span class="keyword">if</span> <span class="global">type</span>(err) == <span class="string">"string"</span> <span class="keyword">then</span>
+            <span class="keyword">local</span> wrapped_error = ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-4"</span>, <span class="string">"Error receiving data while waiting for response "</span>
+                                                          .. <span class="string">"for {{waiting_time}}s: {{error}}"</span>,
+                                                  {<span class="global">error</span> = err, waiting_time = <span class="global">os</span>.<span class="function-name">clock</span>() - start})
+            wrapped_error.cause = err
+            log.<span class="global">error</span>(<span class="global">tostring</span>(wrapped_error))
+            <span class="keyword">return</span> wrapped_error
+        <span class="keyword">end</span>
+        <span class="keyword">local</span> total_wait_time_seconds = <span class="global">os</span>.<span class="function-name">clock</span>() - start
+        <span class="keyword">if</span> self.data_handler:<span class="function-name">has_received_data</span>() <span class="keyword">then</span>
+            log.<span class="function-name">trace</span>(<span class="string">"Received result %s after %fs and %d tries"</span>, result, total_wait_time_seconds, try_count)
+            <span class="keyword">return</span> <span class="keyword">nil</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> total_wait_time_seconds &gt;= timeout_seconds <span class="keyword">then</span>
+            <span class="keyword">return</span> ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-18"</span>,
+                                   <span class="string">"Timeout after {{waiting_time}}s and {{try_count}} tries waiting for data, "</span>
+                                           .. <span class="string">" last result: {{result}}, last error: {{error}}"</span>, {
+                waiting_time = total_wait_time_seconds,
+                try_count = try_count,
+                result = result,
+                <span class="global">error</span> = err
+            })
+        <span class="keyword">end</span>
+        try_count = try_count + <span class="number">1</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Send the given payload and optionally wait for the response and return the response.
+</span><span class="comment">-- @tparam string payload the payload to send
+</span><span class="comment">-- @tparam boolean ignore_response `false` if we expect a response.
+</span><span class="comment">-- @treturn string the received response or `nil` if ignore_response was `true` or an error occurred.
+</span><a id="126"></a><span class="comment">-- @treturn nil|table `nil` if the operation was successful, otherwise the error that occured
+</span><span class="keyword">function</span> Websocket:<span class="function-name">send_raw</span>(payload, ignore_response)
+    <span class="keyword">if</span> <span class="keyword">not</span> ignore_response <span class="keyword">then</span>
+        self.data_handler:<span class="function-name">expect_data</span>()
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> _, err = <span class="function-name">wssend</span>(self.websocket, <span class="number">1</span>, payload)
+    <span class="keyword">if</span> err == <span class="keyword">nil</span> <span class="keyword">then</span>
+        <span class="keyword">if</span> ignore_response <span class="keyword">then</span>
+            log.<span class="function-name">trace</span>(<span class="string">"Ignore response after sending payload '%s'"</span>, payload)
+            <span class="keyword">return</span> <span class="keyword">nil</span>, <span class="keyword">nil</span>
+        <span class="keyword">end</span>
+        err = self:<span class="function-name">_wait_for_response</span>(RECEIVE_TIMEOUT_SECONDS)
+        self.data_handler:<span class="function-name">expected_data_received</span>()
+        <span class="keyword">if</span> err <span class="keyword">then</span>
+            <span class="keyword">return</span> <span class="keyword">nil</span>, err
+        <span class="keyword">else</span>
+            <span class="keyword">return</span> self.data_handler:<span class="function-name">get_data</span>(), <span class="keyword">nil</span>
+        <span class="keyword">end</span>
+    <span class="keyword">else</span>
+        <span class="keyword">local</span> args = {payload = payload, <span class="global">error</span> = err}
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-3"</span>, <span class="string">"Error sending payload {{payload}}: {{error}}"</span>, args):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<a id="150"></a><span class="comment">--- Disconnect from the server and close this websocket.
+</span><span class="keyword">function</span> Websocket:<span class="function-name">close</span>()
+    <span class="keyword">if</span> self.closed <span class="keyword">then</span>
+        <span class="keyword">return</span>
+    <span class="keyword">end</span>
+    log.<span class="function-name">trace</span>(<span class="string">"Closing websocket"</span>)
+    <span class="function-name">wsclose</span>(self.websocket)
+    self.websocket = <span class="keyword">nil</span>
+    self.closed = <span class="keyword">true</span>
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> Websocket</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

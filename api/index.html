@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+  <h2>
+<h1>A LuaSQL driver for the Exasol database</h1>
+
+<p>Check out the <a href="https://github.com/exasol/exasol-driver-lua/blob/main/doc/user_guide/user_guide.md">user guide</a> for more details.</p>
+
+<h2>Features</h2>
+
+<ol>
+    <li>Connect to an <a href="https://www.exasol.com/">Exasol</a> database and execute SQL statements</li>
+    <li>Encrypted communication via TLS</li>
+    <li>Compatible with the <a href="https://github.com/lunarmodules/luasql">LuaSQL</a> API</li>
+</ol>
+
+<h2>Information for Users</h2>
+
+<ul>
+    <li><a href="https://github.com/exasol/exasol-driver-lua">GitHub project</a></li>
+    <li><a href="https://github.com/exasol/exasol-driver-lua/blob/main/doc/user_guide/user_guide.md">User Guide</a></li>
+    <li><a href="examples/examples.lua.html">Example Usage</a></li>
+    <li><a href="https://github.com/exasol/exasol-driver-lua/blob/main/doc/changes/changelog.md">Change Log</a></li>
+    <li><a href="https://github.com/exasol/exasol-driver-lua/blob/main/LICENSE">MIT License</a></li>
+</ul>
+
+<h3>Dependencies</h3>
+
+<p>See the <a href="https://github.com/exasol/exasol-driver-lua/blob/main/dependencies.md">dependencies list</a> for build and test dependencies and license information.</p>
+
+<h2>Information for Developers</h2>
+
+<p>Requirement, design documents and coverage tags are written in <a href="https://github.com/itsallcode/openfasttrace">OpenFastTrace</a> format.</p>
+
+<ul>
+    <li><a href="https://github.com/exasol/exasol-driver-lua/blob/main/doc/developer_guide/developer_guide.md">Developers Guide</a></li>
+    <li><a href="https://github.com/exasol/exasol-driver-lua/blob/main/doc/system_requirements.md">System Requirements</a></li>
+    <li><a href="https://github.com/exasol/exasol-driver-lua/blob/main/doc/design.md">Design</a></li>
+</ul>
+
+</h2>
+
+<h2>Modules</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  ><a href="modules/luasql.exasol.html">luasql.exasol</a></td>
+		<td class="summary">This module allows accessing an Exasol database.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="modules/luasql.exasol.constants.html">luasql.exasol.constants</a></td>
+		<td class="summary">This internal module contains constants used by the Exasol driver.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="modules/luasql.exasol.util.html">luasql.exasol.util</a></td>
+		<td class="summary">This internal module contains common utility functions.</td>
+	</tr>
+</table>
+<h2>Classes</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></td>
+		<td class="summary">This class represents a database connection.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></td>
+		<td class="summary">This internal class represents configuration properties for a database connection.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></td>
+		<td class="summary">This class represents a cursor that allows retrieving rows from a result set.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></td>
+		<td class="summary">This internal class represents the result data of a cursor that allows retreiving rows from a result set.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></td>
+		<td class="summary">This class provides methods for connecting to an Exasol database and closing all connections.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></td>
+		<td class="summary">This internal class represents a websocket connection to an Exasol database that
+ provides convenient functions for sending commands and evaluating the result.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></td>
+		<td class="summary">This internal class represents a websocket connection that allows sending and receiving messages.</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></td>
+		<td class="summary">This internal class is registered as a callback for incoming messages when connecting to a websocket.</td>
+	</tr>
+</table>
+<h2>Examples</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  ><a href="examples/examples.lua.html">examples.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+</table>
+<h2>Source</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  ><a href="source/exasol.lua.html">exasol.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/Connection.lua.html">Connection.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/ConnectionProperties.lua.html">ConnectionProperties.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/Cursor.lua.html">Cursor.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/CursorData.lua.html">CursorData.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/Environment.lua.html">Environment.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/Websocket.lua.html">Websocket.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/constants.lua.html">constants.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/util.lua.html">util.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="source/examples.lua.html">examples.lua</a></td>
+		<td class="summary"></td>
+	</tr>
+</table>
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

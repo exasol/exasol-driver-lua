@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><strong>luasql.exasol.Connection</strong></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>luasql.exasol.Connection</code></h1>
+<p>This class represents a database connection.</p>
+<p> It provides methods for interacting with the database, e.g. executing queries.</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:create">luasql.exasol.connection:create(connection_properties, websocket, session_id)</a></td>
+	<td class="summary">Create a new instance of the Connection class.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:_verify_connection_open">luasql.exasol.connection:_verify_connection_open(operation)</a></td>
+	<td class="summary">Verify that this connection is open before executing an operation</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:execute">luasql.exasol.connection:execute(statement)</a></td>
+	<td class="summary">Executes the given SQL statement.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:commit">luasql.exasol.connection:commit()</a></td>
+	<td class="summary">Commits the current transaction.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:rollback">luasql.exasol.connection:rollback()</a></td>
+	<td class="summary">Rolls back the current transaction.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:setautocommit">luasql.exasol.connection:setautocommit(autocommit)</a></td>
+	<td class="summary">Turns on or off the "auto commit" mode.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#luasql.exasol.connection:close">luasql.exasol.connection:close()</a></td>
+	<td class="summary">Closes this connection and all cursors created using this connection.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "luasql.exasol.connection:create"></a>
+    <strong>luasql.exasol.connection:create(connection_properties, websocket, session_id)</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#19">line 19</a>
+    </dt>
+    <dd>
+    Create a new instance of the Connection class.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">connection_properties</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ConnectionProperties.html#">luasql.exasol.ConnectionProperties</a></span>
+         the connection properties
+        </li>
+        <li><span class="parameter">websocket</span>
+            <span class="types"><a class="type" href="../classes/luasql.exasol.ExasolWebsocket.html#">luasql.exasol.ExasolWebsocket</a></span>
+         websocket connection to the database
+        </li>
+        <li><span class="parameter">session_id</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         session ID of the current database connection
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Connection.html#">luasql.exasol.Connection</a></span>
+        the new instance
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.connection:_verify_connection_open"></a>
+    <strong>luasql.exasol.connection:_verify_connection_open(operation)</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#36">line 36</a>
+    </dt>
+    <dd>
+    Verify that this connection is open before executing an operation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">operation</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the operation to be executed (used in the potential error message)
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    an error if this connection is closed
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.connection:execute"></a>
+    <strong>luasql.exasol.connection:execute(statement)</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#50">line 50</a>
+    </dt>
+    <dd>
+    Executes the given SQL statement.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">statement</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the SQL statement to execute
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><a class="type" href="../classes/luasql.exasol.Cursor.html#">luasql.exasol.Cursor</a>, <span class="type">number</span> or <span class="type">nil</span></span>
+         a Cursor object if there are results,
+   the number of rows affected by the command
+   or <code>nil</code> in case there was an error executing the statement</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a> or <span class="type">nil</span></span>
+        in case there was an error executing the statement or <code>nil</code> if the statement
+   was executed successfully</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.connection:commit"></a>
+    <strong>luasql.exasol.connection:commit()</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#87">line 87</a>
+    </dt>
+    <dd>
+    Commits the current transaction.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> in case of success
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.connection:rollback"></a>
+    <strong>luasql.exasol.connection:rollback()</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#101">line 101</a>
+    </dt>
+    <dd>
+    Rolls back the current transaction.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> in case of success
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.connection:setautocommit"></a>
+    <strong>luasql.exasol.connection:setautocommit(autocommit)</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#118">line 118</a>
+    </dt>
+    <dd>
+    Turns on or off the "auto commit" mode.
+ Auto commit is on by default. If auto commit is off, you must explicitly execute the <code>COMMIT</code> command
+ to commit the transaction.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">autocommit</span>
+            <span class="types"><span class="type">boolean</span></span>
+         <code>true</code> to enable auto commit, <code>false</code> to disable auto commit
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> in case of success
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "luasql.exasol.connection:close"></a>
+    <strong>luasql.exasol.connection:close()</strong>
+    <a style="float:right;" href="../source/Connection.lua.html#134">line 134</a>
+    </dt>
+    <dd>
+    Closes this connection and all cursors created using this connection.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> in case of success
+    </ol>
+
+    <h3>Raises:</h3>
+    an error in case disconnecting fails
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

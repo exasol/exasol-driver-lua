@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Lua driver for Exasol</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/exasol.lua.html">exasol.lua</a></li>
+  <li><a href="../source/Connection.lua.html">Connection.lua</a></li>
+  <li><strong>ConnectionProperties.lua</strong></li>
+  <li><a href="../source/Cursor.lua.html">Cursor.lua</a></li>
+  <li><a href="../source/CursorData.lua.html">CursorData.lua</a></li>
+  <li><a href="../source/Environment.lua.html">Environment.lua</a></li>
+  <li><a href="../source/ExasolWebsocket.lua.html">ExasolWebsocket.lua</a></li>
+  <li><a href="../source/Websocket.lua.html">Websocket.lua</a></li>
+  <li><a href="../source/WebsocketDatahandler.lua.html">WebsocketDatahandler.lua</a></li>
+  <li><a href="../source/constants.lua.html">constants.lua</a></li>
+  <li><a href="../source/util.lua.html">util.lua</a></li>
+  <li><a href="../source/examples.lua.html">examples.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/luasql.exasol.html">luasql.exasol</a></li>
+  <li><a href="../modules/luasql.exasol.constants.html">luasql.exasol.constants</a></li>
+  <li><a href="../modules/luasql.exasol.util.html">luasql.exasol.util</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/luasql.exasol.Connection.html">luasql.exasol.Connection</a></li>
+  <li><a href="../classes/luasql.exasol.ConnectionProperties.html">luasql.exasol.ConnectionProperties</a></li>
+  <li><a href="../classes/luasql.exasol.Cursor.html">luasql.exasol.Cursor</a></li>
+  <li><a href="../classes/luasql.exasol.CursorData.html">luasql.exasol.CursorData</a></li>
+  <li><a href="../classes/luasql.exasol.Environment.html">luasql.exasol.Environment</a></li>
+  <li><a href="../classes/luasql.exasol.ExasolWebsocket.html">luasql.exasol.ExasolWebsocket</a></li>
+  <li><a href="../classes/luasql.exasol.Websocket.html">luasql.exasol.Websocket</a></li>
+  <li><a href="../classes/luasql.exasol.WebsocketDatahandler.html">luasql.exasol.WebsocketDatahandler</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/examples.lua.html">examples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>ConnectionProperties.lua</h2>
+<pre>
+<span class="comment">-- [impl-&gt;dsn~logging-with-remotelog~1]
+</span><span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+
+<span class="keyword">local</span> DEFAULT_FETCHSIZE_KIB&lt;const&gt; = <span class="number">128</span>
+
+<span class="comment">--- This internal class represents configuration properties for a database connection.
+</span><span class="comment">-- @classmod luasql.exasol.ConnectionProperties
+</span><span class="keyword">local</span> ConnectionProperties = {}
+
+<span class="comment">--- Available properties for the <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties:create">luasql.exasol.ConnectionProperties:create</a> method.
+</span><span class="comment">-- @table properties
+</span><span class="comment">--
+</span><span class="comment">-- @field fetchsize_kib The fetch size in KiB used when fetching query result data,
+</span><span class="comment">-- see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties:get_fetchsize_bytes">luasql.exasol.ConnectionProperties:get_fetchsize_bytes</a>.
+</span><span class="comment">-- Default value: `128`.
+</span><span class="comment">--
+</span><span class="comment">-- @field tls_verify The TLS verify mode for connecting to Exasol,
+</span><span class="comment">--   see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties:get_tls_verify">luasql.exasol.ConnectionProperties:get_tls_verify</a> and
+</span><span class="comment">-- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
+</span><span class="comment">-- Default value: `none`, available values:
+</span><span class="comment">--
+</span><span class="comment">-- * `none`
+</span><span class="comment">-- * `peer`
+</span><span class="comment">-- * `client_once`
+</span><span class="comment">-- * `fail_if_no_peer_cert`
+</span><span class="comment">--
+</span><span class="comment">-- @field tls_protocol The TLS protocol for connecting to Exasol,
+</span><span class="comment">--   see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties:get_tls_protocol">luasql.exasol.ConnectionProperties:get_tls_protocol</a> and
+</span><span class="comment">-- [LuaSec documentation](https://github.com/brunoos/luasec/wiki/LuaSec-1.1.0#sslnewcontextparams).
+</span><span class="comment">-- Default value: `tlsv1_2`, available values:
+</span><span class="comment">--
+</span><span class="comment">-- * `tlsv1`
+</span><span class="comment">-- * `tlsv1_1`
+</span><span class="comment">-- * `tlsv1_2` (default)
+</span><span class="comment">-- * `tlsv1_3` (only supported with Exasol v8 and later)
+</span><span class="comment">--
+</span><span class="comment">-- Run the following command to find out which TLS version your Exasol server supports:
+</span><span class="comment">--
+</span><span class="comment">-- `openssl s_client -connect "&lt;IP-Address&gt;:&lt;Port&gt;" &lt; /dev/null 2&gt;/dev/null | grep Protocol`
+</span><span class="comment">--
+</span><span class="comment">-- @field tls_options The TLS options for connecting to Exasol,
+</span><span class="comment">--   see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties:get_tls_options">luasql.exasol.ConnectionProperties:get_tls_options</a>.
+</span><span class="comment">-- The value is a comma-separated list of options without spaces, e.g. `no_tlsv1,no_sslv2`.
+</span><span class="comment">-- Default value: `all`. See output of the following Lua code for a list of available values:
+</span><span class="comment">--
+</span><span class="comment">-- `require("ssl").config.options`
+</span><a id="49"></a>
+<span class="comment">--- Create a new instance of the Connection class.
+</span><span class="comment">-- @tparam ?table properties a properties object or `nil` to use default settings,
+</span><span class="comment">--   see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties.properties">luasql.exasol.ConnectionProperties:properties</a> for details
+</span><span class="comment">-- @treturn luasql.exasol.Connection connection the new instance
+</span><a id="54"></a><span class="comment">-- @raise error if given properties are not valid
+</span><span class="keyword">function</span> ConnectionProperties:<span class="function-name">create</span>(properties)
+    log.<span class="function-name">trace</span>(<span class="string">"Created new connection properties"</span>)
+    properties = properties <span class="keyword">or</span> {}
+    <span class="keyword">local</span> object = {properties = properties}
+    self.__index = self
+    <span class="global">setmetatable</span>(object, self)
+    object:<span class="function-name">_validate</span>()
+    <span class="keyword">return</span> object
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> ConnectionProperties:<span class="function-name">_validate</span>()
+    <span class="keyword">if</span> self.properties.fetchsize_kib <span class="keyword">and</span> self.properties.fetchsize_kib &lt;= <span class="number">0</span> <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EDL-27"</span>, <span class="string">"Parameter 'fetchsize_kib' must be greater than 0"</span>):<span class="function-name">add_mitigations</span>(
+                <span class="string">"Use a value greater than 0"</span>):<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the configured fetch size in bytes used when fetching query result data.
+</span><span class="comment">-- Configuration property: `fetchsize_kib`, see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties.properties">luasql.exasol.ConnectionProperties:properties</a>.
+</span><span class="comment">-- Default value: `131072` = `128 * 1024`.
+</span><a id="75"></a><span class="comment">-- @treturn integer fetchsize in bytes
+</span><span class="keyword">function</span> ConnectionProperties:<span class="function-name">get_fetchsize_bytes</span>()
+    <span class="keyword">return</span> (self.properties.fetchsize_kib <span class="keyword">or</span> DEFAULT_FETCHSIZE_KIB) * <span class="number">1024</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the configured TLS verify mode for connecting to Exasol.
+</span><span class="comment">-- Configuration property: `tls_verify`, see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties.properties">luasql.exasol.ConnectionProperties:properties</a>.
+</span><a id="82"></a><span class="comment">-- @treturn string TLS verify mode
+</span><span class="keyword">function</span> ConnectionProperties:<span class="function-name">get_tls_verify</span>()
+    <span class="keyword">return</span> self.properties.tls_verify <span class="keyword">or</span> <span class="string">"none"</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the configured TLS protocol for connecting to Exasol.
+</span><span class="comment">-- Configuration property: `tls_protocol`, see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties.properties">luasql.exasol.ConnectionProperties:properties</a>.
+</span><a id="89"></a><span class="comment">-- @treturn string TLS protocol
+</span><span class="keyword">function</span> ConnectionProperties:<span class="function-name">get_tls_protocol</span>()
+    <span class="keyword">return</span> self.properties.tls_protocol <span class="keyword">or</span> <span class="string">"tlsv1_2"</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the configured TLS options for connection to Exasol.
+</span><span class="comment">-- Configuration property: `tls_options`, see <a href="../classes/luasql.exasol.ConnectionProperties.html#luasql.exasol.connectionproperties.properties">luasql.exasol.ConnectionProperties.properties</a>.
+</span><a id="96"></a><span class="comment">-- @treturn string TLS options
+</span><span class="keyword">function</span> ConnectionProperties:<span class="function-name">get_tls_options</span>()
+    <span class="keyword">return</span> self.properties.tls_options <span class="keyword">or</span> <span class="string">"all"</span>
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> ConnectionProperties</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-06-22 12:15:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
