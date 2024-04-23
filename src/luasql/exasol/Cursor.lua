@@ -44,7 +44,7 @@ local function get_column_names(result_set)
     if #result_set.columns ~= result_set.numColumns then
         local args = {expected_col_count = result_set.numColumns, actual_col_count = #result_set.columns}
         ExaError:new("E-EDL-24", "Result set reports {{expected_col_count}} but only "
-                                .. "{{actual_col_count}} columns are available", args):add_ticket_mitigation():raise()
+                             .. "{{actual_col_count}} columns are available", args):add_ticket_mitigation():raise()
     end
     local names = {}
     for _, column in ipairs(result_set.columns) do
@@ -114,8 +114,7 @@ function Cursor:_fill_row(table, modestring)
         local col_name = col_name_provider(col)
         if not col_name then
             local args = {index = col}
-            ExaError:new("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation()
-                    :raise()
+            ExaError:new("E-EDL-23", "No column name found for index {{index}}", args):add_ticket_mitigation():raise()
         end
         table[col_name] = self.data:get_column_value(col)
     end
@@ -195,7 +194,7 @@ function Cursor:close()
     local err = self.websocket:send_close_result_set(self.result_set_handle)
     if err then
         ExaError:new("E-EDL-28", "Failed to close result set {{result_set_handle}}: {{error}}",
-                        {result_set_handle = self.result_set_handle, error = err}):raise()
+                     {result_set_handle = self.result_set_handle, error = err}):raise()
         return false
     else
         log.trace("Successfully closed result set %d", self.result_set_handle)

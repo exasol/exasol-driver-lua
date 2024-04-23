@@ -134,10 +134,10 @@ local function get_response_error(response)
         local sqlCode = response.exception.sqlCode or "nil"
         local text = response.exception.text or "nil"
         return ExaError:new("E-EDL-10", "Received DB status {{status}} with code {{sqlCode|uq}}: {{text}}",
-                               {status = response.status, sqlCode = sqlCode, text = text})
+                            {status = response.status, sqlCode = sqlCode, text = text})
     else
         return ExaError:new("E-EDL-17", "Received DB status {{status}} without exception details",
-                               {status = response.status})
+                            {status = response.status})
     end
 end
 
@@ -152,7 +152,7 @@ function ExasolWebsocket:_send_json(payload, ignore_response)
     local raw_payload = cjson.encode(payload)
     if self.closed then
         ExaError:new("E-EDL-22", "Websocket already closed when trying to send payload {{payload}}",
-                        {payload = raw_payload}):raise()
+                     {payload = raw_payload}):raise()
     end
 
     log.trace("Sending payload '%s', ignore response=%s", raw_payload, ignore_response)
@@ -165,7 +165,7 @@ function ExasolWebsocket:_send_json(payload, ignore_response)
     end
     if raw_response == nil then
         err = ExaError:new("E-EDL-2", "Did not receive response for request payload {{payload}}.",
-                              {payload = raw_payload})
+                           {payload = raw_payload})
         log.error(tostring(err))
         err:raise()
     end
