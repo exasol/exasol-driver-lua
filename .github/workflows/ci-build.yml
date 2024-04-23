@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload API documentation
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: api-documentation
           path: target/ldoc/
@@ -113,7 +113,7 @@ jobs:
 
       - name: Archive code coverage results
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: luacov-report
           path: target/luacov-reports/*
@@ -128,12 +128,12 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
-      - name: "Set up JDK"
+      - name: Set up JDK for OpenFastTrace
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: "11"
-          distribution: "temurin"
+          java-version: 17
+          distribution: temurin
       - name: Trace requirements
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
