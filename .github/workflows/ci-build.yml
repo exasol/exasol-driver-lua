@@ -2,7 +2,7 @@ name: "Build and test Lua project"
 on: [push]
 jobs:
 
-  build:
+  matrix-build:
     strategy:
       fail-fast: true
       matrix:
@@ -133,6 +133,12 @@ jobs:
       - name: Trace requirements
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
+
+  build:
+    needs: matrix-build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build finished"
 
   ## This is a separate job because it requires running apt-get which takes > 40s.
   ## When the other job also uses apt-get this can be moved back.
