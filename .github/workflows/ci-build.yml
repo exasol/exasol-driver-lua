@@ -88,22 +88,26 @@ jobs:
             --database-port-forward 8563
         working-directory: integration-test-docker-environment
 
+      - name: Verify Exasol environment configuration
+        run: |
+          cat $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/test/environment_info.sh
+
       - name: Run example code
         run: |
-          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/test/environment_info.sh
           eval $(luarocks path)
-          EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
-            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+          EXASOL_HOST=$ITDE_DATABASE_HOST \
+            EXASOL_PORT=$ITDE_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             lua doc/user_guide/examples.lua
 
       - name: Run integration tests
         run: |
-          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/test/environment_info.sh
           eval $(luarocks path)
           LOG_LEVEL=INFO \
-            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
-            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_HOST=$ITDE_DATABASE_HOST \
+            EXASOL_PORT=$ITDE_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             tools/runtests.sh --run=ci
 
