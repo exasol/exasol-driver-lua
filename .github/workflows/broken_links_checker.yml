@@ -11,11 +11,13 @@ on:
 jobs:
   linkChecker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Configure broken links checker
         run: |
           mkdir -p ./target

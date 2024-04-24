@@ -11,9 +11,8 @@ function util.read_only(table)
     local metatable = {
         __index = table,
         __newindex = function(_, key, value)
-            ExaError:new("E-EDL-32",
-                            "Attempt to update read-only table: tried to set key {{key}} to value {{value}}",
-                            {key = key, value = value}):raise(3)
+            ExaError:new("E-EDL-32", "Attempt to update read-only table: tried to set key {{key}} to value {{value}}",
+                         {key = key, value = value}):raise(3)
         end
     }
     setmetatable(proxy, metatable)

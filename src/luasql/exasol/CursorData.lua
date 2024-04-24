@@ -89,9 +89,8 @@ function CursorData:get_column_value(column_index)
     log.trace("Fetching row %d of %d (%d of %d in current batch)", self.current_row, self.num_rows_total,
               self.current_row_in_batch, self.num_rows_in_message)
     if column_index <= 0 or #self.data < column_index then
-        ExaError:new("E-EDL-29",
-                        "Column index {{column_index}} out of bound, must be between 1 and {{column_count}}",
-                        {column_index = column_index, column_count = #self.data}):add_ticket_mitigation():raise()
+        ExaError:new("E-EDL-29", "Column index {{column_index}} out of bound, must be between 1 and {{column_count}}",
+                     {column_index = column_index, column_count = #self.data}):add_ticket_mitigation():raise()
     end
     if #self.data[column_index] < self.current_row_in_batch then
         local message = "Row {{row_index}} out of bound, must be between 1 and {{row_count}}"
@@ -139,7 +138,7 @@ function CursorData:_fetch_next_data_batch()
     local response, err = self.websocket:send_fetch(self.result_set_handle, start_position, fetch_size)
     if err then
         ExaError:new("E-EDL-26", "Error fetching result data for handle {{result_set_handle}} with start position "
-                                .. "{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}", {
+                             .. "{{start_position}} and fetch size {{fetch_size_bytes}} bytes: {{error}}", {
             result_set_handle = self.result_set_handle,
             start_position = start_position,
             fetch_size_bytes = fetch_size,

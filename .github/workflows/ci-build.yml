@@ -2,12 +2,12 @@ name: "Build and test Lua project"
 on: [push]
 jobs:
 
-  build:
+  matrix-build:
     strategy:
       fail-fast: true
       matrix:
         lua_version: ["5.4"]
-        exasol_version: ["7.1.17", "8.18.1"]
+        exasol_version: ["7.1.17"] # "8.18.1" is disabled because of failing tests, see https://github.com/exasol/exasol-driver-lua/issues/91
     env:
       DEFAULT_DB_VERSION: "7.1.17"
     concurrency:
@@ -15,23 +15,25 @@ jobs:
       cancel-in-progress: true
     name: "Build with Lua ${{ matrix.lua_version }} and Exasol ${{ matrix.exasol_version }}"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Checkout integration test docker environment
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
           repository: "exasol/integration-test-docker-environment"
           path: "integration-test-docker-environment"
-          ref: "1.7.1"
+          ref: "3.0.0"
 
       - name: Cache local Luarocks repository
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.luarocks
           key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
@@ -39,14 +41,14 @@ jobs:
             ${{ runner.os }}-luarocks-
 
       - name: Install Lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v8
+        uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ matrix.lua_version }}
 
       - name: Install LuaRocks
         uses: leafo/gh-actions-luarocks@v4
         with:
-          luarocksVersion: "3.9.0"
+          luaRocksVersion: "3.11.0"
 
       - name: Print versions
         run: |
@@ -73,41 +75,53 @@ jobs:
 
       - name: Upload API documentation
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: api-documentation
           path: target/ldoc/
           if-no-files-found: error
 
       - name: Spawn Exasol environment
+        id: spawn-test-environment
         run: |
           ./start-test-env spawn-test-environment --environment-name test \
             --docker-db-image-version ${{ matrix.exasol_version }} \
             --database-port-forward 8563
+          echo "itde-env=$GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh" >> "$GITHUB_OUTPUT"
         working-directory: integration-test-docker-environment
+
+      - name: Verify Exasol environment configuration
+        run: |
+          cat $TEST_ENV_SH
+        env:
+          TEST_ENV_SH: ${{ steps.spawn-test-environment.outputs.itde-env }}
 
       - name: Run example code
         run: |
-          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          source $TEST_ENV_SH
           eval $(luarocks path)
-          EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
-            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+          EXASOL_HOST=$ITDE_DATABASE_HOST \
+            EXASOL_PORT=$ITDE_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             lua doc/user_guide/examples.lua
+        env:
+          TEST_ENV_SH: ${{ steps.spawn-test-environment.outputs.itde-env }}
 
       - name: Run integration tests
         run: |
-          source $GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh
+          source $TEST_ENV_SH
           eval $(luarocks path)
           LOG_LEVEL=INFO \
-            EXASOL_HOST=$ENVIRONMENT_DATABASE_HOST \
-            EXASOL_PORT=$ENVIRONMENT_DATABASE_DB_PORT \
+            EXASOL_HOST=$ITDE_DATABASE_HOST \
+            EXASOL_PORT=$ITDE_DATABASE_DB_PORT \
             EXASOL_USER=sys EXASOL_PASSWORD=exasol \
             tools/runtests.sh --run=ci
+        env:
+          TEST_ENV_SH: ${{ steps.spawn-test-environment.outputs.itde-env }}
 
       - name: Archive code coverage results
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: luacov-report
           path: target/luacov-reports/*
@@ -122,15 +136,21 @@ jobs:
           eval $(luarocks path)
           tools/runluacheck.sh
 
-      - name: "Set up JDK"
+      - name: Set up JDK for OpenFastTrace
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: "11"
-          distribution: "temurin"
+          java-version: 17
+          distribution: temurin
       - name: Trace requirements
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
+
+  build:
+    needs: matrix-build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build finished"
 
   ## This is a separate job because it requires running apt-get which takes > 40s.
   ## When the other job also uses apt-get this can be moved back.
@@ -145,7 +165,7 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 

@@ -35,8 +35,8 @@ end
 -- @raise an error if this connection is closed
 function Connection:_verify_connection_open(operation)
     if self.closed then
-        ExaError:new("E-EDL-12", "Connection already closed when trying to call {{operation}}",
-                        {operation = operation}):raise()
+        ExaError:new("E-EDL-12", "Connection already closed when trying to call {{operation}}", {operation = operation})
+                :raise()
     end
 end
 
@@ -54,7 +54,7 @@ function Connection:execute(statement)
     local result, err = self.websocket:send_execute(statement)
     if err then
         return nil, ExaError:new("E-EDL-6", "Error executing statement {{statement}}: {{error|uq}}",
-                                    {statement = statement, error = tostring(err)})
+                                 {statement = statement, error = tostring(err)})
     end
     local num_results = result.numResults
     if num_results == 0 then
@@ -64,8 +64,8 @@ function Connection:execute(statement)
     if num_results > 1 then
         return nil,
                ExaError:new("E-EDL-8",
-                               "Got {{numResults}} results for statement {{statement}} but at most one is supported",
-                               {numResults = num_results, statement = statement}):add_mitigations(
+                            "Got {{numResults}} results for statement {{statement}} but at most one is supported",
+                            {numResults = num_results, statement = statement}):add_mitigations(
                 "Use only statements that return a single result")
     end
     local first_result = result.results[1]
@@ -121,7 +121,7 @@ function Connection:setautocommit(autocommit)
     local err = self.websocket:send_set_attribute("autocommit", autocommit)
     if err then
         log.error(tostring(ExaError:new("E-EDL-32", "Failed to set autocommit to {{autocommit}}: {{error}}",
-                                           {autocommit = tostring(autocommit), error = err})))
+                                        {autocommit = tostring(autocommit), error = err})))
         return false
     else
         return true
@@ -135,7 +135,7 @@ function Connection:close()
     -- [impl -> dsn~luasql-connection-close~0]
     if self.closed then
         log.warn(tostring(ExaError:new("W-EDL-35", "Connection with session ID {{session_id}} already closed",
-                                          {session_id = self.session_id})))
+                                       {session_id = self.session_id})))
         return false
     end
     local cursors = self.cursors
@@ -143,15 +143,15 @@ function Connection:close()
     for _, cur in ipairs(cursors) do
         if not cur.closed then
             log.warn(tostring(ExaError:new("W-EDL-34",
-                                              "Cannot close session {{session_id}} because not all cursors are closed",
-                                              {session_id = string.format("%d", self.session_id)})))
+                                           "Cannot close session {{session_id}} because not all cursors are closed",
+                                           {session_id = string.format("%d", self.session_id)})))
             return false
         end
     end
     local err = self.websocket:send_disconnect()
     if err then
         ExaError:new("E-EDL-11", "Error closing session {{session_id}}: {{error}}",
-                        {session_id = self.session_id, error = err}):raise()
+                     {session_id = self.session_id, error = err}):raise()
     end
     local success = self.websocket:close()
     self.closed = true

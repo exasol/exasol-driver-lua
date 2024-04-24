@@ -13,10 +13,10 @@ This section introduces technical system constraints.
 `dsn~use-available-exasol-udf-libraries-only~1`
 
 EDL uses the following external Lua modules that are available to Exasol UDFs:
-* luasocket
-* luasec
-* luaossl
-* lua-cjson
+* `luasocket`
+* `luasec`
+* `luaossl`
+* `lua-cjson`
 
 EDL uses the following external Lua modules that can be amalgamated into a single package:
 * exaerror

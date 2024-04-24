@@ -99,8 +99,8 @@ function Environment:connect(sourcename, username, password, properties)
         socket:close()
         if err["cause"] == "closed" then
             err = ExaError:new("E-EDL-19",
-                                  "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
-                                  {error = tostring(err)})
+                               "Login failed because socket is closed. Probably credentials are wrong: {{error}}",
+                               {error = tostring(err)})
         else
             err = ExaError:new("E-EDL-16", "Login failed: {{error}}", {error = tostring(err)})
         end
@@ -127,8 +127,8 @@ function Environment:close()
     log.trace("Closing environment: check if all %d connections are closed", #self.connections)
     for _, conn in pairs(self.connections) do
         if not conn.closed then
-            log.warn(tostring(ExaError:new("W-EDL-38",
-                                              "Cannot close environment because not all connections are closed")))
+            log.warn(tostring(
+                    ExaError:new("W-EDL-38", "Cannot close environment because not all connections are closed")))
             return false
         end
     end
