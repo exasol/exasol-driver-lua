@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build:
@@ -35,12 +36,22 @@ jobs:
         run: |
           ./tools/build-docs.sh
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: target/ldoc
-          target-folder: api
-          clean: true
-          single-commit: true
-          force: true
+          path: ./target/ldoc
+
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
