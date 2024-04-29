@@ -2,7 +2,7 @@
 
 A LuaSQL driver for the Exasol database.
 
-[![Build and test Lua project](https://github.com/exasol/exasol-driver-lua/actions/workflows/build.yml/badge.svg)](https://github.com/exasol/exasol-driver-lua/actions/workflows/build.yml)
+[![Build and test Lua project](https://github.com/exasol/exasol-driver-lua/actions/workflows/ci-build.yml/badge.svg)](https://github.com/exasol/exasol-driver-lua/actions/workflows/ci-build.yml)
 
 Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 
