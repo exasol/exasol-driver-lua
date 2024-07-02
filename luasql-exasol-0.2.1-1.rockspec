@@ -31,7 +31,7 @@ dependencies = {
     "luasocket >= 3.1.0-1",
     "luasec >= 1.3.2-1",
     "luaossl >= 20220711-0",
-    "lua-cjson == 2.1.0", -- pinned to prevent "undefined symbol: lua_objlen" in 2.1.0.6 (https://github.com/mpx/lua-cjson/issues/56)
+    "lua-cjson == 2.1.0.10-1",
     "base64 >= 1.5-3",
     "exaerror >= 2.0.3-1",
     "remotelog >= 1.1.1-1"
@@ -42,7 +42,7 @@ test_dependencies = {
     "mockagne >= 1.0-2",
     "luacov >= 0.15.0-1",
     "luacov-coveralls >= 0.2.3-1",
-    "luacheck >= 1.1.2-1",
+    "luacheck >= 1.2.0-1",
     "ldoc >= 1.5.0-1",
     "amalg >= 0.8-1",
     "luasql-sqlite3 >= 2.6.1-3"
