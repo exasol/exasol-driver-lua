@@ -1,7 +1,3 @@
---package.cpath = package.cpath .. ';/home/sebastian/.local/share/JetBrains/IntelliJIdea2024.1/EmmyLua/debugger/emmy/linux/?.so'
---local dbg = require('emmy_core')
---dbg.tcpConnect('localhost', 9966)
-
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
