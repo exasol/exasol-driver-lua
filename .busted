@@ -1,6 +1,5 @@
 return {
   _all = {
-    coverage = true,
     shuffle = true,
     recursive = true,
     verbose = true,
@@ -14,6 +13,7 @@ return {
   default = {
   },
   ci = {
+    coverage = true,
     --output = "junit",
     --Xoutput = "target/test-reports/test-report.xml"
   },
@@ -28,9 +28,11 @@ return {
     ROOT = {"spec/integration/smoketest_spec.lua"},
   },
   utest = {
+    coverage = true,
     ROOT = {"spec/unit"},
   },
   itest = {
+    coverate = true,
     ROOT = {"spec/integration"},
   }
 }
