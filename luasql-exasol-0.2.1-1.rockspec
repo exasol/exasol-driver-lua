@@ -31,7 +31,7 @@ dependencies = {
     "luasocket >= 3.1.0-1",
     "luasec >= 1.3.2-1",
     "luaossl >= 20220711-0",
-    "lua-cjson == 2.1.0.10-1"
+    "lua-cjson == 2.1.0.10-1",
     "base64 >= 1.5-3",
     "exaerror >= 2.0.3-1",
     "remotelog >= 1.1.1-1"

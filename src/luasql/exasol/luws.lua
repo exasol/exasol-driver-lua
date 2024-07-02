@@ -244,10 +244,10 @@ function wsopen( url, handler, options )
 			D("wsopen() successful SSL/TLS negotiation")
 			wsconn.socket = sock -- save wrapped socket
 		else
-			D("wsopen() failed SSL negotation")
+			D("wsopen() failed SSL/TLS negotiation")
 			wsconn.socket:close()
 			wsconn.socket = nil
-			return false, "Failed SSL negotation"
+			return false, "Failed SSL/TLS negotiation"
 		end
 	end
 	D("wsopen() upgrading connection to WebSocket")

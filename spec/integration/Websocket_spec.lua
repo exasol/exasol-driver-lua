@@ -15,7 +15,7 @@ local function get_ssl_socket_creation_error(error_details)
     return get_connection_error(string.format("Failed to create SSL socket: '%s'", error_details))
 end
 
-local ssl_negotiation_failed_error<const> = get_connection_error("Failed SSL/TLS negotation")
+local ssl_negotiation_failed_error<const> = get_connection_error("Failed SSL/TLS negotiation")
 
 local function connect(properties, url)
     url = url or local_websocket_url
