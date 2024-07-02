@@ -11,24 +11,16 @@ local function get_optional_system_env(varname, default)
     return value
 end
 
-local function get_system_env(varname, default)
-    local value = get_optional_system_env(varname, default)
-    if value == nil and default == nil then
-        error("Environment variable '" .. varname .. "' required for test is not defined")
-    end
-    return value
-end
-
 function M.get_connection_params(override)
     override = override or {}
     local host = override.host or get_optional_system_env("EXASOL_HOST", "localhost")
-    local port = override.port or get_system_env("EXASOL_PORT", "8563")
+    local port = override.port or get_optional_system_env("EXASOL_PORT", "8563")
     return {
         host = host,
         port = port,
         source_name = string.format("%s:%s", host, port),
-        user = override.user or get_system_env("EXASOL_USER", "sys"),
-        password = override.password or get_system_env("EXASOL_PASSWORD", "exasol"),
+        user = override.user or get_optional_system_env(system_env("EXASOL_USER", "sys")),
+        password = override.password or get_optional_system_env(system_env("EXASOL_PASSWORD", "exasol")),
         fingerprint = override.fingerprint or nil
     }
 end
@@ -49,7 +41,7 @@ function M.configure_logging()
     if luws_trace == "TRACE" then
         enable_luws_trace_log()
     end
-    local log_level = string.upper(get_system_env("LOG_LEVEL", "INFO"))
+    local log_level = string.upper(get_optional_system_env(system_env("LOG_LEVEL", "INFO")))
     log.set_level(log_level)
 end
 
