@@ -32,6 +32,9 @@ local STATE_READMASK = "mask"
 local MAXMESSAGE = 65535 -- maximum WS message size
 local CHUNKSIZE = 2048
 local DEFAULTMSGTIMEOUT = 0 -- drop connection if no message in this time (0=no timeout)
+local WS_UPGRADE_REQUEST_TIMEOUT <const> = 5
+local WS_UPGRADE_RESPONSE_TIMEOUT <const> = 5
+local WS_SEND_FRAME_TIMEOUT <const> = 15
 
 local timenow = socket.gettime or os.time -- use hi-res time if available
 local unpack = unpack or table.unpack -- luacheck: ignore 143
@@ -127,16 +130,16 @@ local function wsupgrade( wsconn )
 
 	-- Send request.
 	D("wsupgrade() sending %1", req)
-	wsconn.socket:settimeout( 5, "b" )
-	wsconn.socket:settimeout( 5, "r" )
+	wsconn.socket:settimeout( WS_UPGRADE_REQUEST_TIMEOUT, "b" )
+	wsconn.socket:settimeout( WS_UPGRADE_REQUEST_TIMEOUT, "r" )
 	local nb,err = wsconn.socket:send( req )
 	if nb == nil then
 		return false, "Failed to send upgrade request: "..tostring(err)
 	end
 
 	-- Read until we get two consecutive linefeeds.
-	wsconn.socket:settimeout( 5, "b" )
-	wsconn.socket:settimeout( 5, "r" )
+	wsconn.socket:settimeout( WS_UPGRADE_RESPONSE_TIMEOUT, "b" )
+	wsconn.socket:settimeout( WS_UPGRADE_RESPONSE_TIMEOUT, "r" )
 	local buf = {}
 	local ntotal = 0
 	while true do
@@ -305,8 +308,8 @@ local function send_frame( wsconn, opcode, fin, s )
 	end
 	t = nil -- luacheck: ignore 311
 	D("send_frame() sending frame of %1 bytes for %2", #frame, s)
-	wsconn.socket:settimeout( 5, "b" )
-	wsconn.socket:settimeout( 5, "r" )
+	wsconn.socket:settimeout( WS_SEND_FRAME_TIMEOUT, "b" )
+	wsconn.socket:settimeout( WS_SEND_FRAME_TIMEOUT, "r" )
 	-- ??? need retry while nb < payload length
 	while #frame > 0 do
 		local nb,err = wsconn.socket:send( frame )
