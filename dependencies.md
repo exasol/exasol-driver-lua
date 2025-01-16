@@ -18,7 +18,7 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 | [exaerror](https://github.com/exasol/error-reporting-lua)           | [MIT](https://github.com/exasol/error-reporting-lua/blob/main/LICENSE)  |
 | [Lua 5.4][lua]                                                      | [MIT][mit]                                                              |
 | [lua-cjson](https://github.com/openresty/lua-cjson)                 | [MIT](https://github.com/openresty/lua-cjson/blob/master/LICENSE)       |
-| [luaossl](http://25thandclement.com/~william/projects/luaossl.html) | [MIT](http://25thandclement.com/~william/projects/luaossl.html#license) |
+| [luaossl](http://25thandclement.com/~william/projects/luaossl.html)  | [MIT](http://25thandclement.com/~william/projects/luaossl.html#license) |
 | [luasec](https://github.com/brunoos/luasec)                         | [MIT](https://github.com/brunoos/luasec/blob/master/LICENSE)            |
 | [luasocket](https://lunarmodules.github.io/luasocket/)              | [MIT][mit]                                                              |
 | [remotelog](https://github.com/exasol/remotelog-lua)                | [MIT](https://github.com/exasol/remotelog-lua/blob/main/LICENSE)        |
@@ -33,15 +33,15 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 | [LuaCov][luacov]                                                             | [MIT][mit]                                                                  |
 | [LuaCov-Coveralls](https://github.com/mockagne/mockagne/blob/master/LICENSE) | [MIT](https://github.com/moteus/luacov-coveralls/blob/master/LICENSE)       |
 | [Shellcheck][shellcheck]                                                     | [GPL V3][gpl3]                                                              |
-
+| [SQLite 3](https://www.sqlite.org/index.html) | [Public Domain](https://www.sqlite.org/copyright.html) |
 ## Build Dependencies
 
-| Dependency                                                     | License                                                           |
-|----------------------------------------------------------------|-------------------------------------------------------------------|
-| [amalg](https://github.com/siffiejoe/lua-amalg/)               | [MIT][mit]                                                        |
- | [LDoc](https://stevedonovan.github.io/ldoc/manual/doc.md.html) | [MIT](https://github.com/lunarmodules/LDoc/blob/master/COPYRIGHT) |
-| [LuaRocks][luarocks]                                           | [MIT][mit]                                                        |
-| [LuaSQL-SQLite3](https://github.com/LuaDist/luasql-sqlite3)    | [MIT][mit]                                                        |
+| Dependency                                                       | License                                                           |
+|------------------------------------------------------------------|-------------------------------------------------------------------|
+| [amalg](https://github.com/siffiejoe/lua-amalg/)                 | [MIT][mit]                                                        |
+| [LDoc](https://stevedonovan.github.io/ldoc/manual/doc.md.html)   | [MIT](https://github.com/lunarmodules/LDoc/blob/master/COPYRIGHT) |
+| [LuaRocks][luarocks]                                             | [MIT][mit]                                                        |
+| [LuaSQL-SQLite3](https://github.com/LuaDist/luasql-sqlite3)      | [MIT][mit]                                                        |
 
 [lua]: https://www.lua.org/
 [luacheck]: https://github.com/mpeterv/luacheck
@@ -50,6 +50,6 @@ The following dependencies are preinstalled on Exasol and are not part of the in
 [luaunit]: https://github.com/bluebird75/luaunit
 [shellcheck]: https://www.shellcheck.net/
 
-[gpl3]: https://www.gnu.org/licenses/gpl-3.0.en.html
+[gpl3]: https://opensource.org/license/gpl-3-0
 [mit]: https://opensource.org/licenses/MIT
 [bsd]: http://opensource.org/licenses/BSD-3-Clause
