@@ -56,6 +56,10 @@ jobs:
           luarocks --version
           luarocks path
 
+      - name: Install SQLLite for smoke tests
+        run: |
+          sudo apt install sqlite3
+
       - name: Install Lua dependencies
         run: |
           luarocks install --local --deps-only *.rockspec
