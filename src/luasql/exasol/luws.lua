@@ -34,7 +34,7 @@ local CHUNKSIZE = 2048
 local DEFAULTMSGTIMEOUT = 0 -- drop connection if no message in this time (0=no timeout)
 local WS_UPGRADE_REQUEST_TIMEOUT <const> = 5
 local WS_UPGRADE_RESPONSE_TIMEOUT <const> = 5
-local WS_SEND_FRAME_TIMEOUT <const> = 15
+local WS_SEND_FRAME_TIMEOUT <const> = 5
 
 local timenow = socket.gettime or os.time -- use hi-res time if available
 local unpack = unpack or table.unpack -- luacheck: ignore 143
