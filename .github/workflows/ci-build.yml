@@ -7,9 +7,9 @@ jobs:
       fail-fast: true
       matrix:
         lua_version: ["5.4"]
-        exasol_version: ["7.1.17"] # "8.18.1" is disabled because of failing tests, see https://github.com/exasol/exasol-driver-lua/issues/91
+        exasol_version: ["8.29.6", "7.1.30"]
     env:
-      DEFAULT_DB_VERSION: "7.1.17"
+      DEFAULT_DB_VERSION: "8.29.6"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 1
           repository: "exasol/integration-test-docker-environment"
           path: "integration-test-docker-environment"
-          ref: "3.0.0"
+          ref: "3.4.0"
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v4
@@ -55,6 +55,10 @@ jobs:
           lua -v
           luarocks --version
           luarocks path
+
+      - name: Install SQLLite for smoke tests
+        run: |
+          sudo apt install sqlite3 libsqlite3-dev
 
       - name: Install Lua dependencies
         run: |

@@ -37,7 +37,7 @@ end
 -- This returns a public RSA key used for encrypting the password before sending it with the
 -- @{luasql.exasol.ExasolWebsocket:send_login_credentials} method.
 -- @treturn table|nil the public RSA key or `nil` if an error occurred
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_login_command()
     log.debug("Sending login command")
     return self:_send_json({command = "login", protocolVersion = 3})
@@ -50,7 +50,7 @@ end
 -- @tparam string encrypted_password the password encrypted with the public key returned by
 --   @{luasql.exasol.ExasolWebsocket:send_login_command}
 -- @treturn table|nil response data from the database or `nil` if an error occurred
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_login_credentials(username, encrypted_password)
     log.debug("Sending login credentials")
     return self:_send_json({username = username, password = encrypted_password, useCompression = false})
@@ -59,7 +59,7 @@ end
 --- Sends the disconnect command.
 -- See Exasol API documentation for the
 -- [`disconnect` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/disconnectV1.md).
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_disconnect()
     log.debug("Sending disconnect command")
     local _, err = self:_send_json({command = "disconnect"}, true)
@@ -71,7 +71,7 @@ end
 -- [`execute` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/executeV1.md).
 -- @tparam string statement the SQL statement to execute
 -- @treturn table|nil the result set response data from the database or `nil` if an error occurred
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_execute(statement)
     local payload = {command = "execute", sqlText = statement, attributes = {}}
     return self:_send_json(payload)
@@ -84,7 +84,7 @@ end
 -- [`setAttributes` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/setAttributesV1.md).
 -- @tparam string attribute_name the name of the attribute to set, e.g. `"autocommit"`
 -- @tparam string|number|boolean|nil attribute_value the value of the attribute to set, e.g. `false`
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_set_attribute(attribute_name, attribute_value)
     if attribute_value == nil or attribute_value == constants.NULL then
         attribute_value = cjson.null
@@ -100,7 +100,7 @@ end
 -- @tparam number start_position row offset (0-based) from which to begin data retrieval
 -- @tparam number num_bytes number of bytes to retrieve (max: 64MiB)
 -- @treturn table|nil result set from the database or `nil` if an error occurred
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_fetch(result_set_handle, start_position, num_bytes)
     local payload = {
         command = "fetch",
@@ -116,7 +116,7 @@ end
 -- See Exasol API documentation for the
 -- [`closeResultSet` command](https://github.com/exasol/websocket-api/blob/master/docs/commands/closeResultSetV1.md).
 -- @tparam number result_set_handle result set handle to close
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:send_close_result_set(result_set_handle)
     local payload = {command = "closeResultSet", resultSetHandles = {result_set_handle}, attributes = {}}
     local _, err = self:_send_json(payload)
@@ -125,7 +125,7 @@ end
 
 --- Extract the error from the given database response.
 -- @tparam table response the response from the database
--- @treturn nil|table `nil` the error that occured or `nil` if the response was successful
+-- @treturn nil|table `nil` the error that occurred or `nil` if the response was successful
 local function get_response_error(response)
     if response.status == "ok" then
         return nil
@@ -147,7 +147,7 @@ end
 -- @tparam boolean|nil ignore_response `false` if we expect a response, else `true`.
 --   Default is `false`.
 -- @treturn table|nil the received response or nil if ignore_response was `true` or an error occurred
--- @treturn table|nil `nil` if the operation was successful, otherwise the error that occured
+-- @treturn table|nil `nil` if the operation was successful, otherwise the error that occurred
 function ExasolWebsocket:_send_json(payload, ignore_response)
     local raw_payload = cjson.encode(payload)
     if self.closed then
