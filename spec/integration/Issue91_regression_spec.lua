@@ -25,14 +25,13 @@ describe("Issue91", function()
         -- be triggered with the next new connection.
         connectionA:close()
         local connectionB = create_connection()
-        local cursor = assert(connectionB:execute("SELECT 1")) -- ← here is where the error is raised.
         finally(function()
             if(not connectionB.closed) then
                 print("Cleaning up remaining connection after failure.")
                 connectionB:close()
             end
         end)
+        local cursor = assert(connectionB:execute("SELECT 1")) -- ← here is where the error is raised.
         cursor:close()
-        connectionB:close()
     end)
 end)
