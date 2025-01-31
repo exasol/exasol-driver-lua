@@ -123,6 +123,18 @@ jobs:
         env:
           TEST_ENV_SH: ${{ steps.spawn-test-environment.outputs.itde-env }}
 
+      - name: Run repeated integration tests
+        run: |
+          source $TEST_ENV_SH
+          eval $(luarocks path)
+          LOG_LEVEL=INFO \
+            EXASOL_HOST=$ITDE_DATABASE_HOST \
+            EXASOL_PORT=$ITDE_DATABASE_DB_PORT \
+            EXASOL_USER=sys EXASOL_PASSWORD=exasol \
+            tools/runtests.sh --run=ci --repeat=19
+        env:
+          TEST_ENV_SH: ${{ steps.spawn-test-environment.outputs.itde-env }}
+
       - name: Archive code coverage results
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         uses: actions/upload-artifact@v4
