@@ -69,8 +69,14 @@ describe("ExasolWebsocket", function()
         end)
 
         it("returns error when socket returns error", function()
+            -- We are suppressing STDERR here to avoid having something in the
+            -- test log that looks like a failure, but isn't.
+            local original_stderr = io.stderr
+            finally(function() io.stderr = original_stderr end)
+
             simulate_socket_error("mock error")
             local result, err = exa_socket:send_login_command()
+            io.stderr = original_stderr
             assert.is_nil(result)
             assert.is_same("mock error", tostring(err))
         end)
