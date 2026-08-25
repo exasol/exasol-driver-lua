@@ -24,6 +24,8 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 
 ### Dependencies
 
+Requires Exasol 8.10.0 or later.
+
 See the [dependencies list](dependencies.md) for build and test dependencies and license information.
 
 ## Information for Developers

@@ -58,7 +58,7 @@ EXASOL_HOST=<host> \
   lua doc/user_guide/examples.lua
 ```
 
-You will need to adjust host, port and credentials. If everything is setup correctly, the script will log the following:
+You will need to adjust host, port and credentials. If everything is set up correctly, the script will log the following:
 
 ```
 2022-04-27 18:07:09 (038.649ms) [INFO]   Successfully connected to Exasol database at 192.168.56.7:8563 with user sys

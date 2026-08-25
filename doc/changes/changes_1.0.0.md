@@ -10,6 +10,8 @@ This release updates all dependencies on top of 0.2.1. We also decided to increa
 
 We also now pin the Ubuntu version to 24.04 in the CI build.
 
+Breaking change: Support for Exasol 7.x has been removed.
+
 ## Features
 
 * #100: Add TLS certificate fingerprint pinning.

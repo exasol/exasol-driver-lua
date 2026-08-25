@@ -187,7 +187,6 @@ local function connect( ip, port )
 end
 
 local function verify_certificate_fingerprint(sock, expected_fingerprint)
-
 	if expected_fingerprint == nil then
 		return true
 	end
