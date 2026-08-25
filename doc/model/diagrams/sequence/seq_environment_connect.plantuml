@@ -48,7 +48,7 @@ else valid fingerprint format or no fingerprint
     deactivate db
     ws -->> env
     deactivate ws
-    group Login command and send credentials
+    group Send login command and credentials
     env -> ws: send_login_command()
     activate ws
     ws -> db: Login command

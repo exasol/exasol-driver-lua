@@ -1,6 +1,6 @@
 # exasol-driver-lua 1.0.0, released 2026-08-??
 
-Code name: TSL Certificate Fingerprint Pinning
+Code name: TLS Certificate Fingerprint Pinning
 
 ## Summary
 

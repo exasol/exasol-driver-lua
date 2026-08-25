@@ -108,7 +108,7 @@ Needs: dsn
 ##### TLS Certificate Fingerprint Pinning
 `req~tls-certificate-fingerprint-pinning~1`
 
-Client code can pass the optional `fingerprint` connection property to `Environment:connect()` to authenticate the TLS peer certificate without a CA file, trust store, or access to internal driver sockets. The canonical value is the SHA-256 fingerprint of the peer certificate's binary DER encoding, expressed as 64 digit hexadecimal number.
+Client code can pass the optional `fingerprint` connection property to `Environment:connect()` to authenticate the TLS peer certificate without a CA file, trust store, or access to internal driver sockets. The canonical value is the SHA-256 fingerprint of the peer certificate's binary DER encoding, expressed as a 64-digit hexadecimal number.
 
 Covers:
 * `feat~luasql-api~1`
