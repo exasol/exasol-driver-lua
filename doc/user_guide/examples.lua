@@ -41,6 +41,9 @@ local properties = {
     tls_protocol = "tlsv1_2",
     tls_options = "no_tlsv1"
 }
+-- Optional TLS certificate pinning:
+-- properties.fingerprint = "0123456789abcdef0123456789abcdef"
+--         .. "0123456789abcdef0123456789abcdef"
 
 -- Create the connection
 local connection, err = environment:connect(source_name, config.user,

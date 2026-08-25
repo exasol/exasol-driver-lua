@@ -15,13 +15,45 @@ activate client
 activate db
 
 group Initial Connection
-    ?-> ws : connect(url)
+    client -> ws : connect(url)
+    activate ws
     create msghandler
     ws -> msghandler : create()
-    ws -> luws : wsopen(url, message_handler)
+    ws -> luws : wsopen(url, message_handler,\ntls_options)
     activate luws
-    luws -->> ws : Socket
+    luws -> luws : Wrap socket with TLS
+    activate luws
     deactivate luws
+    luws -> luws : Complete TLS handshake
+    activate luws
+    deactivate luws
+    alt fingerprint is configured
+        ' [dsn~tls-certificate-fingerprint-pinning~1 -> scn~connect-with-matching-certificate-fingerprint~1 >> impl,utest,itest]
+        luws -> luws : Read peer certificate and\ncalculate SHA-256 fingerprint
+        activate luws
+        deactivate luws
+        alt fingerprint matches
+            luws -> luws : Upgrade connection to WebSocket
+            activate luws
+            deactivate luws
+            luws -->> ws : Socket
+        else fingerprint mismatches or certificate data is unavailable
+            ' [dsn~reject-mismatching-certificate-fingerprint~1 -> scn~reject-mismatching-certificate-fingerprint~1 >> impl,utest,itest]
+            luws -> luws : Close TLS socket
+            activate luws
+            deactivate luws
+            luws -->> ws : Error
+        end
+    else no fingerprint is configured
+        ' [dsn~skip-certificate-fingerprint-verification~1 -> scn~connect-without-certificate-fingerprint~1 >> impl,utest,itest]
+        luws -> luws : Upgrade connection to WebSocket
+        activate luws
+        deactivate luws
+        luws -->> ws : Socket
+    end
+    deactivate luws
+    ws -->> client : connection or error
+    deactivate ws
 end
 
 client -> conn : execute()
@@ -29,17 +61,23 @@ activate conn
 conn -> exaws : send_execute()
 activate exaws
 exaws -> exaws : Encode JSON payload
+activate exaws
+deactivate exaws
 exaws -> ws : send_raw(json_payload)
 activate ws
 ws -> luws : wssend(socket, payload)
 activate luws
 luws -> luws : Encode\nWebsocket frame
+activate luws
+deactivate luws
 luws -> db : socket:send()
 activate db
 luws -->> ws
 deactivate luws
 group Wait for response
     db -> db : Process statement
+    activate db
+    deactivate db
     loop until data received
         'activate luws
         ws -> luws : wsreceive(socket)
@@ -51,9 +89,13 @@ group Wait for response
     activate luws
     deactivate luws
     luws -> luws : Decode\nWebsocket frame
+    activate luws
+    deactivate luws
     luws -> msghandler : Message received
     activate msghandler
     msghandler -> msghandler : Store message
+    activate msghandler
+    deactivate msghandler
     msghandler -->> luws
     deactivate msghandler
     deactivate luws
@@ -68,6 +110,8 @@ deactivate msghandler
 ws -->> exaws : Response payload
 deactivate ws
 exaws -> exaws : Decode JSON payload,\ncheck for exception
+activate exaws
+deactivate exaws
 exaws -->> conn : result set
 deactivate exaws
 conn -->> client : cursor

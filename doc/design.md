@@ -61,6 +61,50 @@ Note: the following sequence diagrams only show a simplified workflow without th
 
 See [Diagram source](./model/diagrams/sequence/seq_environment_connect.plantuml).
 
+### TLS Certificate Fingerprint Pinning
+
+The driver validates the optional `fingerprint` connection property in `ConnectionProperties` before opening a socket. `Websocket` forwards a valid fingerprint to the bundled LuWS options. After LuaSec completes the TLS handshake, LuWS reads the peer certificate, derives its SHA-256 fingerprint from the binary DER encoding, and compares it case-insensitively with the configured fingerprint. LuWS only upgrades the connection to WebSocket after a successful comparison. On a mismatch or unavailable certificate data, LuWS closes the TLS socket and returns a safe error without initiating the WebSocket upgrade or Exasol login.
+
+#### Connect Without a Fingerprint
+`dsn~skip-certificate-fingerprint-verification~1`
+
+When no fingerprint is configured, `ConnectionProperties`, `Websocket`, and LuWS preserve the existing TLS connection flow and do not inspect the peer certificate.
+
+Covers:
+* `scn~connect-without-certificate-fingerprint~1`
+
+Needs: impl, utest, itest
+
+#### Reject a Malformed Fingerprint
+`dsn~validate-certificate-fingerprint~1`
+
+`ConnectionProperties:create()` rejects missing, non-string, or malformed fingerprints before `Websocket.connect()` is invoked.
+
+Covers:
+* `scn~reject-malformed-certificate-fingerprint~1`
+
+Needs: impl, utest
+
+#### Connect With a Matching Fingerprint
+`dsn~tls-certificate-fingerprint-pinning~1`
+
+LuWS verifies a configured fingerprint after a successful TLS handshake and before calling `wsupgrade()`. A matching fingerprint permits the normal WebSocket upgrade and login flow to continue.
+
+Covers:
+* `scn~connect-with-matching-certificate-fingerprint~1`
+
+Needs: impl, utest, itest
+
+#### Reject a Mismatching Fingerprint
+`dsn~reject-mismatching-certificate-fingerprint~1`
+
+LuWS closes and clears the TLS socket when its calculated fingerprint differs from the configured fingerprint. It returns a mismatch error without calling `wsupgrade()` or allowing login commands or credentials to be sent.
+
+Covers:
+* `scn~reject-mismatching-certificate-fingerprint~1`
+
+Needs: impl, utest, itest
+
 ### Closing the Environment
 `dsn~env-close~1`
 

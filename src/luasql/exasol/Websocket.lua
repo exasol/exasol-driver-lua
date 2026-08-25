@@ -73,7 +73,9 @@ function Websocket.connect(url, connection_properties)
         receive_timeout = RECEIVE_TIMEOUT_SECONDS,
         ssl_protocol = connection_properties:get_tls_protocol(),
         ssl_verify = connection_properties:get_tls_verify(),
-        ssl_options = connection_properties:get_tls_options()
+        ssl_options = connection_properties:get_tls_options(),
+        -- [impl -> dsn~skip-certificate-fingerprint-verification~1]
+        fingerprint = connection_properties:get_fingerprint()
     }
     log.debug("Connecting to '%s' with %d retries", url, CONNECT_RETRY_COUNT)
     return connect_with_retry(url, websocket_options, CONNECT_RETRY_COUNT)

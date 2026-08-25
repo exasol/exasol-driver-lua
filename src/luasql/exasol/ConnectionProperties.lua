@@ -33,7 +33,7 @@ local ConnectionProperties = {}
 -- * `tlsv1`
 -- * `tlsv1_1`
 -- * `tlsv1_2` (default)
--- * `tlsv1_3` (only supported with Exasol v8 and later)
+-- * `tlsv1_3`
 --
 -- Run the following command to find out which TLS version your Exasol server supports:
 --
@@ -45,6 +45,9 @@ local ConnectionProperties = {}
 -- Default value: `all`. See output of the following Lua code for a list of available values:
 --
 -- `require("ssl").config.options`
+--
+-- @field fingerprint Optional SHA-256 fingerprint used to pin the TLS peer certificate.
+-- The value is 64 hexadecimal digits. Upper-case hexadecimal input is accepted and normalized to lower case.
 
 --- Create a new instance of the Connection class.
 -- @tparam ?table properties a properties object or `nil` to use default settings,
@@ -65,6 +68,16 @@ function ConnectionProperties:_validate()
     if self.properties.fetchsize_kib and self.properties.fetchsize_kib <= 0 then
         ExaError:new("E-EDL-27", "Parameter 'fetchsize_kib' must be greater than 0"):add_mitigations(
                 "Use a value greater than 0"):raise()
+    end
+    -- [impl -> dsn~validate-certificate-fingerprint~1]
+    local fingerprint = self.properties.fingerprint
+    if fingerprint ~= nil then
+        if type(fingerprint) ~= "string" or not fingerprint:match("^[0-9a-fA-F][0-9a-fA-F]*$")
+                or #fingerprint ~= 64 then
+            ExaError:new("E-EDL-41", "Parameter 'fingerprint' must be a 64-digit hexadecimal SHA-256 fingerprint")
+                    :add_mitigations("Use the SHA-256 fingerprint of the TLS peer certificate."):raise()
+        end
+        self.properties.fingerprint = fingerprint:lower()
     end
 end
 
@@ -95,6 +108,13 @@ end
 -- @treturn string TLS options
 function ConnectionProperties:get_tls_options()
     return self.properties.tls_options or "all"
+end
+
+--- Get the normalized TLS certificate fingerprint, if configured.
+-- Configuration property: `fingerprint`, see @{luasql.exasol.ConnectionProperties:properties}.
+-- @treturn nil|string lower-case SHA-256 certificate fingerprint
+function ConnectionProperties:get_fingerprint()
+    return self.properties.fingerprint
 end
 
 return ConnectionProperties

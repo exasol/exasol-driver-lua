@@ -5,6 +5,7 @@ participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
 participant "luasql.exasol\ndriver" as entry
 participant Environment as env << (C,#ADD1B2) >>
+participant ConnectionProperties as props << (C,#ADD1B2) >>
 participant Connection as conn << (C,#ADD1B2) >>
 participant ExasolWebsocket as ws << (C,#ADD1B2) >>
 end box
@@ -22,39 +23,57 @@ deactivate entry
 ' [dsn -> req~luasql-environment-connect~1 >> impl,utest,itest]
 client -> env: connect(host_and_port, user, password)
 activate env
-create ws
-env -> ws: connect(url)
-activate ws
-ws -> db: Connect
-activate db
-db -->> ws
-deactivate db
-ws -->> env
-deactivate ws
-group Login command and send credentials
+create props
+env -> props: create(properties)
+activate props
+' [dsn~validate-certificate-fingerprint~1 -> scn~reject-malformed-certificate-fingerprint~1 >> impl,utest]
+props -> props: validate()
+note right
+    * Fetch size
+    * Fingerprint
+end note
+activate props
+deactivate props
+alt invalid connection properties
+    props -->> env: Validation error
+    env -->> client: Error
+else valid fingerprint format or no fingerprint
+    props -->> env: Connection properties
+    create ws
+    env -> ws: connect(url, properties)
+    activate ws
+    ws -> db: Connect
+    activate db
+    db -->> ws
+    deactivate db
+    ws -->> env
+    deactivate ws
+    group Login command and send credentials
     env -> ws: send_login_command()
     activate ws
     ws -> db: Login command
-    activate db
     db -> db : Generate public key
-    db -->> ws: Login response\nincl. public key
+    activate db
     deactivate db
+    db -->> ws: Login response\nincl. public key
     ws -->> env: Public key
     deactivate ws
     env -> env: Encrypt password\nwith public key
     env -> ws: send_login_credentials(username,\nencrypted_password)
     activate ws
     ws -> db: Credentials
-    activate db
     db -> db: Validate credentials
-    db -->> ws: Session ID
+    activate db
     deactivate db
+    db -->> ws: Session ID
     ws -->> env: Session ID
     deactivate ws
     create conn
     env -> conn: create(session_id)
+    end
+    env -->> client: connection
 end
-client <-- env: connection
+deactivate props
 deactivate env
 ref over client, conn: Use connection, e.g. connection:execute(statement)
 @enduml

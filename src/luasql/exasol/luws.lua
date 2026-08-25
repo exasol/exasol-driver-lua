@@ -18,6 +18,7 @@ local math = require "math"
 local string = require "string"
 local socket = require "socket"
 -- local ltn12 = require "ltn12"
+local luws = {}
 
 -- local WSGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 local STATE_START = "start"
@@ -185,6 +186,27 @@ local function connect( ip, port )
 	return nil, string.format("Connection to %s:%s failed: %s", ip, port, tostring(e))
 end
 
+local function verify_certificate_fingerprint(sock, expected_fingerprint)
+
+	if expected_fingerprint == nil then
+		return true
+	end
+	local certificate = sock:getpeercertificate()
+	if certificate == nil then
+		return nil, "E-EDL-42: TLS peer certificate is unavailable for fingerprint verification"
+	end
+	local actual_fingerprint, err = certificate:digest("sha256")
+	if type(actual_fingerprint) ~= "string" then
+		return nil, "E-EDL-42: TLS peer certificate fingerprint is unavailable"
+	end
+	if actual_fingerprint:lower() ~= expected_fingerprint then
+		return nil, "E-EDL-43: TLS peer certificate fingerprint does not match the configured fingerprint"
+	end
+	return true
+end
+
+luws._verify_certificate_fingerprint = verify_certificate_fingerprint
+
 function wsopen( url, handler, options )
 	D("wsopen(%1)", url)
 	options = options or {}
@@ -246,6 +268,14 @@ function wsopen( url, handler, options )
 		if sock and sock:dohandshake() then
 			D("wsopen() successful SSL/TLS negotiation")
 			wsconn.socket = sock -- save wrapped socket
+			-- [impl -> dsn~tls-certificate-fingerprint-pinning~1]
+			-- [impl -> dsn~reject-mismatching-certificate-fingerprint~1]
+			local verified, verification_error = verify_certificate_fingerprint(sock, options.fingerprint)
+			if not verified then
+				pcall( function() wsconn.socket:close() end )
+				wsconn.socket = nil
+				return false, verification_error
+			end
 		else
 			D("wsopen() failed SSL/TLS negotiation")
 			wsconn.socket:close()
@@ -631,3 +661,5 @@ function wslastping( wsconn )
 	D("wslastping(%1)", wsconn)
 	return wsconn and wsconn.lastPing or 0
 end
+
+return luws

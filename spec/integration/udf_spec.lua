@@ -1,7 +1,6 @@
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
-local log = require("remotelog")
 local amalg = require("amalg_util")
 
 config.configure_logging()
@@ -68,10 +67,6 @@ describe("Exasol driver works inside an UDF", function()
     end
 
     it("can execute query in UDF", function()
-        if not config.db_supports_openssl_module() then
-            log.warn("Skipping test because current Exasol version does not support openssl module")
-            return
-        end
         local result = execute_query_in_udf("select t.* from (values (1, 'a'), (2, 'b'), (3, 'c')) as t(num, txt)")
         assert.is_same([[Column names: [NUM, TXT]
 Column types: [DECIMAL, VARCHAR]
@@ -81,4 +76,3 @@ Row 3: [3, c]
 ]], result)
     end)
 end)
-

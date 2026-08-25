@@ -2,6 +2,8 @@ require("busted.runner")()
 local websocket = require("luasql.exasol.Websocket")
 local ConnectionProperties = require("luasql.exasol.ConnectionProperties")
 local log = require("remotelog")
+local socket = require("socket")
+local ssl = require("ssl")
 local config = require("config")
 config.configure_logging()
 local params<const> = config.get_connection_params()
@@ -42,9 +44,42 @@ local function assert_connect_fails(properties, expected_error)
     end, expected_error)
 end
 
+local function get_tls_peer_fingerprint()
+    local tcp_socket = assert(socket.tcp())
+    assert(tcp_socket:connect(params.host, params.port))
+    local tls_socket = assert(ssl.wrap(tcp_socket, {
+        mode = "client",
+        verify = "none",
+        protocol = "tlsv1_2",
+        options = {"all"}
+    }))
+    assert(tls_socket:dohandshake())
+    local fingerprint = assert(tls_socket:getpeercertificate():digest("sha256"))
+    tls_socket:close()
+    return fingerprint
+end
+
 describe("Websocket", function()
+    -- [itest -> dsn~skip-certificate-fingerprint-verification~1]
     it("connects with default properties", function() --
         assert_connect_successful()
+    end)
+
+    describe("with certificate fingerprint pinning", function()
+        -- [itest -> dsn~tls-certificate-fingerprint-pinning~1]
+        it("connects with the matching peer certificate fingerprint", function()
+            assert_connect_successful({fingerprint = get_tls_peer_fingerprint()})
+        end)
+
+        -- [itest -> dsn~reject-mismatching-certificate-fingerprint~1]
+        it("rejects a mismatching fingerprint without exposing the configured fingerprint", function()
+            local fingerprint = string.rep("0", 64)
+            local success, err = pcall(connect, {fingerprint = fingerprint})
+            assert.is_false(success)
+            local error_message = tostring(err)
+            assert.matches("E%-EDL%-43", error_message)
+            assert.not_matches(fingerprint, error_message)
+        end)
     end)
 
     describe("with option tls_verify option", function()
@@ -72,10 +107,7 @@ describe("Websocket", function()
 
     describe("with tls_protocol option", function()
         describe("connects successfully for Exasol-supported protocol version:", function()
-            local supported_protocols = {"any", "tlsv1_2"}
-            if config.db_supports_tlsv1_3() then
-                table.insert(supported_protocols, "tlsv1_3")
-            end
+            local supported_protocols = {"any", "tlsv1_2", "tlsv1_3"}
             for _, tls_protocol_option in ipairs(supported_protocols) do
                 it(string.format("value %q", tls_protocol_option), function()
                     assert_connect_successful({tls_protocol = tls_protocol_option})
@@ -85,9 +117,6 @@ describe("Websocket", function()
 
         describe("fails SSL negotiation for TLS protocol version that is not supported by Exasol:", function()
             local unsupported_protocols = {"tlsv1", "tlsv1_1"}
-            if not config.db_supports_tlsv1_3() then
-                table.insert(unsupported_protocols, "tlsv1_3")
-            end
             for _, tls_protocol_option in ipairs(unsupported_protocols) do
                 it(string.format("%q", tls_protocol_option), function()
                     assert_connect_fails({tls_protocol = tls_protocol_option}, ssl_negotiation_failed_error)
@@ -141,7 +170,6 @@ describe("Websocket", function()
 
     teardown(function()
         -- Log available SSL configuration options, useful for debugging
-        local ssl = require("ssl")
         log.debug("Available ssl configuration options:")
         for key, value in pairs(ssl.config.options) do --
             log.debug("ssl.config.options['%s'] = %s", key, value)
