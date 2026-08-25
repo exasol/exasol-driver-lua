@@ -299,8 +299,9 @@ See files [amalg_util.lua](../../spec/amalg_util.lua) and [udf_spec.lua](../../s
 
 EDL is tested with the following Exasol versions:
 
-| EDL version | Exasol version | Note                                    |
-|-------------|----------------|-----------------------------------------|
-| 0.2.0       | 7.1.10         |                                         |
-| 0.2.1       | 7.1.17         |                                         |
-| 0.2.1       | 8.18.1         | supports TLS 1.3 and running EDL as UDF |
+| EDL version | Exasol version                       | Note                                    |
+|-------------|--------------------------------------|-----------------------------------------|
+| 0.2.0       | 7.1.10                               |                                         |
+| 0.2.1       | 7.1.17                               |                                         |
+| 0.2.1       | 8.18.1                               | supports TLS 1.3 and running EDL as UDF |
+| 1.0.0       | Latest 8, Latest LTS, Latest overall | add fingerprint pinning                 |
