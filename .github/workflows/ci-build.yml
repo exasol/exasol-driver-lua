@@ -86,6 +86,7 @@ jobs:
           python3 -m pip install exasol-integration-test-docker-environment==6.5.1
           itde spawn-test-environment --environment-name test \
             --docker-db-image-version ${{ matrix.exasol_version }} \
+            --db-mem-size "4 GB" \
             --database-port-forward 8563
           echo "itde-env=$GITHUB_WORKSPACE/.build_output/cache/environments/test/environment_info.sh" >> "$GITHUB_OUTPUT"
 
