@@ -1,10 +1,3 @@
 doc/changes/changelog.md                   linguist-generated=true
 doc/changesets/*                           linguist-generated=true
 doc/images/generated/*                     linguist-generated=true
-
-.github/workflows/broken_links_checker.yml linguist-generated=true
-.github/workflows/ci-build.yml             linguist-generated=true
-.github/workflows/publish-api-doc.yml      linguist-generated=true
-
-.settings/org.eclipse.jdt.core.prefs       linguist-generated=true
-.settings/org.eclipse.jdt.ui.prefs         linguist-generated=true
