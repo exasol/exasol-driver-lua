@@ -8,9 +8,9 @@ jobs:
       matrix:
         lua_version: ["5.4"]
         exasol_version:
-          - "8.29.13" # Latest 8
-          - "2025.1.14" # Latest LTS
-          - "2026.1.1" # Latest overall
+          - "8.29.13" # Latest 8 that ITDE supports
+          - "2025.1.8" # Latest LTS that ITDE supports
+          - "2026.1.0" # Latest overall that ITDE supports
     env:
       DEFAULT_DB_VERSION: "2026.1.1"
     concurrency:
