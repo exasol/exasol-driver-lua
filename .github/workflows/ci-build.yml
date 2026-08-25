@@ -7,9 +7,12 @@ jobs:
       fail-fast: true
       matrix:
         lua_version: ["5.4"]
-        exasol_version: ["8.29.6"]
+        exasol_version:
+          - "8.29.13" # Latest 8
+          - "2025.1.14" # Latest LTS
+          - "2026.1.1" # Latest overall
     env:
-      DEFAULT_DB_VERSION: "8.29.6"
+      DEFAULT_DB_VERSION: "2026.1.1"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
@@ -20,12 +23,12 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Checkout integration test docker environment
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
           repository: "exasol/integration-test-docker-environment"
@@ -33,7 +36,7 @@ jobs:
           ref: "3.4.0"
 
       - name: Cache local Luarocks repository
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.luarocks
           key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
@@ -41,12 +44,12 @@ jobs:
             ${{ runner.os }}-luarocks-
 
       - name: Install Lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v10
+        uses: leafo/gh-actions-lua@v13
         with:
           luaVersion: ${{ matrix.lua_version }}
 
       - name: Install LuaRocks
-        uses: leafo/gh-actions-luarocks@v4
+        uses: leafo/gh-actions-luarocks@v6
         with:
           luaRocksVersion: "3.11.0"
 
@@ -79,7 +82,7 @@ jobs:
 
       - name: Upload API documentation
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: api-documentation
           path: target/ldoc/
@@ -125,7 +128,7 @@ jobs:
 
       - name: Archive code coverage results
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: luacov-report
           path: target/luacov-reports/*
@@ -142,7 +145,7 @@ jobs:
 
       - name: Set up JDK for OpenFastTrace
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: 17
           distribution: temurin
@@ -159,8 +162,6 @@ jobs:
   ## This is a separate job because it requires running apt-get which takes > 40s.
   ## When the other job also uses apt-get this can be moved back.
   plantuml:
-    strategy:
-      fail-fast: true
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
@@ -169,7 +170,7 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
