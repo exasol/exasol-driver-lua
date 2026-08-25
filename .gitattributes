@@ -1,3 +1,3 @@
 doc/changes/changelog.md                   linguist-generated=true
 doc/changesets/*                           linguist-generated=true
-doc/images/generated/*                     linguist-generated=true
+doc/images/generated/*.svg                 linguist-generated=true
