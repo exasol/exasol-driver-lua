@@ -152,7 +152,17 @@ When creating a new connection you can specify the following properties:
     ```lua
     require("ssl").config.options
     ```
-* `fingerprint` optionally pins the TLS peer certificate. Set it to the SHA-256 fingerprint of the certificate's binary DER encoding, represented by exactly 64 hexadecimal digits. Upper-case digits are accepted and normalized to lower case. When configured, the driver verifies the fingerprint after the TLS handshake and before the WebSocket upgrade or login. Invalid fingerprints, unavailable certificate data, and mismatches fail the connection without including credentials or certificate data in the error.
+* `fingerprint` optionally pins the TLS peer certificate
+
+##### TLS Certificate Fingerprint Pinning
+
+Clients of TLS connections need to verify the authenticity of the server they communicate with. Usually, that is done via certificate validation through signatures. Where this is not available, fingerprint pinning is a less elegant variant.  
+
+You can optionally set the 64-digit hexadecimal fingerprint that the client expects. If it does not match the fingerprint of the server's TLS certificate, the driver closes the connection.
+
+The letters in the fingerprint are case-insensitive.
+
+The fingerprint itself is the SHA-256 hash of the certificate's binary DER encoding.
 
 ### Executing SQL Statements and Queries
 
