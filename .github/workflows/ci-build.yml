@@ -87,7 +87,7 @@ jobs:
           itde spawn-test-environment --environment-name test \
             --docker-db-image-version ${{ matrix.exasol_version }} \
             --database-port-forward 8563
-          echo "itde-env=$GITHUB_WORKSPACE/.build_output/cache/test/environment_info.sh" >> "$GITHUB_OUTPUT"
+          echo "itde-env=$GITHUB_WORKSPACE/.build_output/cache/environments/test/environment_info.sh" >> "$GITHUB_OUTPUT"
 
       - name: Verify Exasol environment configuration
         run: |
