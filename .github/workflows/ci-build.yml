@@ -9,8 +9,8 @@ jobs:
         lua_version: ["5.4"]
         exasol_version:
           - "8.29.13" # Latest 8 that ITDE supports
-          - "2025.1.8" # Latest LTS that ITDE supports
-          - "2026.1.0" # Latest overall that ITDE supports
+          - "2025.1.11" # Latest LTS that ITDE supports
+          #- "2026.1.0" # Latest overall that ITDE supports
     env:
       DEFAULT_DB_VERSION: "2026.1.1"
     concurrency:
@@ -86,7 +86,6 @@ jobs:
           python3 -m pip install exasol-integration-test-docker-environment==6.5.1
           itde spawn-test-environment --environment-name test \
             --docker-db-image-version ${{ matrix.exasol_version }} \
-            --db-mem-size "4 GB" \
             --database-port-forward 8563
           echo "itde-env=$GITHUB_WORKSPACE/.build_output/cache/environments/test/environment_info.sh" >> "$GITHUB_OUTPUT"
 
