@@ -3,6 +3,8 @@ on: [push]
 jobs:
 
   matrix-build:
+    # Keep collecting evidence for the reported server issue without blocking PRs.
+    continue-on-error: ${{ matrix.exasol_version == '2025.1.11' || matrix.exasol_version == '2026.1.0' }}
     strategy:
       fail-fast: true
       matrix:
