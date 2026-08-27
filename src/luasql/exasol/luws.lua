@@ -1,13 +1,11 @@
---[[
-	luws.lua - Luup WebSocket implemented (for Vera Luup and openLuup systems)
-	Copyright 2020 Patrick H. Rigney, All Rights Reserved. http://www.toggledbits.com/
-	Works best with SockProxy installed.
-	Ref: RFC6455
-
-	NOTA BENE: 64-bit payload length not supported.
-
-	See CHANGELOG.md for release notes at https://github.com/toggledbits/LuWS
---]]
+-- luws.lua - Luup WebSocket implemented (for Vera Luup and openLuup systems)
+-- Copyright 2020 Patrick H. Rigney, All Rights Reserved. http://www.toggledbits.com/
+-- Works best with SockProxy installed.
+-- Ref: RFC6455
+--
+-- NOTA BENE: 64-bit payload length not supported.
+--
+-- See CHANGELOG.md for release notes at https://github.com/toggledbits/LuWS
 --luacheck: std lua51,module,read globals luup,ignore 542 611 612 614 111/_,no max line length
 
 _VERSION = 20358
@@ -33,6 +31,7 @@ local STATE_READMASK = "mask"
 local MAXMESSAGE = 65535 -- maximum WS message size
 local CHUNKSIZE = 2048
 local DEFAULTMSGTIMEOUT = 0 -- drop connection if no message in this time (0=no timeout)
+local WS_TLS_HANDSHAKE_TIMEOUT <const> = 5
 local WS_UPGRADE_REQUEST_TIMEOUT <const> = 5
 local WS_UPGRADE_RESPONSE_TIMEOUT <const> = 5
 local WS_SEND_FRAME_TIMEOUT <const> = 5
@@ -264,7 +263,10 @@ function wsopen( url, handler, options )
 			return false, "Failed to create SSL socket: '"..err.."'"
 		end
 		D("wsopen() starting handshake");
-		if sock and sock:dohandshake() then
+		sock:settimeout( WS_TLS_HANDSHAKE_TIMEOUT, "b" )
+		sock:settimeout( WS_TLS_HANDSHAKE_TIMEOUT, "r" )
+		local handshake_success, handshake_error = sock:dohandshake()
+		if handshake_success then
 			D("wsopen() successful SSL/TLS negotiation")
 			wsconn.socket = sock -- save wrapped socket
 			-- [impl -> dsn~tls-certificate-fingerprint-pinning~1]
@@ -276,9 +278,12 @@ function wsopen( url, handler, options )
 				return false, verification_error
 			end
 		else
-			D("wsopen() failed SSL/TLS negotiation")
-			wsconn.socket:close()
+			D("wsopen() failed SSL/TLS negotiation: %1", handshake_error)
+			pcall( function() sock:close() end )
 			wsconn.socket = nil
+			if handshake_error == "timeout" then
+				return false, string.format("TLS handshake timed out after %ss", WS_TLS_HANDSHAKE_TIMEOUT)
+			end
 			return false, "Failed SSL/TLS negotiation"
 		end
 	end

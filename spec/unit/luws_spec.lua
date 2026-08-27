@@ -33,6 +33,7 @@ describe("LuWS TLS certificate fingerprint verification", function()
     it("closes the TLS socket before WebSocket upgrade on mismatch", function()
         local original_ssl = package.loaded.ssl
         local tls_socket = {closed = false}
+        tls_socket.settimeout = function() end
         tls_socket.dohandshake = function() return true end
         tls_socket.getpeercertificate = function()
             return {digest = function() return string.rep("b", 64) end}
