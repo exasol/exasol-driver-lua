@@ -1,4 +1,4 @@
--- luacheck: globals wsopen
+-- luacheck: globals wsopen wsreceive
 require("busted.runner")()
 local luws = require("luasql.exasol.luws")
 
@@ -53,5 +53,31 @@ describe("LuWS TLS certificate fingerprint verification", function()
         assert.is_false(websocket)
         assert.is_same("E-EDL-43: TLS peer certificate fingerprint does not match the configured fingerprint", err)
         assert.is_true(tls_socket.closed)
+    end)
+end)
+
+describe("LuWS receive timeout", function()
+    -- [utest -> dsn~websocket-timeout-coordination~1]
+    it("reports the LuWS wire-level timeout", function()
+        local timeout_seconds = 5
+        local websocket = {
+            connected = true,
+            lastMessage = 0,
+            options = {receive_timeout = timeout_seconds},
+            socket = {
+                settimeout = function()
+                end,
+                receive = function()
+                    return nil, "timeout", ""
+                end
+            },
+            msghandler = function()
+            end
+        }
+
+        local result, err = wsreceive(websocket)
+
+        assert.is_nil(result)
+        assert.is_same("LuWS wire-level timeout after 5s without a WebSocket message", err)
     end)
 end)

@@ -36,6 +36,7 @@ local DEFAULTMSGTIMEOUT = 0 -- drop connection if no message in this time (0=no 
 local WS_UPGRADE_REQUEST_TIMEOUT <const> = 5
 local WS_UPGRADE_RESPONSE_TIMEOUT <const> = 5
 local WS_SEND_FRAME_TIMEOUT <const> = 5
+local MESSAGE_TIMEOUT_ERROR <const> = "LuWS wire-level timeout after %ss without a WebSocket message"
 
 local timenow = socket.gettime or os.time -- use hi-res time if available
 local unpack = unpack or table.unpack -- luacheck: ignore 143
@@ -605,6 +606,7 @@ local function wshandleincoming( data, wsconn )
 	D("wshandleincoming() ending state is %1", state.readstate)
 end
 
+-- [impl -> dsn~websocket-timeout-coordination~1]
 -- Receiver task. Use non-blocking read. Returns nil,err on error, otherwise true/false is the
 -- receiver believes there may immediately be more data to process.
 function wsreceive( wsconn )
@@ -621,14 +623,16 @@ function wsreceive( wsconn )
 		if err == "timeout" or err == "wantread" then
 			if bb and #bb > 0 then
 				D("wsreceive() %1; handling partial result %2 bytes", err, #bb)
+				wsconn.lastMessage = timenow()
 				wshandleincoming( bb, wsconn )
 				return false, #bb -- timeout, say no more data
 			elseif wsconn.options.receive_timeout > 0 and
 				( timenow() - wsconn.lastMessage ) > wsconn.options.receive_timeout then
-				D("wsreceive() message timeout after %1s", wsconn.options.receive_timeout)
-				pcall( wsconn.msghandler, wsconn, false, "message timeout",
+				local timeout_error = string.format(MESSAGE_TIMEOUT_ERROR, wsconn.options.receive_timeout)
+				D("wsreceive() %1", timeout_error)
+				pcall( wsconn.msghandler, wsconn, false, timeout_error,
 					unpack(wsconn.options.handler_args or {}) )
-				return nil, "message timeout"
+				return nil, timeout_error
 			end
 			D("wsreceive() no data received, err=%1, byte count=%2", err, #bb)
 			return false, 0 -- not error, no data was handled
@@ -641,6 +645,7 @@ function wsreceive( wsconn )
 	end
 	D("wsreceive() handling %1 bytes", #nb)
 	if #nb > 0 then
+		wsconn.lastMessage = timenow()
 		wshandleincoming( nb, wsconn )
 	end
 	return #nb > 0, #nb -- data handled, maybe more?

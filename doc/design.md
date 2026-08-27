@@ -175,7 +175,32 @@ See [Diagram source](./model/diagrams/sequence/seq_cursor_close.plantuml).
 
 ## Websocket Request/Response
 
-Detailed Websocket Request and Response cycle using `connection:execute()` as an example:
+### Timeout Ownership and Error Propagation
+`dsn~websocket-timeout-coordination~1`
+
+LuWS owns the timeout that detects the absence of WebSocket traffic. It returns a distinct, timeout result to `Websocket` clearly distinguishable from ordinary "no data available" polling.
+
+`Websocket` stops waiting immediately on that signal. The receive-loop ends and `Websocket` does not send another application-level
+WebSocket command on the timed-out session.
+
+Needs: impl, utest, itest
+
+### Websocket Safety Deadline
+`dsn~websocket-safety-deadline~1`
+
+`Websocket` may use a safety deadline only when it is longer than the LuWS wire-level timeout, so it cannot mask a LuWS timeout. Its error identifies the expired `Websocket` deadline without a LuWS result. Timeout errors state the layer, operation, and elapsed timeout without sensitive or unbounded data. A timed-out session sends no further application-level requests, including during cleanup.
+
+Needs: impl, utest, itest
+
+### Websocket Connection
+
+![Sequence Diagram: Websocket Connection](./images/generated/seq_websocket_connect.svg)
+
+See [Diagram source](./model/diagrams/sequence/seq_websocket_connect.plantuml).
+
+### Websocket Execute
+
+Detailed request and response cycle using `connection:execute()` as an example:
 
 ![Sequence Diagram: Websocket Request/Response](./images/generated/seq_websocket_request_response.svg)
 

@@ -1,6 +1,8 @@
 @startuml seq_websocket_request_response
 !include ../clean.skin
 
+caption Receive data from the database (good scenario without timeouts)
+
 participant "Client Code" as client <<external>>
 box "Exasol Driver for Lua"
     participant "Connection" as conn << (C,#ADD1B2) >>
@@ -11,50 +13,9 @@ box "Exasol Driver for Lua"
 end box
 participant "Exasol Database" as db
 
-activate client
-activate db
-
-group Initial Connection
-    client -> ws : connect(url)
-    activate ws
-    create msghandler
-    ws -> msghandler : create()
-    ws -> luws : wsopen(url, message_handler,\ntls_options)
-    activate luws
-    luws -> luws : Wrap socket with TLS
-    activate luws
-    deactivate luws
-    luws -> luws : Complete TLS handshake
-    activate luws
-    deactivate luws
-    alt fingerprint is configured
-        ' [dsn~tls-certificate-fingerprint-pinning~1 -> scn~connect-with-matching-certificate-fingerprint~1 >> impl,utest,itest]
-        luws -> luws : Read peer certificate and\ncalculate SHA-256 fingerprint
-        activate luws
-        deactivate luws
-        alt fingerprint matches
-            luws -> luws : Upgrade connection to WebSocket
-            activate luws
-            deactivate luws
-            luws -->> ws : Socket
-        else fingerprint mismatches or certificate data is unavailable
-            ' [dsn~reject-mismatching-certificate-fingerprint~1 -> scn~reject-mismatching-certificate-fingerprint~1 >> impl,utest,itest]
-            luws -> luws : Close TLS socket
-            activate luws
-            deactivate luws
-            luws -->> ws : Error
-        end
-    else no fingerprint is configured
-        ' [dsn~skip-certificate-fingerprint-verification~1 -> scn~connect-without-certificate-fingerprint~1 >> impl,utest,itest]
-        luws -> luws : Upgrade connection to WebSocket
-        activate luws
-        deactivate luws
-        luws -->> ws : Socket
-    end
-    deactivate luws
-    ws -->> client : connection or error
-    deactivate ws
-end
+ref over client, ws
+    Connect (see Websocket Connection)
+end ref
 
 client -> conn : execute()
 activate conn
@@ -79,42 +40,40 @@ group Wait for response
     activate db
     deactivate db
     loop until data received
-        'activate luws
         ws -> luws : wsreceive(socket)
         activate luws
         luws -->> ws : no data available
+        deactivate luws
     end
-    db -> luws: Response
-    deactivate db
-    activate luws
-    deactivate luws
-    luws -> luws : Decode\nWebsocket frame
-    activate luws
-    deactivate luws
-    luws -> msghandler : Message received
-    activate msghandler
-    msghandler -> msghandler : Store message
-    activate msghandler
-    deactivate msghandler
-    msghandler -->> luws
-    deactivate msghandler
-    deactivate luws
-    luws -->> ws : data available
-    deactivate luws
-end
-
-ws -> msghandler : get_data()
-activate msghandler
-msghandler -->> ws
-deactivate msghandler
-ws -->> exaws : Response payload
-deactivate ws
-exaws -> exaws : Decode JSON payload,\ncheck for exception
-activate exaws
-deactivate exaws
-exaws -->> conn : result set
-deactivate exaws
-conn -->> client : cursor
-deactivate conn
-
+    loop until no more data
+        ws -> luws : wsreceive(socket)
+        activate luws
+        db -> luws: Response
+        deactivate db
+        luws -> luws : Decode\nWebsocket frame
+        activate luws
+        deactivate luws
+        luws -> msghandler : Message received
+        activate msghandler
+        msghandler -> msghandler : Store message
+        activate msghandler
+        deactivate msghandler
+        msghandler -->> luws
+        deactivate msghandler
+        luws -->> ws : data available
+        deactivate luws
+        ws -> msghandler : get_data()
+        activate msghandler
+        msghandler -->> ws
+        deactivate msghandler
+    end
+    ws -->> exaws : Response payload
+    deactivate
+    exaws -> exaws : Decode JSON payload,\ncheck for exception
+    activate exaws
+    deactivate exaws
+    exaws -->> conn : result set
+    deactivate
+    conn -->> client : cursor
+    deactivate
 @enduml

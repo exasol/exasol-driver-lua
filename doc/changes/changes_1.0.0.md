@@ -19,3 +19,7 @@ Breaking change: Support for Exasol 7.x has been removed.
 ## Refactoring
 
 * #97: Updated dependencies on 0.2.1
+
+## Bugfixes
+
+* 100: Improved handling and error reporting for WebSocket receive timeouts.
