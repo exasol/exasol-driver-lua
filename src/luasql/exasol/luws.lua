@@ -39,7 +39,6 @@ local WS_SEND_FRAME_TIMEOUT <const> = 5
 local MESSAGE_TIMEOUT_ERROR <const> = "LuWS wire-level timeout after %ss without a WebSocket message"
 
 local timenow = socket.gettime or os.time -- use hi-res time if available
-local unpack = unpack or table.unpack -- luacheck: ignore 143
 local LOG = (luup and luup.log) or ( function(msg,level) print(level or 50,msg) end )
 
 function dump(t, seen)
@@ -195,7 +194,7 @@ local function verify_certificate_fingerprint(sock, expected_fingerprint)
 	if certificate == nil then
 		return nil, "E-EDL-42: TLS peer certificate is unavailable for fingerprint verification"
 	end
-	local actual_fingerprint, err = certificate:digest("sha256")
+	local actual_fingerprint, _ = certificate:digest("sha256")
 	if type(actual_fingerprint) ~= "string" then
 		return nil, "E-EDL-42: TLS peer certificate fingerprint is unavailable"
 	end
@@ -415,7 +414,7 @@ end
 local function handle_control_frame( wsconn, opcode, data )
 	D("handle_control_frame(%1,%2,%3)", wsconn, opcode, data )
 	if wsconn.options.control_handler and
-		false == wsconn.options.control_handler( wsconn, opcode, data, unpack(wsconn.options.handler_args or {}) ) then
+		false == wsconn.options.control_handler( wsconn, opcode, data, table.unpack(wsconn.options.handler_args or {}) ) then
 		-- If custom handler returns exactly boolean false, don't do default actions
 		return
 	end
@@ -427,7 +426,7 @@ local function handle_control_frame( wsconn, opcode, data )
 		end
 		-- Notify
 		pcall( wsconn.msghandler, wsconn, false, "receiver error: closed",
-			unpack(wsconn.options.handler_args or {}) )
+			table.unpack(wsconn.options.handler_args or {}) )
 	elseif opcode == 0x09 then
 		-- Ping. Reply with pong.
 		D("handle_control_frame() Received ping with data %1, send pong", data)
@@ -456,12 +455,12 @@ local function wshandlefragment( fin, op, data, wsconn )
 			-- Control frame or FIN on first packet, handle immediately, no copy/buffering
 			D("wshandlefragment() fast dispatch %1 byte message for op %2", #data, op)
 			return pcall( wsconn.msghandler, wsconn, op, data,
-				unpack(wsconn.options.handler_args or {}) )
+				table.unpack(wsconn.options.handler_args or {}) )
 		end
 		-- Completion of continuation; RFC6455 requires final fragment to be op 0 (we tolerate same op)
 		if op ~= 0 and op ~= wsconn.msgop then
 			return pcall( wsconn.msghandler, wsconn, false, "ws completion error",
-				unpack(wsconn.options.handler_args or {}) )
+				table.unpack(wsconn.options.handler_args or {}) )
 		end
 		-- Append to buffer and send message
 		local maxn = math.max( 0, wsconn.options.max_payload_size - #wsconn.msg )
@@ -473,7 +472,7 @@ local function wshandlefragment( fin, op, data, wsconn )
 		D("wshandlefragment() dispatch %2 byte message for op %1", wsconn.msgop, #wsconn.msg)
 		wsconn.lastMessage = timenow()
 		local ok, err = pcall( wsconn.msghandler, wsconn, wsconn.msgop, wsconn.msg,
-			unpack(wsconn.options.handler_args or {}) )
+			table.unpack(wsconn.options.handler_args or {}) )
 		if not ok then
 			L("wsandlefragment() message handler threw error:", err)
 		end
@@ -489,7 +488,7 @@ local function wshandlefragment( fin, op, data, wsconn )
 			-- D("wshandlefragment() no fin, additional fragment")
 			-- RFC6455 requires op on continuations to be 0.
 			if op ~= 0 then return pcall( wsconn.msghandler, wsconn, false,
-				"ws continuation error", unpack(wsconn.options.handler_args or {}) ) end
+				"ws continuation error", table.unpack(wsconn.options.handler_args or {}) ) end
 			local maxn = math.max( 0, wsconn.options.max_payload_size - #wsconn.msg )
 			if maxn < #data then
 				L("wshandlefragment() buffer overflow, have %1, incoming %2, max %3; message truncated",
@@ -597,7 +596,7 @@ local function wshandleincoming( data, wsconn )
 			end
 			-- D("wshandleincoming() received %1 mask bytes, now %2", state.masklen, state.mask)
 		elseif state.readstate == STATE_SYNC then
-			return pcall( state.msghandler, wsconn, false, "lost sync", unpack(wsconn.options.handler_args or {}) )
+			return pcall( state.msghandler, wsconn, false, "lost sync", table.unpack(wsconn.options.handler_args or {}) )
 		else
 			assert(false, "Invalid state in wshandleincoming: "..tostring(state.readstate))
 		end
@@ -631,7 +630,7 @@ function wsreceive( wsconn )
 				local timeout_error = string.format(MESSAGE_TIMEOUT_ERROR, wsconn.options.receive_timeout)
 				D("wsreceive() %1", timeout_error)
 				pcall( wsconn.msghandler, wsconn, false, timeout_error,
-					unpack(wsconn.options.handler_args or {}) )
+					table.unpack(wsconn.options.handler_args or {}) )
 				return nil, timeout_error
 			end
 			D("wsreceive() no data received, err=%1, byte count=%2", err, #bb)
@@ -640,7 +639,7 @@ function wsreceive( wsconn )
 		-- ??? error
 		D("wsreceive() Unexpected error %1 when calling socket:receive()", err)
 		pcall( wsconn.msghandler, wsconn, false, "receiver error: "..err,
-			unpack(wsconn.options.handler_args or {}) )
+			table.unpack(wsconn.options.handler_args or {}) )
 		return nil, err
 	end
 	D("wsreceive() handling %1 bytes", #nb)
