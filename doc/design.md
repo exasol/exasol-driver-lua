@@ -183,14 +183,14 @@ LuWS owns the timeout that detects the absence of WebSocket traffic. It returns 
 `Websocket` stops waiting immediately on that signal. The receive-loop ends and `Websocket` does not send another application-level
 WebSocket command on the timed-out session.
 
-Needs: impl, utest, itest
+Needs: impl, utest
 
 ### Websocket Safety Deadline
 `dsn~websocket-safety-deadline~1`
 
 `Websocket` may use a safety deadline only when it is longer than the LuWS wire-level timeout, so it cannot mask a LuWS timeout. Its error identifies the expired `Websocket` deadline without a LuWS result. Timeout errors state the layer, operation, and elapsed timeout without sensitive or unbounded data. A timed-out session sends no further application-level requests, including during cleanup.
 
-Needs: impl, utest, itest
+Needs: impl, utest
 
 ### Websocket Connection
 
