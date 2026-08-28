@@ -1,0 +1,18 @@
+@startuml
+:Websocket: send and wait for response
+{{
+    start
+    :luws: send and wait for response;
+    note right
+        Times out after
+         5 seconds
+    end note
+    end
+}}
+;
+note right
+    Times out after
+     10 seconds
+end note
+
+@enduml

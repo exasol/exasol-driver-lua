@@ -1,0 +1,51 @@
+@startuml seq_websocket_connect
+!include ../clean.skin
+
+participant "Client Code" as client <<external>>
+box "Exasol Driver for Lua"
+    participant "Websocket" as ws << (C,#ADD1B2) >>
+    participant "Message Handler" as msghandler << (C,#ADD1B2) >>
+    participant "LuWS Socket" as luws <<Third party library>>
+end box
+
+client -> ws : connect(url)
+activate ws
+create msghandler
+ws -> msghandler : create()
+ws -> luws : wsopen(url, message_handler,\ntls_options)
+activate luws
+luws -> luws : Wrap socket with TLS
+activate luws
+deactivate luws
+luws -> luws : Complete TLS handshake
+activate luws
+deactivate luws
+alt fingerprint is configured
+    ' [dsn~tls-certificate-fingerprint-pinning~1 -> scn~connect-with-matching-certificate-fingerprint~1 >> impl,utest,itest]
+    luws -> luws : Read peer certificate and\ncalculate SHA-256 fingerprint
+    activate luws
+    deactivate luws
+    alt fingerprint matches
+        luws -> luws : Upgrade connection to WebSocket
+        activate luws
+        deactivate luws
+        luws -->> ws : Socket
+    else fingerprint mismatches or certificate data is unavailable
+        ' [dsn~reject-mismatching-certificate-fingerprint~1 -> scn~reject-mismatching-certificate-fingerprint~1 >> impl,utest,itest]
+        luws -> luws : Close TLS socket
+        activate luws
+        deactivate luws
+        luws -->> ws : Error
+    end
+else no fingerprint is configured
+    ' [dsn~skip-certificate-fingerprint-verification~1 -> scn~connect-without-certificate-fingerprint~1 >> impl,utest,itest]
+    luws -> luws : Upgrade connection to WebSocket
+    activate luws
+    deactivate luws
+    luws -->> ws : Socket
+end
+deactivate luws
+ws -->> client : connection or error
+deactivate ws
+
+@enduml

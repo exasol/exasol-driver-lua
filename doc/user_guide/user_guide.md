@@ -58,7 +58,7 @@ EXASOL_HOST=<host> \
   lua doc/user_guide/examples.lua
 ```
 
-You will need to adjust host, port and credentials. If everything is setup correctly, the script will log the following:
+You will need to adjust host, port and credentials. If everything is set up correctly, the script will log the following:
 
 ```
 2022-04-27 18:07:09 (038.649ms) [INFO]   Successfully connected to Exasol database at 192.168.56.7:8563 with user sys
@@ -147,11 +147,22 @@ When creating a new connection you can specify the following properties:
   * `tlsv1`
   * `tlsv1_1`
   * `tlsv1_2` (default)
-  * `tlsv1_3` (only supported with Exasol v8 and later)
+  * `tlsv1_3`
 * `tls_options` specifies additional options for OpenSSL, e.g. `no_tlsv1`. The default value is `all`. You can get a complete list of supported options by executing the following Lua code:
     ```lua
     require("ssl").config.options
     ```
+* `fingerprint` optionally pins the TLS peer certificate
+
+##### TLS Certificate Fingerprint Pinning
+
+Clients of TLS connections need to verify the authenticity of the server they communicate with. Usually, that is done via certificate validation through signatures. Where this is not available, fingerprint pinning is a less elegant variant.  
+
+You can optionally set the 64-digit hexadecimal fingerprint that the client expects. If it does not match the fingerprint of the server's TLS certificate, the driver closes the connection.
+
+The letters in the fingerprint are case-insensitive.
+
+The fingerprint itself is the SHA-256 hash of the certificate's binary DER encoding.
 
 ### Executing SQL Statements and Queries
 
@@ -240,7 +251,7 @@ Close the environment after you have closed all connections created with it. The
 
 ## Using `exasol-driver-lua` in an Exasol UDF
 
-Exasol version 7.1 or later allows running Lua code in [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm). The exasol-driver-lua uses only dependencies that are available to UDFs or that can be included into an package using amalgamation. This makes it possible to also use it in an Exasol UDF, e.g. for accessing another Exasol database. Some required C-Lua-interface packages are shipped with Exasol 8 and later. So Exasol 8 is required to run the driver.
+Exasol allows running Lua code in [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm). The exasol-driver-lua uses only dependencies that are available to UDFs or that can be included into a package using amalgamation. This makes it possible to also use it in an Exasol UDF, for example for accessing another Exasol database.
 
 To build such a package follow these steps:
 
@@ -288,8 +299,9 @@ See files [amalg_util.lua](../../spec/amalg_util.lua) and [udf_spec.lua](../../s
 
 EDL is tested with the following Exasol versions:
 
-| EDL version | Exasol version | Note                                    |
-|-------------|----------------|-----------------------------------------|
-| 0.2.0       | 7.1.10         |                                         |
-| 0.2.1       | 7.1.17         |                                         |
-| 0.2.1       | 8.18.1         | supports TLS 1.3 and running EDL as UDF |
+| EDL version | Exasol version                       | Note                                    |
+|-------------|--------------------------------------|-----------------------------------------|
+| 0.2.0       | 7.1.10                               |                                         |
+| 0.2.1       | 7.1.17                               |                                         |
+| 0.2.1       | 8.18.1                               | supports TLS 1.3 and running EDL as UDF |
+| 1.0.0       | Latest 8, Latest LTS, Latest overall | add fingerprint pinning                 |

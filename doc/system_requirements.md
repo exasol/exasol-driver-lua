@@ -105,6 +105,16 @@ Covers:
 * `feat~luasql-api~1`
 Needs: dsn
 
+##### TLS Certificate Fingerprint Pinning
+`req~tls-certificate-fingerprint-pinning~1`
+
+Client code can pass the optional `fingerprint` connection property to `Environment:connect()` to authenticate the TLS peer certificate without a CA file, trust store, or access to internal driver sockets. The canonical value is the SHA-256 fingerprint of the peer certificate's binary DER encoding, expressed as a 64-digit hexadecimal number.
+
+Covers:
+* `feat~luasql-api~1`
+
+Needs: scn
+
 ##### Environment:close()
 `req~luasql-environment-close~1`
 
@@ -218,6 +228,52 @@ Needs: dsn
 ### LuaSQL Error Handling
 
 ### LuaSQL
+
+## Scenarios
+
+### Connect Without a Fingerprint
+`scn~connect-without-certificate-fingerprint~1`
+
+**GIVEN** client code does not set `fingerprint`
+**WHEN** the client code connects to the database
+**THEN** the driver uses the configured existing TLS options and does not perform certificate fingerprint verification.
+
+Covers:
+* `req~tls-certificate-fingerprint-pinning~1`
+Needs: dsn
+
+### Reject a Malformed Fingerprint
+`scn~reject-malformed-certificate-fingerprint~1`
+
+**GIVEN** client sets `fingerprint` to a missing, non-string, or malformed value
+**WHEN** the client attempts to connect to the database
+**THEN** the driver rejects the connection configuration with a safe diagnostic before opening a network connection.
+
+Covers:
+* `req~tls-certificate-fingerprint-pinning~1`
+Needs: dsn
+
+### Connect With a Matching Fingerprint
+`scn~connect-with-matching-certificate-fingerprint~1`
+
+**GIVEN** client configures a fingerprint that matches case-insensitively the TLS peer certificate
+**WHEN** the client connects to the database
+**THEN** the driver verifies the fingerprint after the TLS handshake and before the WebSocket upgrade, then continues connecting normally.
+
+Covers:
+* `req~tls-certificate-fingerprint-pinning~1`
+Needs: dsn
+
+### Reject a Mismatching Fingerprint
+`scn~reject-mismatching-certificate-fingerprint~1`
+
+**GIVEN** client configures a fingerprint that does not match the TLS peer certificate
+**WHEN** the client connects to the database
+**THEN** the driver closes the TLS connection and reports a safe mismatch diagnostic before the WebSocket upgrade, Exasol login command, or credentials are sent.
+
+Covers:
+* `req~tls-certificate-fingerprint-pinning~1`
+Needs: dsn
 
 ## Non-functional Requirements
 

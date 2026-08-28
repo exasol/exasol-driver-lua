@@ -77,4 +77,30 @@ Mitigations:
             assert.is_same("myValue", props:get_tls_options())
         end)
     end)
+
+    describe("fingerprint property", function()
+        local EXPECTED_VALIDATION_ERROR<const> = "E-EDL-41: Parameter 'fingerprint' must be a "
+                .. "64-digit hexadecimal SHA-256 fingerprint\n\nMitigations:\n\n"
+                .. "* Use the SHA-256 fingerprint of the TLS peer certificate."
+
+        -- [utest -> dsn~skip-certificate-fingerprint-verification~1]
+        it("is absent by default", function()
+            assert.is_nil(ConnectionProperties:create():get_fingerprint())
+        end)
+
+        -- [utest -> dsn~tls-certificate-fingerprint-pinning~1]
+        it("normalizes upper-case hexadecimal input", function()
+            local fingerprint = string.rep("AB", 32)
+            local properties = ConnectionProperties:create({fingerprint = fingerprint})
+            assert.is_same(string.rep("ab", 32), properties:get_fingerprint())
+        end)
+
+        -- [utest -> dsn~validate-certificate-fingerprint~1]
+        for _, invalid_fingerprint in ipairs({"", string.rep("a", 63), string.rep("g", 64), 42}) do
+            it("rejects invalid fingerprint " .. tostring(invalid_fingerprint), function()
+                assert_validation_error({fingerprint = invalid_fingerprint},
+                                        EXPECTED_VALIDATION_ERROR)
+            end)
+        end
+    end)
 end)

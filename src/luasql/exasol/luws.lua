@@ -1,13 +1,11 @@
---[[
-	luws.lua - Luup WebSocket implemented (for Vera Luup and openLuup systems)
-	Copyright 2020 Patrick H. Rigney, All Rights Reserved. http://www.toggledbits.com/
-	Works best with SockProxy installed.
-	Ref: RFC6455
-
-	NOTA BENE: 64-bit payload length not supported.
-
-	See CHANGELOG.md for release notes at https://github.com/toggledbits/LuWS
---]]
+-- luws.lua - Luup WebSocket implemented (for Vera Luup and openLuup systems)
+-- Copyright 2020 Patrick H. Rigney, All Rights Reserved. http://www.toggledbits.com/
+-- Works best with SockProxy installed.
+-- Ref: RFC6455
+--
+-- NOTA BENE: 64-bit payload length not supported.
+--
+-- See CHANGELOG.md for release notes at https://github.com/toggledbits/LuWS
 --luacheck: std lua51,module,read globals luup,ignore 542 611 612 614 111/_,no max line length
 
 _VERSION = 20358
@@ -18,6 +16,7 @@ local math = require "math"
 local string = require "string"
 local socket = require "socket"
 -- local ltn12 = require "ltn12"
+local luws = {}
 
 -- local WSGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 local STATE_START = "start"
@@ -32,12 +31,13 @@ local STATE_READMASK = "mask"
 local MAXMESSAGE = 65535 -- maximum WS message size
 local CHUNKSIZE = 2048
 local DEFAULTMSGTIMEOUT = 0 -- drop connection if no message in this time (0=no timeout)
+local WS_TLS_HANDSHAKE_TIMEOUT <const> = 5
 local WS_UPGRADE_REQUEST_TIMEOUT <const> = 5
 local WS_UPGRADE_RESPONSE_TIMEOUT <const> = 5
 local WS_SEND_FRAME_TIMEOUT <const> = 5
+local MESSAGE_TIMEOUT_ERROR <const> = "LuWS wire-level timeout after %ss without a WebSocket message"
 
 local timenow = socket.gettime or os.time -- use hi-res time if available
-local unpack = unpack or table.unpack -- luacheck: ignore 143
 local LOG = (luup and luup.log) or ( function(msg,level) print(level or 50,msg) end )
 
 function dump(t, seen)
@@ -185,6 +185,26 @@ local function connect( ip, port )
 	return nil, string.format("Connection to %s:%s failed: %s", ip, port, tostring(e))
 end
 
+local function verify_certificate_fingerprint(sock, expected_fingerprint)
+	if expected_fingerprint == nil then
+		return true
+	end
+	local certificate = sock:getpeercertificate()
+	if certificate == nil then
+		return nil, "E-EDL-42: TLS peer certificate is unavailable for fingerprint verification"
+	end
+	local actual_fingerprint, _ = certificate:digest("sha256")
+	if type(actual_fingerprint) ~= "string" then
+		return nil, "E-EDL-42: TLS peer certificate fingerprint is unavailable"
+	end
+	if actual_fingerprint:lower() ~= expected_fingerprint then
+		return nil, "E-EDL-43: TLS peer certificate fingerprint does not match the configured fingerprint"
+	end
+	return true
+end
+
+luws._verify_certificate_fingerprint = verify_certificate_fingerprint
+
 function wsopen( url, handler, options )
 	D("wsopen(%1)", url)
 	options = options or {}
@@ -243,13 +263,27 @@ function wsopen( url, handler, options )
 			return false, "Failed to create SSL socket: '"..err.."'"
 		end
 		D("wsopen() starting handshake");
-		if sock and sock:dohandshake() then
+		sock:settimeout( WS_TLS_HANDSHAKE_TIMEOUT, "b" )
+		sock:settimeout( WS_TLS_HANDSHAKE_TIMEOUT, "r" )
+		local handshake_success, handshake_error = sock:dohandshake()
+		if handshake_success then
 			D("wsopen() successful SSL/TLS negotiation")
 			wsconn.socket = sock -- save wrapped socket
+			-- [impl -> dsn~tls-certificate-fingerprint-pinning~1]
+			-- [impl -> dsn~reject-mismatching-certificate-fingerprint~1]
+			local verified, verification_error = verify_certificate_fingerprint(sock, options.fingerprint)
+			if not verified then
+				pcall( function() wsconn.socket:close() end )
+				wsconn.socket = nil
+				return false, verification_error
+			end
 		else
-			D("wsopen() failed SSL/TLS negotiation")
-			wsconn.socket:close()
+			D("wsopen() failed SSL/TLS negotiation: %1", handshake_error)
+			pcall( function() sock:close() end )
 			wsconn.socket = nil
+			if handshake_error == "timeout" then
+				return false, string.format("TLS handshake timed out after %ss", WS_TLS_HANDSHAKE_TIMEOUT)
+			end
 			return false, "Failed SSL/TLS negotiation"
 		end
 	end
@@ -385,7 +419,7 @@ end
 local function handle_control_frame( wsconn, opcode, data )
 	D("handle_control_frame(%1,%2,%3)", wsconn, opcode, data )
 	if wsconn.options.control_handler and
-		false == wsconn.options.control_handler( wsconn, opcode, data, unpack(wsconn.options.handler_args or {}) ) then
+		false == wsconn.options.control_handler( wsconn, opcode, data, table.unpack(wsconn.options.handler_args or {}) ) then
 		-- If custom handler returns exactly boolean false, don't do default actions
 		return
 	end
@@ -397,7 +431,7 @@ local function handle_control_frame( wsconn, opcode, data )
 		end
 		-- Notify
 		pcall( wsconn.msghandler, wsconn, false, "receiver error: closed",
-			unpack(wsconn.options.handler_args or {}) )
+			table.unpack(wsconn.options.handler_args or {}) )
 	elseif opcode == 0x09 then
 		-- Ping. Reply with pong.
 		D("handle_control_frame() Received ping with data %1, send pong", data)
@@ -426,12 +460,12 @@ local function wshandlefragment( fin, op, data, wsconn )
 			-- Control frame or FIN on first packet, handle immediately, no copy/buffering
 			D("wshandlefragment() fast dispatch %1 byte message for op %2", #data, op)
 			return pcall( wsconn.msghandler, wsconn, op, data,
-				unpack(wsconn.options.handler_args or {}) )
+				table.unpack(wsconn.options.handler_args or {}) )
 		end
 		-- Completion of continuation; RFC6455 requires final fragment to be op 0 (we tolerate same op)
 		if op ~= 0 and op ~= wsconn.msgop then
 			return pcall( wsconn.msghandler, wsconn, false, "ws completion error",
-				unpack(wsconn.options.handler_args or {}) )
+				table.unpack(wsconn.options.handler_args or {}) )
 		end
 		-- Append to buffer and send message
 		local maxn = math.max( 0, wsconn.options.max_payload_size - #wsconn.msg )
@@ -443,7 +477,7 @@ local function wshandlefragment( fin, op, data, wsconn )
 		D("wshandlefragment() dispatch %2 byte message for op %1", wsconn.msgop, #wsconn.msg)
 		wsconn.lastMessage = timenow()
 		local ok, err = pcall( wsconn.msghandler, wsconn, wsconn.msgop, wsconn.msg,
-			unpack(wsconn.options.handler_args or {}) )
+			table.unpack(wsconn.options.handler_args or {}) )
 		if not ok then
 			L("wsandlefragment() message handler threw error:", err)
 		end
@@ -459,7 +493,7 @@ local function wshandlefragment( fin, op, data, wsconn )
 			-- D("wshandlefragment() no fin, additional fragment")
 			-- RFC6455 requires op on continuations to be 0.
 			if op ~= 0 then return pcall( wsconn.msghandler, wsconn, false,
-				"ws continuation error", unpack(wsconn.options.handler_args or {}) ) end
+				"ws continuation error", table.unpack(wsconn.options.handler_args or {}) ) end
 			local maxn = math.max( 0, wsconn.options.max_payload_size - #wsconn.msg )
 			if maxn < #data then
 				L("wshandlefragment() buffer overflow, have %1, incoming %2, max %3; message truncated",
@@ -567,7 +601,7 @@ local function wshandleincoming( data, wsconn )
 			end
 			-- D("wshandleincoming() received %1 mask bytes, now %2", state.masklen, state.mask)
 		elseif state.readstate == STATE_SYNC then
-			return pcall( state.msghandler, wsconn, false, "lost sync", unpack(wsconn.options.handler_args or {}) )
+			return pcall( state.msghandler, wsconn, false, "lost sync", table.unpack(wsconn.options.handler_args or {}) )
 		else
 			assert(false, "Invalid state in wshandleincoming: "..tostring(state.readstate))
 		end
@@ -576,6 +610,7 @@ local function wshandleincoming( data, wsconn )
 	D("wshandleincoming() ending state is %1", state.readstate)
 end
 
+-- [impl -> dsn~websocket-timeout-coordination~1]
 -- Receiver task. Use non-blocking read. Returns nil,err on error, otherwise true/false is the
 -- receiver believes there may immediately be more data to process.
 function wsreceive( wsconn )
@@ -592,14 +627,16 @@ function wsreceive( wsconn )
 		if err == "timeout" or err == "wantread" then
 			if bb and #bb > 0 then
 				D("wsreceive() %1; handling partial result %2 bytes", err, #bb)
+				wsconn.lastMessage = timenow()
 				wshandleincoming( bb, wsconn )
 				return false, #bb -- timeout, say no more data
 			elseif wsconn.options.receive_timeout > 0 and
 				( timenow() - wsconn.lastMessage ) > wsconn.options.receive_timeout then
-				D("wsreceive() message timeout after %1s", wsconn.options.receive_timeout)
-				pcall( wsconn.msghandler, wsconn, false, "message timeout",
-					unpack(wsconn.options.handler_args or {}) )
-				return nil, "message timeout"
+				local timeout_error = string.format(MESSAGE_TIMEOUT_ERROR, wsconn.options.receive_timeout)
+				D("wsreceive() %1", timeout_error)
+				pcall( wsconn.msghandler, wsconn, false, timeout_error,
+					table.unpack(wsconn.options.handler_args or {}) )
+				return nil, timeout_error
 			end
 			D("wsreceive() no data received, err=%1, byte count=%2", err, #bb)
 			return false, 0 -- not error, no data was handled
@@ -607,11 +644,12 @@ function wsreceive( wsconn )
 		-- ??? error
 		D("wsreceive() Unexpected error %1 when calling socket:receive()", err)
 		pcall( wsconn.msghandler, wsconn, false, "receiver error: "..err,
-			unpack(wsconn.options.handler_args or {}) )
+			table.unpack(wsconn.options.handler_args or {}) )
 		return nil, err
 	end
 	D("wsreceive() handling %1 bytes", #nb)
 	if #nb > 0 then
+		wsconn.lastMessage = timenow()
 		wshandleincoming( nb, wsconn )
 	end
 	return #nb > 0, #nb -- data handled, maybe more?
@@ -631,3 +669,5 @@ function wslastping( wsconn )
 	D("wslastping(%1)", wsconn)
 	return wsconn and wsconn.lastPing or 0
 end
+
+return luws

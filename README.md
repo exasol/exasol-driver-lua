@@ -10,8 +10,9 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 
 1. Connect to an [Exasol](https://www.exasol.com/) database and execute SQL statements
 2. Encrypted communication via TLS
-3. Compatible with the [LuaSQL](https://github.com/lunarmodules/luasql) API
-4. Runs inside an Exasol [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm), see the [user guide](./doc/user_guide/user_guide.md#using-exasol-driver-lua-in-an-exasol-udf) for details. Exasol 8 or later is required for this.
+3. TLS certificate fingerprint pinning
+4. Compatible with the [LuaSQL](https://github.com/lunarmodules/luasql) API
+5. Runs inside an Exasol [user defined functions (UDF)](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm), see the [user guide](./doc/user_guide/user_guide.md#using-exasol-driver-lua-in-an-exasol-udf) for details.
 
 ## Information for Users
 
@@ -22,6 +23,8 @@ Check out the [user guide](doc/user_guide/user_guide.md) for more details.
 * [MIT License](LICENSE)
 
 ### Dependencies
+
+Requires Exasol 8.10.0 or later.
 
 See the [dependencies list](dependencies.md) for build and test dependencies and license information.
 

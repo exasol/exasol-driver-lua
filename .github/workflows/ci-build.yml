@@ -3,13 +3,18 @@ on: [push]
 jobs:
 
   matrix-build:
+    # Keep collecting evidence for the reported server issue without blocking PRs.
+    continue-on-error: ${{ matrix.exasol_version == '2025.1.11' || matrix.exasol_version == '2026.1.0' }}
     strategy:
       fail-fast: true
       matrix:
         lua_version: ["5.4"]
-        exasol_version: ["8.29.6", "7.1.30"]
+        exasol_version:
+          - "8.29.13" # Latest 8 that ITDE supports
+          - "2025.1.11" # Latest LTS that ITDE supports
+          - "2026.1.0" # Latest overall that ITDE supports
     env:
-      DEFAULT_DB_VERSION: "8.29.6"
+      DEFAULT_DB_VERSION: "2026.1.0"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
@@ -20,20 +25,12 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
-
-      - name: Checkout integration test docker environment
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          repository: "exasol/integration-test-docker-environment"
-          path: "integration-test-docker-environment"
-          ref: "3.4.0"
 
       - name: Cache local Luarocks repository
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.luarocks
           key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
@@ -41,12 +38,12 @@ jobs:
             ${{ runner.os }}-luarocks-
 
       - name: Install Lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v10
+        uses: leafo/gh-actions-lua@v13
         with:
           luaVersion: ${{ matrix.lua_version }}
 
       - name: Install LuaRocks
-        uses: leafo/gh-actions-luarocks@v4
+        uses: leafo/gh-actions-luarocks@v6
         with:
           luaRocksVersion: "3.11.0"
 
@@ -79,7 +76,7 @@ jobs:
 
       - name: Upload API documentation
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: api-documentation
           path: target/ldoc/
@@ -88,11 +85,11 @@ jobs:
       - name: Spawn Exasol environment
         id: spawn-test-environment
         run: |
-          ./start-test-env spawn-test-environment --environment-name test \
+          python3 -m pip install exasol-integration-test-docker-environment==6.5.1
+          itde spawn-test-environment --environment-name test \
             --docker-db-image-version ${{ matrix.exasol_version }} \
             --database-port-forward 8563
-          echo "itde-env=$GITHUB_WORKSPACE/integration-test-docker-environment/.build_output/cache/environments/test/environment_info.sh" >> "$GITHUB_OUTPUT"
-        working-directory: integration-test-docker-environment
+          echo "itde-env=$GITHUB_WORKSPACE/.build_output/cache/environments/test/environment_info.sh" >> "$GITHUB_OUTPUT"
 
       - name: Verify Exasol environment configuration
         run: |
@@ -125,7 +122,7 @@ jobs:
 
       - name: Archive code coverage results
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: luacov-report
           path: target/luacov-reports/*
@@ -142,7 +139,7 @@ jobs:
 
       - name: Set up JDK for OpenFastTrace
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: 17
           distribution: temurin
@@ -159,8 +156,6 @@ jobs:
   ## This is a separate job because it requires running apt-get which takes > 40s.
   ## When the other job also uses apt-get this can be moved back.
   plantuml:
-    strategy:
-      fail-fast: true
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
@@ -169,7 +164,7 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 

@@ -3,6 +3,7 @@ require("luasql.exasol.luws")
 local ExaError = require("ExaError")
 -- [impl->dsn~logging-with-remotelog~1]
 local log = require("remotelog")
+local socket = require("socket")
 local websocket_datahandler = require("luasql.exasol.WebsocketDatahandler")
 
 --- This internal class represents a websocket connection that allows sending and receiving messages.
@@ -13,7 +14,8 @@ local Websocket = {}
 -- The number of retries when connection to the data fails.
 local CONNECT_RETRY_COUNT<const> = 3
 -- The maximum time in seconds to wait for a response after sending a request.
-local RECEIVE_TIMEOUT_SECONDS<const> = 5
+local RECEIVE_TIMEOUT_SECONDS<const> = 10
+local timenow = socket.gettime or os.time
 
 --- Creates a new instance of this class that is not yet opened/connected.
 -- @treturn luasql.exasol.Websocket the new websocket.
@@ -73,7 +75,9 @@ function Websocket.connect(url, connection_properties)
         receive_timeout = RECEIVE_TIMEOUT_SECONDS,
         ssl_protocol = connection_properties:get_tls_protocol(),
         ssl_verify = connection_properties:get_tls_verify(),
-        ssl_options = connection_properties:get_tls_options()
+        ssl_options = connection_properties:get_tls_options(),
+        -- [impl -> dsn~skip-certificate-fingerprint-verification~1]
+        fingerprint = connection_properties:get_fingerprint()
     }
     log.debug("Connecting to '%s' with %d retries", url, CONNECT_RETRY_COUNT)
     return connect_with_retry(url, websocket_options, CONNECT_RETRY_COUNT)
@@ -81,37 +85,50 @@ end
 
 --- Wait until we receive a response.
 -- This is implemented with busy waiting until wsreceive indicates that data was received.
+-- [impl -> dsn~websocket-timeout-coordination~1]
+-- [impl -> dsn~websocket-safety-deadline~1]
 -- @tparam number timeout_seconds the number of seconds to wait for a response
 -- @treturn nil|table `nil` if a response was received within the timeout or an error if the response
 --   did not arrive within the timeout or an error occured while waiting
 function Websocket:_wait_for_response(timeout_seconds)
     log.trace("Waiting %ds for response", timeout_seconds)
-    local start<const> = os.clock()
+    local start<const> = timenow()
     local try_count = 0
     while true do
         local result, err = wsreceive(self.websocket)
         if type(err) == "string" then
-            local wrapped_error = ExaError:new("E-EDL-4", "Error receiving data while waiting for response "
-                                                       .. "for {{waiting_time}}s: {{error}}",
-                                               {error = err, waiting_time = os.clock() - start})
+            local error_message = "Error receiving data while waiting for response for {{waiting_time}}s: {{error}}"
+            if string.match(err, "^LuWS wire%-level timeout") then
+                error_message = "LuWS wire-level timeout while waiting for response for {{waiting_time}}s: {{error}}"
+            end
+            local wrapped_error = ExaError:new("E-EDL-4", error_message,
+                                               {error = err, waiting_time = timenow() - start})
             wrapped_error.cause = err
             log.error(tostring(wrapped_error))
+            if string.match(err, "^LuWS wire%-level timeout") then
+                self.timeout_error = wrapped_error
+                Websocket.close(self)
+            end
             return wrapped_error
         end
-        local total_wait_time_seconds = os.clock() - start
+        local total_wait_time_seconds = timenow() - start
         if self.data_handler:has_received_data() then
             log.trace("Received result %s after %fs and %d tries", result, total_wait_time_seconds, try_count)
             return nil
         end
         if total_wait_time_seconds >= timeout_seconds then
-            return ExaError:new("E-EDL-18",
-                                "Timeout after {{waiting_time}}s and {{try_count}} tries waiting for data, "
-                                        .. " last result: {{result}}, last error: {{error}}", {
+            local timeout_error = ExaError:new("E-EDL-18",
+                                               "Websocket safety deadline expired after {{waiting_time}}s and "
+                                                       .. "{{try_count}} tries waiting for a response, "
+                                                       .. " last result: {{result}}, last error: {{error}}", {
                 waiting_time = total_wait_time_seconds,
                 try_count = try_count,
                 result = result,
                 error = err
             })
+            self.timeout_error = timeout_error
+            Websocket.close(self)
+            return timeout_error
         end
         try_count = try_count + 1
     end
@@ -123,6 +140,9 @@ end
 -- @treturn string the received response or `nil` if ignore_response was `true` or an error occurred.
 -- @treturn nil|table `nil` if the operation was successful, otherwise the error that occured
 function Websocket:send_raw(payload, ignore_response)
+    if self.closed then
+        return nil, self.timeout_error or "websocket closed"
+    end
     if not ignore_response then
         self.data_handler:expect_data()
     end

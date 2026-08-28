@@ -1,7 +1,7 @@
 <!-- @formatter:off -->
 # Dependencies
 
-The Lua Exasol database driver requires on [Lua 5.4][lua] or higher to run. This is available in Exasol 7.1.x. and above.
+The Lua Exasol database driver requires [Lua 5.4][lua] or higher to run. This is available in all supported Exasol versions.
 
 The following dependencies are preinstalled on Exasol and are not part of the installation bundle:
 
