@@ -14,7 +14,7 @@ jobs:
           - "2025.1.11" # Latest LTS that ITDE supports
           - "2026.1.0" # Latest overall that ITDE supports
     env:
-      DEFAULT_DB_VERSION: "2026.1.1"
+      DEFAULT_DB_VERSION: "2026.1.0"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
