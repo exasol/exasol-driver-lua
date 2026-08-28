@@ -40,7 +40,8 @@ local properties = {
     tls_verify = "none",
     tls_protocol = "tlsv1_2",
     tls_options = "no_tlsv1",
-    -- To pin the TLS certificate (64 digit hexadecimal) uncomment next line:
+    -- To pin the TLS certificate (64 digit hexadecimal) uncomment the
+    -- next line:
     -- fingerprint = "01234...abcdef"
 }
 
