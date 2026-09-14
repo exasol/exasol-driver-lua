@@ -54,6 +54,9 @@ jobs:
           luarocks --version
           luarocks path
 
+      - name: Lint LuaRocks rockspec
+        run: luarocks lint *.rockspec
+
       - name: Install SQLLite for smoke tests
         run: |
           sudo apt install sqlite3 libsqlite3-dev
