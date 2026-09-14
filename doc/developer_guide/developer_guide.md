@@ -136,7 +136,7 @@ To run the requirements tracing with [OpenFastTrace](https://github.com/itsallco
 
 Publishing is performed manually.
 
-1. Before uploading, update the release version and change log
+1. Update the release version and change log via a PR
 2. [Create a new GitHub release](https://github.com/exasol/exasol-driver-lua/releases/new), using the changelog as content
 3. Validate the rockspec and build it locally:
 
