@@ -72,7 +72,7 @@ You need an Exasol database for running the tests. You can start a Docker instan
 To start Exasol in a Docker container, run the following:
 
 ```sh
-docker run --publish 8563:8563 --detach --privileged --stop-timeout 120 exasol/docker-db:2026.1.1
+docker run --publish 8563:8563 --detach --privileged --stop-timeout 120 exasol/docker-db:2026.1.0
 ```
 
 Once Exasol is running, start the tests by executing:
