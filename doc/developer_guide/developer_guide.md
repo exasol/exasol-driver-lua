@@ -132,6 +132,25 @@ To run the requirements tracing with [OpenFastTrace](https://github.com/itsallco
 ./tools/trace-requirements.sh
 ```
 
+## Publish A Release To LuaRocks
+
+Publishing is performed manually.
+
+1. Before uploading, update the release version and change log
+2. [Create a new GitHub release](https://github.com/exasol/exasol-driver-lua/releases/new), using the changelog as content
+3. Validate the rockspec and build it locally:
+
+   ```sh
+   rockspec=luasql-exasol-<version>-<revision>.rockspec
+   luarocks lint "$rockspec"
+   luarocks make --local "$rockspec"
+   ```
+4. Upload library:
+
+   ```sh
+   luarocks upload "$rockspec" --temp-key "$LUAROCKS_API_KEY"
+   ```
+
 # Troubleshooting
 
 ## `luarocks install` fails with `bad argument` error
