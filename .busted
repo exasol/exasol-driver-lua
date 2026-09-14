@@ -11,6 +11,7 @@ return {
     ROOT = {"spec/"},
   },
   default = {
+    coverage = true,
   },
   ci = {
     coverage = true,
