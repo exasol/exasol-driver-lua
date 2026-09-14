@@ -4,7 +4,7 @@ jobs:
 
   matrix-build:
     # Keep collecting evidence for the reported server issue without blocking PRs.
-    continue-on-error: ${{ matrix.exasol_version == '2025.1.11' || matrix.exasol_version == '2026.1.0' }}
+    continue-on-error: ${{ matrix.exasol_version == '2025.1.11' || matrix.exasol_version == '2026.1.1' }}
     strategy:
       fail-fast: true
       matrix:
@@ -12,9 +12,9 @@ jobs:
         exasol_version:
           - "8.29.13" # Latest 8 that ITDE supports
           - "2025.1.11" # Latest LTS that ITDE supports
-          - "2026.1.0" # Latest overall that ITDE supports
+          - "2026.1.1" # Latest overall that ITDE supports
     env:
-      DEFAULT_DB_VERSION: "2026.1.0"
+      DEFAULT_DB_VERSION: "2026.1.1"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
