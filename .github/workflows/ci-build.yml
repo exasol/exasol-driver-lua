@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v6
@@ -38,14 +39,14 @@ jobs:
             ${{ runner.os }}-luarocks-
 
       - name: Install Lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v13
+        uses: leafo/gh-actions-lua@@6919171ccf181b826f44b9bca76307b577217377 # v13.0.0
         with:
           luaVersion: ${{ matrix.lua_version }}
 
       - name: Install LuaRocks
-        uses: leafo/gh-actions-luarocks@v6
+        uses: leafo/gh-actions-luarocks@35d062def313a7699a0d513e996bcf4352f05389 # v6.1.0
         with:
-          luaRocksVersion: "3.11.0"
+          luaRocksVersion: "3.13.0"
 
       - name: Print versions
         run: |
@@ -147,9 +148,31 @@ jobs:
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
 
-  build:
-    needs: matrix-build
+  lint-github-actions:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - id: checkout
+        name: Checkout the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Lint GitHub actions with Zizmore
+        id: lint-github-actions
+        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          advanced-security: false
+
+  build:
+    needs: [matrix-build, lint-github-actions]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - run: echo "Build finished"
 
@@ -161,12 +184,15 @@ jobs:
       cancel-in-progress: true
     name: "Build Plantuml diagrams"
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
 
       - name: Checkout repo
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Install Plantuml
         run: |

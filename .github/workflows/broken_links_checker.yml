@@ -17,7 +17,9 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Configure broken links checker
         run: |
           mkdir -p ./target
@@ -25,7 +27,7 @@ jobs:
                '{"pattern": "^https?://(www|dev).mysql.com/"},' \
                '{"pattern": "^https?://(www.)?opensource.org"}' \
                ']}' > ./target/broken_links_checker.json
-      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      - uses: tcort/markdown-link-check@275c27c5035a5b4a656fe0e21a4c1403c118c767 # 3.15.0
         with:
           use-quiet-mode: 'yes'
           use-verbose-mode: 'yes'
