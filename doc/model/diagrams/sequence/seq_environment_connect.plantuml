@@ -26,7 +26,6 @@ activate env
 create props
 env -> props: create(properties)
 activate props
-' [dsn~validate-certificate-fingerprint~1 -> scn~reject-malformed-certificate-fingerprint~1 >> impl,utest]
 props -> props: validate()
 note right
     * Fetch size

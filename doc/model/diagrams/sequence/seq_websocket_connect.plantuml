@@ -21,7 +21,6 @@ luws -> luws : Complete TLS handshake
 activate luws
 deactivate luws
 alt fingerprint is configured
-    ' [dsn~tls-certificate-fingerprint-pinning~1 -> scn~connect-with-matching-certificate-fingerprint~1 >> impl,utest,itest]
     luws -> luws : Read peer certificate and\ncalculate SHA-256 fingerprint
     activate luws
     deactivate luws
@@ -31,14 +30,12 @@ alt fingerprint is configured
         deactivate luws
         luws -->> ws : Socket
     else fingerprint mismatches or certificate data is unavailable
-        ' [dsn~reject-mismatching-certificate-fingerprint~1 -> scn~reject-mismatching-certificate-fingerprint~1 >> impl,utest,itest]
         luws -> luws : Close TLS socket
         activate luws
         deactivate luws
         luws -->> ws : Error
     end
 else no fingerprint is configured
-    ' [dsn~skip-certificate-fingerprint-verification~1 -> scn~connect-without-certificate-fingerprint~1 >> impl,utest,itest]
     luws -> luws : Upgrade connection to WebSocket
     activate luws
     deactivate luws
