@@ -101,8 +101,8 @@ function Websocket:_wait_for_response(timeout_seconds)
             if string.match(err, "^LuWS wire%-level timeout") then
                 error_message = "LuWS wire-level timeout while waiting for response for {{waiting_time}}s: {{error}}"
             end
-            local wrapped_error = ExaError:new("E-EDL-4", error_message,
-                                               {error = err, waiting_time = timenow() - start})
+            local wrapped_error =
+                    ExaError:new("E-EDL-4", error_message, {error = err, waiting_time = timenow() - start})
             wrapped_error.cause = err
             log.error(tostring(wrapped_error))
             if string.match(err, "^LuWS wire%-level timeout") then

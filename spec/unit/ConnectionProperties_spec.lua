@@ -80,8 +80,9 @@ Mitigations:
 
     describe("fingerprint property", function()
         local EXPECTED_VALIDATION_ERROR<const> = "E-EDL-41: Parameter 'fingerprint' must be a "
-                .. "64-digit hexadecimal SHA-256 fingerprint\n\nMitigations:\n\n"
-                .. "* Use the SHA-256 fingerprint of the TLS peer certificate."
+                                                         .. "64-digit hexadecimal SHA-256 fingerprint\n\n"
+                                                         .. "Mitigations:\n\n"
+                                                         .. "* Use the SHA-256 fingerprint of the TLS peer certificate."
 
         -- [utest -> dsn~skip-certificate-fingerprint-verification~1]
         it("is absent by default", function()
@@ -98,8 +99,7 @@ Mitigations:
         -- [utest -> dsn~validate-certificate-fingerprint~1]
         for _, invalid_fingerprint in ipairs({"", string.rep("a", 63), string.rep("g", 64), 42}) do
             it("rejects invalid fingerprint " .. tostring(invalid_fingerprint), function()
-                assert_validation_error({fingerprint = invalid_fingerprint},
-                                        EXPECTED_VALIDATION_ERROR)
+                assert_validation_error({fingerprint = invalid_fingerprint}, EXPECTED_VALIDATION_ERROR)
             end)
         end
     end)

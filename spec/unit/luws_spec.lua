@@ -7,15 +7,30 @@ describe("LuWS TLS certificate fingerprint verification", function()
 
     -- [utest -> dsn~tls-certificate-fingerprint-pinning~1]
     it("accepts a matching peer certificate fingerprint", function()
-        local certificate = {digest = function() return string.upper(expected_fingerprint) end}
-        assert.is_true(luws._verify_certificate_fingerprint({getpeercertificate = function() return certificate end},
-                                                            expected_fingerprint))
+        local certificate = {
+            digest = function()
+                return string.upper(expected_fingerprint)
+            end
+        }
+        assert.is_true(luws._verify_certificate_fingerprint({
+            getpeercertificate = function()
+                return certificate
+            end
+        }, expected_fingerprint))
     end)
 
     -- [utest -> dsn~reject-mismatching-certificate-fingerprint~1]
     it("rejects a mismatching peer certificate fingerprint", function()
-        local certificate = {digest = function() return string.rep("b", 64) end}
-        local socket = {getpeercertificate = function() return certificate end}
+        local certificate = {
+            digest = function()
+                return string.rep("b", 64)
+            end
+        }
+        local socket = {
+            getpeercertificate = function()
+                return certificate
+            end
+        }
         local result, err = luws._verify_certificate_fingerprint(socket, expected_fingerprint)
         assert.is_nil(result)
         assert.is_same("E-EDL-43: TLS peer certificate fingerprint does not match the configured fingerprint", err)
@@ -23,8 +38,11 @@ describe("LuWS TLS certificate fingerprint verification", function()
 
     -- [utest -> dsn~reject-mismatching-certificate-fingerprint~1]
     it("rejects an unavailable peer certificate", function()
-        local result, err = luws._verify_certificate_fingerprint({getpeercertificate = function() return nil end},
-                                                                  expected_fingerprint)
+        local result, err = luws._verify_certificate_fingerprint({
+            getpeercertificate = function()
+                return nil
+            end
+        }, expected_fingerprint)
         assert.is_nil(result)
         assert.is_same("E-EDL-42: TLS peer certificate is unavailable for fingerprint verification", err)
     end)
@@ -33,23 +51,41 @@ describe("LuWS TLS certificate fingerprint verification", function()
     it("closes the TLS socket before WebSocket upgrade on mismatch", function()
         local original_ssl = package.loaded.ssl
         local tls_socket = {closed = false}
-        tls_socket.settimeout = function() end
-        tls_socket.dohandshake = function() return true end
+        tls_socket.settimeout = function()
+        end
+        tls_socket.dohandshake = function()
+            return true
+        end
         tls_socket.getpeercertificate = function()
-            return {digest = function() return string.rep("b", 64) end}
+            return {
+                digest = function()
+                    return string.rep("b", 64)
+                end
+            }
         end
         function tls_socket:close()
             self.closed = true
         end
-        package.loaded.ssl = {wrap = function() return tls_socket end}
-        finally(function() package.loaded.ssl = original_ssl end)
+        package.loaded.ssl = {
+            wrap = function()
+                return tls_socket
+            end
+        }
+        finally(function()
+            package.loaded.ssl = original_ssl
+        end)
 
         local tcp_socket = {
             setoption = function()
             end
         }
         local websocket, err = wsopen("wss://localhost:8563", function()
-        end, {connect = function() return tcp_socket end, fingerprint = expected_fingerprint})
+        end, {
+            connect = function()
+                return tcp_socket
+            end,
+            fingerprint = expected_fingerprint
+        })
 
         assert.is_false(websocket)
         assert.is_same("E-EDL-43: TLS peer certificate fingerprint does not match the configured fingerprint", err)

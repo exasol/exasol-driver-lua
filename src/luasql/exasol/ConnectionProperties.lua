@@ -72,8 +72,9 @@ function ConnectionProperties:_validate()
     -- [impl -> dsn~validate-certificate-fingerprint~1]
     local fingerprint = self.properties.fingerprint
     if fingerprint ~= nil then
-        if type(fingerprint) ~= "string" or not fingerprint:match("^[0-9a-fA-F][0-9a-fA-F]*$")
-                or #fingerprint ~= 64 then
+        if type(fingerprint) ~= "string" --
+        or not fingerprint:match("^[0-9a-fA-F][0-9a-fA-F]*$") --
+        or #fingerprint ~= 64 then
             ExaError:new("E-EDL-41", "Parameter 'fingerprint' must be a 64-digit hexadecimal SHA-256 fingerprint")
                     :add_mitigations("Use the SHA-256 fingerprint of the TLS peer certificate."):raise()
         end

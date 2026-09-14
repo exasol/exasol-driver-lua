@@ -47,12 +47,8 @@ end
 local function get_tls_peer_fingerprint()
     local tcp_socket = assert(socket.tcp())
     assert(tcp_socket:connect(params.host, params.port))
-    local tls_socket = assert(ssl.wrap(tcp_socket, {
-        mode = "client",
-        verify = "none",
-        protocol = "tlsv1_2",
-        options = {"all"}
-    }))
+    local tls_socket = assert(ssl.wrap(tcp_socket,
+                                       {mode = "client", verify = "none", protocol = "tlsv1_2", options = {"all"}}))
     assert(tls_socket:dohandshake())
     local fingerprint = assert(tls_socket:getpeercertificate():digest("sha256"))
     tls_socket:close()

@@ -73,7 +73,9 @@ describe("ExasolWebsocket", function()
             -- test log that looks like a failure, but isn't.
             -- Note that we also need to suppress LuaCheck error 122 in this case.
             local original_stderr = io.stderr
-            finally(function() io.stderr = original_stderr end) -- luacheck: ignore 122
+            finally(function()
+                io.stderr = original_stderr -- luacheck: ignore 122
+            end)
             io.stderr = io.open("/dev/null", "w") -- luacheck: ignore 122
             simulate_socket_error("mock error")
             local result, err = exa_socket:send_login_command()
