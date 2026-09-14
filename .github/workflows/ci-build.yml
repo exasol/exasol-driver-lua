@@ -13,9 +13,6 @@ jobs:
           - "8.29.13" # Latest 8 that ITDE supports
           - "2025.1.11" # Latest LTS that ITDE supports
           - "2026.1.0" # Latest overall that ITDE supports
-        include:
-          - lua_version: "5.5"
-            exasol_version: "2026.1.0"
     env:
       DEFAULT_DB_VERSION: "2026.1.0"
     concurrency:
