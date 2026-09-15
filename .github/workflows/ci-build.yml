@@ -34,19 +34,25 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.luarocks
-          key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
+          key: ${{ runner.os }}-lua-${{ matrix.lua_version }}-luarocks-${{ hashFiles('**/*.rockspec') }}
           restore-keys: |
-            ${{ runner.os }}-luarocks-
+            ${{ runner.os }}-lua-${{ matrix.lua_version }}-luarocks-
+            ${{ runner.os }}-lua-
 
-      - name: Install Lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@6919171ccf181b826f44b9bca76307b577217377 # v13.0.0
-        with:
-          luaVersion: ${{ matrix.lua_version }}
-
-      - name: Install LuaRocks
-        uses: leafo/gh-actions-luarocks@35d062def313a7699a0d513e996bcf4352f05389 # v6.1.0
-        with:
-          luaRocksVersion: "3.13.0"
+      - name: Install Lua and LuaRocks
+        id: install-lua
+        run: |
+          sudo apt-get install "lua$LUA_VERSION" "liblua$LUA_VERSION-dev" luarocks
+          sudo update-alternatives --install /usr/bin/lua lua-interpreter /usr/bin/lua$LUA_VERSION $LUA_VERSION
+          sudo update-alternatives --install /usr/bin/luac lua-compiler /usr/bin/luac$LUA_VERSION $LUA_VERSION
+          sudo update-alternatives --set lua-interpreter /usr/bin/lua$LUA_VERSION
+          sudo update-alternatives --set lua-compiler /usr/bin/luac$LUA_VERSION
+          luarocks config --scope user lua_version $LUA_VERSION
+          luarocks config --scope user lua_dir /usr
+          luarocks config --local deploy_bin_dir >> "$GITHUB_PATH"
+          luarocks --lua-version=$LUA_VERSION --local install --only-deps *.rockspec
+        env:
+          LUA_VERSION: ${{ matrix.lua_version }}
 
       - name: Print versions
         run: |
