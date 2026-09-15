@@ -8,7 +8,6 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        lua_version: ["5.4"]
         exasol_version:
           - "8.29.13" # Latest 8 that ITDE supports
           - "2025.1.11" # Latest LTS that ITDE supports
@@ -16,9 +15,9 @@ jobs:
     env:
       DEFAULT_DB_VERSION: "2026.1.0"
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
+      group: ${{ github.workflow }}-${{ github.ref }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
-    name: "Build with Lua ${{ matrix.lua_version }} and Exasol ${{ matrix.exasol_version }}"
+    name: "Build with Lua 5.4 and Exasol ${{ matrix.exasol_version }}"
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -34,25 +33,22 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.luarocks
-          key: ${{ runner.os }}-lua-${{ matrix.lua_version }}-luarocks-${{ hashFiles('**/*.rockspec') }}
+          key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
           restore-keys: |
-            ${{ runner.os }}-lua-${{ matrix.lua_version }}-luarocks-
-            ${{ runner.os }}-lua-
+            ${{ runner.os }}-luarocks-
 
       - name: Install Lua and LuaRocks
         id: install-lua
         run: |
-          sudo apt-get install "lua$LUA_VERSION" "liblua$LUA_VERSION-dev" luarocks
-          sudo update-alternatives --install /usr/bin/lua lua-interpreter /usr/bin/lua$LUA_VERSION $LUA_VERSION
-          sudo update-alternatives --install /usr/bin/luac lua-compiler /usr/bin/luac$LUA_VERSION $LUA_VERSION
-          sudo update-alternatives --set lua-interpreter /usr/bin/lua$LUA_VERSION
-          sudo update-alternatives --set lua-compiler /usr/bin/luac$LUA_VERSION
-          luarocks config --scope user lua_version $LUA_VERSION
+          sudo apt-get install lua5.4 liblua5.4-dev luarocks
+          sudo update-alternatives --install /usr/bin/lua lua-interpreter /usr/bin/lua5.4 54
+          sudo update-alternatives --install /usr/bin/luac lua-compiler /usr/bin/luac5.4 54
+          sudo update-alternatives --set lua-interpreter /usr/bin/lua5.4
+          sudo update-alternatives --set lua-compiler /usr/bin/luac5.4
+          luarocks config --scope user lua_version 5.4
           luarocks config --scope user lua_dir /usr
           luarocks config --local deploy_bin_dir >> "$GITHUB_PATH"
-          luarocks --lua-version=$LUA_VERSION --local install --only-deps *.rockspec
-        env:
-          LUA_VERSION: ${{ matrix.lua_version }}
+          luarocks --lua-version=5.4 --local install --only-deps *.rockspec
 
       - name: Print versions
         run: |
