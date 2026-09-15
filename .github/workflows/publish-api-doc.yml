@@ -25,9 +25,9 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.luarocks
-          key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
+          key: ${{ runner.os }}-lua5.4-apt-luarocks-v1-${{ hashFiles('**/*.rockspec') }}
           restore-keys: |
-            ${{ runner.os }}-luarocks-
+            ${{ runner.os }}-lua5.4-apt-luarocks-v1-
 
       - name: Install Lua and LuaRocks
         id: install-lua
