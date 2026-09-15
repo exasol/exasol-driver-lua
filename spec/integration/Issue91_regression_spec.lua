@@ -6,7 +6,6 @@
 -- 5 seconds.
 --
 -- The test below is the minimal implementation that triggers the issue.
-
 require("busted.runner")()
 local driver = require("luasql.exasol")
 local config = require("config")
@@ -26,7 +25,7 @@ describe("Issue91", function()
         connectionA:close()
         local connectionB = create_connection()
         finally(function()
-            if(not connectionB.closed) then
+            if (not connectionB.closed) then
                 print("Cleaning up remaining connection after failure.")
                 connectionB:close()
             end

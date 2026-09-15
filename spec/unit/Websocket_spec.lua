@@ -17,7 +17,11 @@ describe("Websocket receive timeout", function()
         }
         local websocket = {
             websocket = websocket_connection,
-            data_handler = {has_received_data = function() return false end}
+            data_handler = {
+                has_received_data = function()
+                    return false
+                end
+            }
         }
 
         local result = Websocket._wait_for_response(websocket, 0)

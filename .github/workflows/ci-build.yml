@@ -8,7 +8,6 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        lua_version: ["5.4"]
         exasol_version:
           - "8.29.13" # Latest 8 that ITDE supports
           - "2025.1.11" # Latest LTS that ITDE supports
@@ -16,9 +15,9 @@ jobs:
     env:
       DEFAULT_DB_VERSION: "2026.1.0"
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-lua-${{ matrix.lua_version }}-exasol-${{ matrix.exasol_version }}
+      group: ${{ github.workflow }}-${{ github.ref }}-exasol-${{ matrix.exasol_version }}
       cancel-in-progress: true
-    name: "Build with Lua ${{ matrix.lua_version }} and Exasol ${{ matrix.exasol_version }}"
+    name: "Build with Lua 5.4 and Exasol ${{ matrix.exasol_version }}"
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -28,30 +27,37 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Cache local Luarocks repository
         uses: actions/cache@v6
         with:
           path: ~/.luarocks
-          key: ${{ runner.os }}-luarocks-${{ hashFiles('**/*.rockspec') }}
+          key: ${{ runner.os }}-lua5.4-apt-luarocks-v1-${{ hashFiles('**/*.rockspec') }}
           restore-keys: |
-            ${{ runner.os }}-luarocks-
+            ${{ runner.os }}-lua5.4-apt-luarocks-v1-
 
-      - name: Install Lua ${{ matrix.lua_version }}
-        uses: leafo/gh-actions-lua@v13
-        with:
-          luaVersion: ${{ matrix.lua_version }}
-
-      - name: Install LuaRocks
-        uses: leafo/gh-actions-luarocks@v6
-        with:
-          luaRocksVersion: "3.11.0"
+      - name: Install Lua and LuaRocks
+        id: install-lua
+        run: |
+          sudo apt-get install lua5.4 liblua5.4-dev luarocks
+          sudo update-alternatives --install /usr/bin/lua lua-interpreter /usr/bin/lua5.4 54
+          sudo update-alternatives --install /usr/bin/luac lua-compiler /usr/bin/luac5.4 54
+          sudo update-alternatives --set lua-interpreter /usr/bin/lua5.4
+          sudo update-alternatives --set lua-compiler /usr/bin/luac5.4
+          luarocks config --scope user lua_version 5.4
+          luarocks config --scope user lua_dir /usr
+          luarocks config --local deploy_bin_dir >> "$GITHUB_PATH"
+          luarocks --lua-version=5.4 --local install --only-deps *.rockspec
 
       - name: Print versions
         run: |
           lua -v
           luarocks --version
           luarocks path
+
+      - name: Lint LuaRocks rockspec
+        run: luarocks lint *.rockspec
 
       - name: Install SQLLite for smoke tests
         run: |
@@ -147,9 +153,31 @@ jobs:
         if: ${{ env.DEFAULT_DB_VERSION == matrix.exasol_version }}
         run: ./tools/trace-requirements.sh
 
-  build:
-    needs: matrix-build
+  lint-github-actions:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: lint-github-actions-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - id: checkout
+        name: Checkout the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Lint GitHub actions with Zizmore
+        id: lint-github-actions
+        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          advanced-security: false
+
+  build:
+    needs: [matrix-build, lint-github-actions]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - run: echo "Build finished"
 
@@ -161,12 +189,15 @@ jobs:
       cancel-in-progress: true
     name: "Build Plantuml diagrams"
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
 
       - name: Checkout repo
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Install Plantuml
         run: |

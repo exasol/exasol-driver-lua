@@ -22,7 +22,7 @@ Install the build dependencies like this:
     ```
 * Ubuntu:
     ```sh
-    sudo apt install openssl libssl-dev sqllite3 libsqlite3-dev 
+    sudo apt install openssl libssl-dev sqllite3 libsqlite3-dev
     ```
 
 ### Install Runtime Dependencies
@@ -72,7 +72,7 @@ You need an Exasol database for running the tests. You can start a Docker instan
 To start Exasol in a Docker container, run the following:
 
 ```sh
-docker run --publish 8563:8563 --detach --privileged --stop-timeout 120 exasol/docker-db:8.27.0
+docker run --publish 8563:8563 --detach --privileged --stop-timeout 120 exasol/docker-db:2026.1.0
 ```
 
 Once Exasol is running, start the tests by executing:
@@ -131,6 +131,25 @@ To run the requirements tracing with [OpenFastTrace](https://github.com/itsallco
 ```sh
 ./tools/trace-requirements.sh
 ```
+
+## Publish A Release To LuaRocks
+
+Publishing is performed manually.
+
+1. Update the release version and change log via a PR
+2. [Create a new GitHub release](https://github.com/exasol/exasol-driver-lua/releases/new), using the changelog as content
+3. Validate the rockspec and build it locally:
+
+   ```sh
+   rockspec=luasql-exasol-<version>-<revision>.rockspec
+   luarocks lint "$rockspec"
+   luarocks make --local "$rockspec"
+   ```
+4. Upload library:
+
+   ```sh
+   luarocks upload "$rockspec" --temp-key "$LUAROCKS_API_KEY"
+   ```
 
 # Troubleshooting
 
