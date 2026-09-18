@@ -14,7 +14,7 @@ local Websocket = {}
 -- The number of retries when connection to the data fails.
 local CONNECT_RETRY_COUNT<const> = 3
 -- The maximum time in seconds to wait for a response after sending a request.
-local RECEIVE_TIMEOUT_SECONDS<const> = 10
+local RECEIVE_TIMEOUT_SECONDS<const> = 60
 local timenow = socket.gettime or os.time
 
 --- Creates a new instance of this class that is not yet opened/connected.
