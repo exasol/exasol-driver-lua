@@ -35,7 +35,7 @@ describe("Exasol driver works inside an UDF", function()
 
     local function create_script_with_driver(schema_name, script_arguments, script_content)
         local content = amalg.amalgamate_with_script(script_content)
-        local statement = string.format("CREATE LUA SCALAR SCRIPT %s.RUN_TEST(%s) RETURNS VARCHAR(2000) AS\n%s\n/",
+        local statement = string.format("CREATE LUA SCALAR SCRIPT %s.RUN_TEST(%s) RETURNS VARCHAR(2000) AS\n%s\n",
                                         schema_name, script_arguments, content)
         assert(conn:execute(statement))
     end
@@ -45,8 +45,8 @@ describe("Exasol driver works inside an UDF", function()
     end
 
     local function read_file(file)
-        local f = assert(io.open(file, "rb"))
-        local content = f:read("*all")
+        local f = assert(io.open(file, "rb"), "Unable to open file '" .. file .. "'")
+        local content = assert(f:read("*all"), "Unable to read from file '" .. file .. "'")
         f:close()
         return content
     end

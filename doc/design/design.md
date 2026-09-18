@@ -30,7 +30,7 @@ This will allow EDL to run inside an Exasol UDF.
 
 Covers:
 
-* [const~use-available-exasol-udf-libraries-only~1](./system_requirements.md#restrict-libraries-to-the-ones-available-to-exasol-udfs)
+* [const~use-available-exasol-udf-libraries-only~1](../requirements/requirements.md#restrict-libraries-to-the-ones-available-to-exasol-udfs)
 
 Needs: itest
 
@@ -40,13 +40,13 @@ EDL uses Exasol's public [websocket-api](https://github.com/exasol/websocket-api
 
 ## Requirement Overview
 
-Please refer to the [System Requirement Specification](system_requirements.md) for user-level requirements.
+Please refer to the [System Requirement Specification](../requirements/requirements.md) for user-level requirements.
 
 # Building Blocks
 
-![Class Diagram](./images/generated/cl_exasol_driver_lua.svg)
+![Class Diagram](../images/generated/cl_exasol_driver_lua.svg)
 
-See [Diagram source](./model/diagrams/class/cl_exasol_driver_lua.plantuml).
+See [Diagram source](../model/diagrams/class/cl_exasol_driver_lua.plantuml).
 
 # Runtime
 
@@ -57,9 +57,9 @@ Note: the following sequence diagrams only show a simplified workflow without th
 ### Connecting to the Database
 `dsn~env-connect~1`
 
-![Sequence Diagram: Connecting to the database](./images/generated/seq_environment_connect.svg)
+![Sequence Diagram: Connecting to the database](../images/generated/seq_environment_connect.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_environment_connect.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_environment_connect.plantuml).
 
 ### TLS Certificate Fingerprint Pinning
 
@@ -108,68 +108,68 @@ Needs: impl, utest, itest
 ### Closing the Environment
 `dsn~env-close~1`
 
-![Sequence Diagram: Closing the Environment](./images/generated/seq_environment_close.svg)
+![Sequence Diagram: Closing the Environment](../images/generated/seq_environment_close.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_environment_close.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_environment_close.plantuml).
 
 ## Connection
 
 ### Executing a Statement
 
-![Sequence Diagram: Executing Statements and fetching results](./images/generated/seq_connection_execute.svg)
+![Sequence Diagram: Executing Statements and fetching results](../images/generated/seq_connection_execute.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_connection_execute.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_connection_execute.plantuml).
 
 ### Setting Autocommit for the Connection
 
-![Sequence Diagram: Setting Autocommit](./images/generated/seq_connection_setautocommit.svg)
+![Sequence Diagram: Setting Autocommit](../images/generated/seq_connection_setautocommit.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_connection_setautocommit.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_connection_setautocommit.plantuml).
 
 ### Committing a Transaction for the Connection
 
-![Sequence Diagram: Committing a Transaction](./images/generated/seq_connection_commit.svg)
+![Sequence Diagram: Committing a Transaction](../images/generated/seq_connection_commit.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_connection_commit.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_connection_commit.plantuml).
 
 ### Rolling Back a Transaction for the Connection
 
-![Sequence Diagram: Rolling Back a Transaction](./images/generated/seq_connection_rollback.svg)
+![Sequence Diagram: Rolling Back a Transaction](../images/generated/seq_connection_rollback.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_connection_rollback.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_connection_rollback.plantuml).
 
 
 ### Closing the Connection
 
-![Sequence Diagram: Closing the Connection](./images/generated/seq_connection_close.svg)
+![Sequence Diagram: Closing the Connection](../images/generated/seq_connection_close.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_connection_close.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_connection_close.plantuml).
 
 ## Cursor
 
 ### Fetching Results
 
-![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_fetch.svg)
+![Sequence Diagram: Closing a Cursor](../images/generated/seq_cursor_fetch.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_cursor_fetch.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_cursor_fetch.plantuml).
 
 ### Getting Column Names
 
-![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_getcolnames.svg)
+![Sequence Diagram: Closing a Cursor](../images/generated/seq_cursor_getcolnames.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_cursor_getcolnames.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_cursor_getcolnames.plantuml).
 
 ### Getting Column Types
 
-![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_getcoltypes.svg)
+![Sequence Diagram: Closing a Cursor](../images/generated/seq_cursor_getcoltypes.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_cursor_getcoltypes.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_cursor_getcoltypes.plantuml).
 
 ### Closing a Cursor
 
-![Sequence Diagram: Closing a Cursor](./images/generated/seq_cursor_close.svg)
+![Sequence Diagram: Closing a Cursor](../images/generated/seq_cursor_close.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_cursor_close.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_cursor_close.plantuml).
 
 # Cross-cutting Concerns
 
@@ -194,17 +194,17 @@ Needs: impl, utest
 
 ### Websocket Connection
 
-![Sequence Diagram: Websocket Connection](./images/generated/seq_websocket_connect.svg)
+![Sequence Diagram: Websocket Connection](../images/generated/seq_websocket_connect.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_websocket_connect.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_websocket_connect.plantuml).
 
 ### Websocket Execute
 
 Detailed request and response cycle using `connection:execute()` as an example:
 
-![Sequence Diagram: Websocket Request/Response](./images/generated/seq_websocket_request_response.svg)
+![Sequence Diagram: Websocket Request/Response](../images/generated/seq_websocket_request_response.svg)
 
-See [Diagram source](./model/diagrams/sequence/seq_websocket_request_response.plantuml).
+See [Diagram source](../model/diagrams/sequence/seq_websocket_request_response.plantuml).
 
 ## Logging with remotelog
 `dsn~logging-with-remotelog~1`
@@ -231,14 +231,14 @@ Needs: impl, utest
 
 We include the source code of some third party Lua modules in this repository. This section explains the rationale.
 
-### [luws.lua](../src/luasql/exasol/luws.lua)
+### [luws.lua](../../src/luasql/exasol/luws.lua)
 
 This module from [github.com/toggledbits/LuWS](https://github.com/toggledbits/LuWS) implements the WebSocket protocol. We include it's source code for the following reasons:
 
 * The module is not published at [LuaRocks](https://luarocks.org/)
 * The module requires modifications to work with Lua 5.4 and the original author requires backwards compatibility. See discussion at [LuWS issue #3](https://github.com/toggledbits/LuWS/issues/3).
 
-### [base64.lua](../src/luasql/exasol/base64.lua)
+### [base64.lua](../../src/luasql/exasol/base64.lua)
 
 This module from [github.com/iskolbin/lbase64](https://github.com/iskolbin/lbase64) implements a base64 encoder and decoder. We include it's source code for the following reasons:
 

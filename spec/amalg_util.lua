@@ -32,9 +32,15 @@ local function amalgamate(lua_path, modules, script_path)
     end
     command = command .. " " .. table.concat(modules, " ")
     log.debug("Running amalg command: %s", command)
-    local file = io.popen(command, "r")
+    local error_path = os.tmpname()
+    local file = io.popen(command .. " 2>" .. error_path, "r")
     local output = file:read("*all")
-    file:close()
+    local success, _, exit_code = file:close()
+    local error_file = assert(io.open(error_path, "r"))
+    local error_output = error_file:read("*all")
+    error_file:close()
+    assert(os.remove(error_path))
+    assert(success, string.format("Amalg command failed with exit code %d: %s", exit_code, error_output))
     return output
 end
 
