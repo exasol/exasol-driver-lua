@@ -3,7 +3,6 @@ on: [push]
 jobs:
 
   matrix-build:
-    # Keep collecting evidence for the reported server issue without blocking PRs.
     strategy:
       fail-fast: true
       matrix:
