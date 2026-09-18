@@ -45,8 +45,8 @@ describe("Exasol driver works inside an UDF", function()
     end
 
     local function read_file(file)
-        local f = assert(io.open(file, "rb"))
-        local content = f:read("*all")
+        local f = assert(io.open(file, "rb"), "Unable to open file '" .. file .. "'")
+        local content = assert(f:read("*all"), "Unable to read from file '" .. file .. "'")
         f:close()
         return content
     end

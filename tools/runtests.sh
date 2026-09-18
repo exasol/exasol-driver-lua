@@ -26,5 +26,6 @@ mkdir -p "$reports_dir"
 mkdir -p "$luacov_dir"
 
 cd "$base_dir"
+eval "$(luarocks path)"
 luarocks test --local -- "$@"
 print_coverage_summary
